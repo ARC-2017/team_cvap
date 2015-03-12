@@ -3,12 +3,12 @@
 source /opt/ros/hydro/setup.bash
 sudo apt-get install ros-hydro-moveit* 
 
-WS=~/amazon_challenge_ws
+WS=$HOME/amazon_challenge_ws
 
 # create catkin workspace
 # and install
 
-mdkir -p $WS/src
+mkdir -p $WS/src
 cp amazon_challenge.rosinstall $WS/src/
 cd $WS/src
 
