@@ -1,5 +1,5 @@
 - git: {local-name: cub, uri: 'https://github.com/NVlabs/cub.git', version: 1.3.2}
 - git: {local-name: simtrack, uri: 'git@bitbucket.org:karlpauwels/simtrack_private_devel', version: devel}
 - git: {local-name: amazon_challenge, uri: 'git@bitbucket.org:robocoffee/amazon_challenge', version: devel}
-- git: {local-name: pr2_ft_moveit_config, uri: 'https://github.com/kth-ros-pkg/pr2_ft_moveit_config.git', version: hydro}
+- git: {local-name: pr2_ft_moveit_config, uri: 'https://github.com/fevb/pr2_ft_moveit_config.git', version: groovy-no-octomap}
 - git: {local-name: pr2_moveit_config, uri: 'https://github.com/ros-planning/moveit_pr2.git', version: hydro-devel}
