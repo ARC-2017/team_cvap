@@ -4,7 +4,7 @@ Scripts and rosinstall files for getting things up and running for the amazon ch
 
 # HOW TO RUN #
 
-To run it, clone the repo to your home directory and do:
+To run it, clone the repo to your home directory, go into the *amazon_challenge_install* folder and do:
 
 
 ```
