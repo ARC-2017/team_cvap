@@ -1,7 +1,7 @@
 #!/bin/bash
 
 source /opt/ros/hydro/setup.bash
-sudo apt-get install ros-hydro-moveit* 
+sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* 
 
 WS=$HOME/amazon_challenge_ws
 
