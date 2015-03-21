@@ -30,7 +30,3 @@ wstool update
 
 cd $WS
 catkin_make
-
-
-
-
