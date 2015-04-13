@@ -12,7 +12,7 @@ The dictionaries are in the **./config/** folder. You can load them via roslaunc
 ```
 #!python
 
-rosparam load left_arm_joint_pose_dict
+rosparam load left_arm_joint_pose_dict.yaml
 ```
 
 Then read the dictionary in python like this:
@@ -27,5 +27,3 @@ q = left_arm_joint_pos_dict['start']
 q2 = left_arm_joint_pos_dict['bin_A_start']
 
 ```
-
-
