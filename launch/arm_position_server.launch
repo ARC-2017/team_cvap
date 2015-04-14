@@ -1,0 +1,11 @@
+<launch>
+
+  <!-- Load the pose dictionaries to the parameter server -->
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/left_arm_joint_pos_dict.yaml" />
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/right_arm_joint_pos_dict.yaml" />
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/torso_joint_pos_dict.yaml" />
+
+  <!-- spawn the 'robot pose initializer'  -->
+  <node name="condition" pkg="amazon_challenge_motion" type="arm_position_server" output="screen"/>
+      
+</launch>

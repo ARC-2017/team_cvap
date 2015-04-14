@@ -1,1 +1,38 @@
+torso_joint_pos_dict: { start: [0.3],
 
+                        bin_A_start: [0.0],
+                        bin_A_out: [0.0],
+
+                        bin_B_start: [0.0],
+                        bin_B_out: [0.0],
+
+                        bin_C_start: [0.0],
+                        bin_C_out: [0.0],
+
+                        bin_D_start: [0.0],
+                        bin_D_out: [0.0],
+
+                        bin_E_start: [0.0],
+                        bin_E_out: [0.0],
+
+                        bin_F_start: [0.0],
+                        bin_F_out: [0.0],
+
+                        bin_G_start: [0.25],
+                        bin_G_out: [0.0],
+
+                        bin_H_start: [0.25],
+                        bin_H_out: [0.0],
+
+                        bin_I_start: [0.25],
+                        bin_I_out: [0.0],
+
+                        bin_J_start: [0.0],
+                        bin_J_out: [0.0],
+
+                        bin_K_start: [0.0],
+                        bin_K_out: [0.0],
+
+                        bin_L_start: [0.0],
+                        bin_L_out: [0.0]
+                        }
