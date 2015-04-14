@@ -13,3 +13,13 @@ To run it, clone the repo to your home directory, go into the *amazon_challenge_
   chmod +x ./install_aragorn.sh
   ./install_aragorn.sh
 ```
+
+# MERGING THE ROSINSTALL FILE #
+
+```
+#!bash
+
+  cd catkin_ws/src
+  wstool init 
+  wstool merge amazon_challenge.rosinstall
+```
