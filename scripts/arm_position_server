@@ -149,7 +149,7 @@ class ArmPositionAction(object):
         t_print = rospy.Time.now()
 
         # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol:
+        while np.max(np.abs(q_goal-q_now)) > q_tol+0.025:
             q_now = np.array(group.get_current_joint_values())
 
             if normalize_angles:
@@ -162,7 +162,7 @@ class ArmPositionAction(object):
                 rospy.loginfo('[arm position server]: action halted')
                 self._as.set_preempted()
                 self._success = False
-                break
+                return False
 
             if (rospy.Time.now()-t_print).to_sec()>1.0:
                 t_print = rospy.Time.now()
