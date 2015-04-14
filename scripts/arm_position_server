@@ -132,13 +132,10 @@ class ArmPositionAction(object):
         # normalize angles between -pi -> pi
         q_goal = np.array(joint_pos_goal)
 
-        print 'joint pos goal: ', joint_pos_goal
 
         # TODO normalize angles
         if normalize_angles:
             q_goal = self.normalize_angles(q_goal)
-
-        print 'joint pos goal: ', q_goal
 
 
         group.set_joint_value_target(list(q_goal))
