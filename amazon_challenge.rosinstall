@@ -4,7 +4,8 @@
 - git: {local-name: pr2_ft_moveit_config, uri: 'https://github.com/fevb/pr2_ft_moveit_config.git', version: hydro-no-octomap}
 - git: {local-name: moveit_pr2, uri: 'https://github.com/ros-planning/moveit_pr2.git', version: hydro-devel}
 - git: {local-name: pr2_amazon_challenge_sim, uri: 'git@bitbucket.org:robocoffee/pr2_amazon_challenge_sim.git', version: master}
-- git: {local-name: amazon-challenge-bt-nodes, uri: 'git@bitbucket.org:miccol/amazon-challenge-bt-nodes.git'}
 - git: {local-name: amazon_challenge_motion, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_motion.git'}
 - git: {local-name: amazon_challenge_launch, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_launch.git'}
-- git: {local-name: pr2_moveit_utils, uri: ' git@bitbucket.org:cvapgoestoseattle/pr2_moveit_utils.git'}
+- git: {local-name: amazon_challenge_install, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_install.git'}
+- git: {local-name: amazon_challenge_bt, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_bt.git'}
+- git: {local-name: pr2_moveit_utils, uri: 'git@bitbucket.org:cvapgoestoseattle/pr2_moveit_utils.git'}
