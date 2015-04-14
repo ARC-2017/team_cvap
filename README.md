@@ -22,4 +22,5 @@ To run it, clone the repo to your home directory, go into the *amazon_challenge_
   cd catkin_ws/src
   wstool init 
   wstool merge amazon_challenge.rosinstall
+  wstool update
 ```
