@@ -2,6 +2,15 @@
 
 BT nodes for executing motion plans on the PR2 for the Amazon Challenge.
 
+## Arm position server ##
+
+BT node that initializes the arm position depending on the bin we will grasp from
+
+```
+#!python
+
+roslaunch amazon_challenge_motion arm_position_server.launch
+```
 ## Loading/reading pose dictionaries ##
 
 Use the [ROS parameter server](http://wiki.ros.org/rosparam) and the [python interface](http://wiki.ros.org/rospy/Overview/Parameter%20Server).
