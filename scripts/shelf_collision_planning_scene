@@ -1,0 +1,115 @@
+#!/usr/bin/env python
+
+
+
+#   shelf_collision_planning_scene
+#
+#   Created on: April 15, 2015
+#   Authors:   Francisco Vina
+#             fevb <at> kth.se
+#
+
+#  Copyright (c) 2015, Francisco Vina, CVAP, KTH
+#    All rights reserved.
+
+#    Redistribution and use in source and binary forms, with or without
+#    modification, are permitted provided that the following conditions are met:
+#       * Redistributions of source code must retain the above copyright
+#         notice, this list of conditions and the following disclaimer.
+#       * Redistributions in binary form must reproduce the above copyright
+#         notice, this list of conditions and the following disclaimer in the
+#         documentation and/or other materials provided with the distribution.
+#       * Neither the name of KTH nor the
+#         names of its contributors may be used to endorse or promote products
+#         derived from this software without specific prior written permission.
+
+#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#    DISCLAIMED. IN NO EVENT SHALL KTH BE LIABLE FOR ANY
+#    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+import rospy
+from moveit_commander import PlanningSceneInterface
+import shape_msgs.msg
+import moveit_msgs.msg
+from tf import TransformListener
+import tf
+from tf_conversions import posemath
+from geometry_msgs.msg import Pose, PoseStamped
+import rospkg
+import sys
+import numpy as np
+import PyKDL as kdl
+
+
+if __name__=='__main__':
+    rospy.init_node('shelf_collision_planning_scene')
+
+    base_frame_id = rospy.get_param('base_frame_id', '/base_link')
+    shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf')
+
+    translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
+    rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
+
+    tf_listener = TransformListener()
+
+    planning_scene = PlanningSceneInterface()
+    object_added = False
+
+    # get filepath of shelf stl file
+    rp = rospkg.RosPack()
+    try:
+        shelf_mesh_fp = rp.get_path('pr2_amazon_challenge_sim')
+    except:
+        rospy.logerr('[shelf_collision_planning_scene]: shelf mesh file not found!')
+        sys.exit(1)
+
+    shelf_mesh_fp = shelf_mesh_fp + '/kiva_pod/meshes/pod_lowres.stl'
+
+    r = rospy.Rate(1.0)
+
+    F_shelf_previous = kdl.Frame()
+
+    while not rospy.is_shutdown():
+        try:
+            T_shelf = tf_listener.lookupTransform(base_frame_id, shelf_frame_id, rospy.Time(0))
+        except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
+            rospy.logerr('[shelf_collision_planning_scene]: transform unavailable between /base_link and /shelf')
+            r.sleep()
+            continue
+
+        if not object_added:
+            shelf_pose_stamped = PoseStamped()
+            shelf_pose_stamped.pose = posemath.toMsg(posemath.fromTf(T_shelf))
+            shelf_pose_stamped.header.stamp = rospy.Time.now()
+            shelf_pose_stamped.header.frame_id = base_frame_id
+
+            planning_scene.add_mesh('shelf', shelf_pose_stamped, shelf_mesh_fp)
+
+            F_shelf_previous = posemath.fromMsg(shelf_pose_stamped.pose)
+
+
+        else:
+            F_shelf = posemath.fromTf(T_shelf)
+
+            # update only if there is significant change of shelf pose
+            angle_rotation = (F_shelf.M*F_shelf_previous.M).GetRotAngle()
+            if ((F_shelf.p-F_shelf_previous.p).Norm()>1e-2) or (np.abs(angle_rotation)>5*np.pi/180.0):
+                kdl.Rotation
+                shelf_pose = posemath.toMsg(posemath.fromTf(T_shelf))
+                shelf_collision_object = moveit_msgs.msg.CollisionObject
+                shelf_collision_object.operation = shelf_collision_object.MOVE
+                shelf_collision_object.id = 'shelf'
+                shelf_collision_object.mesh_poses = [shelf_pose]
+
+
+
+        r.sleep()
+
