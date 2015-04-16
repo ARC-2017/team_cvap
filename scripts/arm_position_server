@@ -52,6 +52,8 @@ class ArmPositionAction(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
+        self.pub_posed = rospy.Publisher('arm_posed', String, queue_size=10)
+        self.pub_rate = rospy.Rate(30)
         self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
         self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
         self._arms = moveit_commander.MoveGroupCommander('arms')
@@ -108,7 +110,21 @@ class ArmPositionAction(object):
             self.set_status('FAILURE')
             return
 
+        
+        #####################################
+
+
+        # request a new detection
+
+
+        self.request_detection()
+
+
         ######################################
+
+
+        #####################################
+
 
         # move base w.r.t. shelf TODO
 
@@ -125,8 +141,26 @@ class ArmPositionAction(object):
 
 
         #IF THE ACTION HAS SUCCEEDED
+
         self.set_status('SUCCESS')
         return
+
+    def request_detection(self):
+        client = actionlib.SimpleActionClient('amazon_detector', amazon_challenge_bt_actions.msg.DetectorAction)
+
+        # Waits until the action server has started up and started
+        # listening for goals.
+        rospy.loginfo('Start Waiting')
+        client.wait_for_server()
+
+        # Creates a goal to send to the action server.
+        goal = amazon_challenge_bt_actions.msg.DetectorGoal(parameter=1)
+
+            # Sends the goal to the action server.
+        client.send_goal(goal)
+        rospy.loginfo('Goal Sent')
+            # Waits for the server to finish performing the action.
+        client.wait_for_result()
 
     def go_joint_goal_async(self, group, joint_pos_goal, normalize_angles=False):
         # normalize angles between -pi -> pi
@@ -181,6 +215,8 @@ class ArmPositionAction(object):
 
     def set_status(self,status):
         if status == 'SUCCESS':
+            self.pub_posed.publish("SUCCESS")
+            rospy.sleep(1)
             self._feedback.status = 1
             self._result.status = self._feedback.status
             rospy.loginfo('Action %s: Succeeded' % self._action_name)
