@@ -34,5 +34,8 @@ torso_joint_pos_dict: { start: [0.3],
                         bin_K_out: [0.0],
 
                         bin_L_start: [0.0],
-                        bin_L_out: [0.0]
+                        bin_L_out: [0.0],
+
+                        layer_3: [0.247041288864]
+
                         }
