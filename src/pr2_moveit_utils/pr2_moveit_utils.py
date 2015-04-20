@@ -59,6 +59,9 @@ def transform_wrist_frame(T_tool, ft):
 
         T_tool_ = posemath.fromMsg(T_tool)
 
+    elif type(T_tool) is tuple and len(T_tool) is 2:
+        T_tool_ = posemath.fromTf(T_tool)
+
     else:
         T_tool_ = T_tool
 
