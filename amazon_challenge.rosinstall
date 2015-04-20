@@ -9,3 +9,4 @@
 - git: {local-name: amazon_challenge_install, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_install.git'}
 - git: {local-name: amazon_challenge_bt, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_bt.git'}
 - git: {local-name: pr2_moveit_utils, uri: 'git@bitbucket.org:cvapgoestoseattle/pr2_moveit_utils.git'}
+- git: {local-name: moveit_commander, uri: 'https://github.com/fevb/moveit_commander.git', version: hydro-devel-normalize-angles} 
