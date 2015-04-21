@@ -11,11 +11,41 @@ BT node that initializes the arm position depending on the bin we will grasp fro
 
 roslaunch amazon_challenge_motion arm_position_server.launch
 ```
+
+## Saving joint position waypoints ##
+
+Make sure you have downloaded [Francisco's branch of the moveit_commander package](https://github.com/fevb/moveit_commander/tree/hydro-devel-normalize-angles) (it is also in the **.rosinstall** file of the **amazon_challenge_install** package.
+
+
+```
+#!python
+
+rosrun moveit_commander moveit_commander_cmdline.py
+```
+
+This will bring up an interactive command line
+
+Then select e.g. the **left_arm** group, record different joint positions in variables **bin_A**, **bin_B** and **bin_C** and save all these poses to a text file:
+```
+#!python
+
+use left_arm
+record bin_A
+record bin_B
+record bin_C
+save bin.txt
+```
+
+You can also use several different groups, such as the right_arm, torso, etc.
+
+Then you can copy-paste the joint poses to the **.yaml** files in the **./config** folder of this package.
+
+
 ## Loading/reading pose dictionaries ##
 
 Use the [ROS parameter server](http://wiki.ros.org/rosparam) and the [python interface](http://wiki.ros.org/rospy/Overview/Parameter%20Server).
 
-The dictionaries are in the **./config/** folder. You can load them via roslaunch files (see **launch/pose_intializer.launch**) or via the command line (make sure you have a running ROS core):
+The dictionaries are in the **./config/** folder. You can load them via roslaunch files (see for example  **launch/arm_position_server.launch**) or via the command line (make sure you have a running ROS core):
 
 
 ```
