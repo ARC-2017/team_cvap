@@ -33,7 +33,7 @@ use left_arm
 record bin_A
 record bin_B
 record bin_C
-save bin.txt
+save left_arm_bin_A_B_C.txt
 ```
 
 You can also use several different groups, such as the right_arm, torso, etc.
