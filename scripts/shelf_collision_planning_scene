@@ -53,7 +53,7 @@ if __name__=='__main__':
     rospy.init_node('shelf_collision_planning_scene')
 
     base_frame_id = rospy.get_param('base_frame_id', '/base_link')
-    shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf')
+    shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
 
     translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
     rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
