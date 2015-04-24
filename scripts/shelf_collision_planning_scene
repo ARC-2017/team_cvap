@@ -58,6 +58,8 @@ if __name__=='__main__':
     translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
     rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
 
+    planning_scene_world_pub = rospy.Publisher('/planning_scene_world', moveit_msgs.msg.PlanningSceneWorld)
+
     F_shelf_real_cad = kdl.Frame(kdl.Rotation.RPY(np.pi*0.5, 0.0, np.pi*0.5), kdl.Vector(0.4421, 0.0, -0.303))
 
 
@@ -80,6 +82,9 @@ if __name__=='__main__':
 
     F_shelf_previous = kdl.Frame()
 
+    shelf_collision_object = moveit_msgs.msg.CollisionObject()
+    planning_scene_world_msg = moveit_msgs.msg.PlanningSceneWorld()
+
     while not rospy.is_shutdown():
         try:
             T_shelf = tf_listener.lookupTransform(base_frame_id, shelf_frame_id, rospy.Time(0))
@@ -90,17 +95,19 @@ if __name__=='__main__':
             T_shelf = posemath.toTf(F_shelf_cad)
 
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
-            rospy.logerr('[shelf_collision_planning_scene]: transform unavailable between ' + base_frame_id + 'and ' + shelf_frame_id)
+            rospy.logerr('[shelf_collision_planning_scene]: transform unavailable between ' + base_frame_id + ' and ' + shelf_frame_id)
             r.sleep()
             continue
 
         if not object_added:
+
             shelf_pose_stamped = PoseStamped()
             shelf_pose_stamped.pose = posemath.toMsg(posemath.fromTf(T_shelf))
             shelf_pose_stamped.header.stamp = rospy.Time.now()
             shelf_pose_stamped.header.frame_id = base_frame_id
 
             planning_scene.add_mesh('shelf', shelf_pose_stamped, shelf_mesh_fp)
+            object_added = True
 
             F_shelf_previous = posemath.fromMsg(shelf_pose_stamped.pose)
 
@@ -111,14 +118,15 @@ if __name__=='__main__':
             # update only if there is significant change of shelf pose
             angle_rotation = (F_shelf.M*F_shelf_previous.M).GetRotAngle()
             if ((F_shelf.p-F_shelf_previous.p).Norm()>1e-2) or (np.abs(angle_rotation)>5*np.pi/180.0):
-                kdl.Rotation
-                shelf_pose = posemath.toMsg(posemath.fromTf(T_shelf))
-                shelf_collision_object = moveit_msgs.msg.CollisionObject
+                shelf_pose = posemath.toMsg(F_shelf)
                 shelf_collision_object.operation = shelf_collision_object.MOVE
                 shelf_collision_object.id = 'shelf'
                 shelf_collision_object.mesh_poses = [shelf_pose]
 
+                planning_scene_world_msg.collision_objects = [shelf_collision_object]
+                planning_scene_world_pub.publish(planning_scene_world_msg)
 
+                F_shelf_previous = F_shelf
 
         r.sleep()
 
