@@ -3,13 +3,15 @@
  
   <!-- shelf collision model planning scene publisher -->
   <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene">
-    <param name="base_frame_id" value="/base_link"/>
-    <param name="shelf_frame_id" value="/shelf"/>
+    <param name="base_frame_id" value="/base_laser_link"/>
+    <param name="shelf_frame_id" value="/shelf_frame"/>
     <param name="translation_tolerance" value="0.01"/>
     <param name="rotation_tolerance" value="0.0873"/>
   </node>
 
-  <node name="shelf_tf_publisher" pkg="tf" type="static_transform_publisher" args="1.2 0.0 0.0 1.5708 0.0 1.5708 base_link shelf 100"/>
+  <!-- <node name="shelf_tf_publisher" pkg="tf" type="static_transform_publisher" args="1.2 0.0 0.0 1.5708 0.0 1.5708 base_footprint shelf_frame 100"/> -->
+
+  <node name="shelf_tf_publisher" pkg="tf" type="static_transform_publisher" args="0.4829 0.0 0.0 0.0 0.0 0.0 base_laser_link shelf_frame 100"/>
 
   <!-- moveit stuff -->
   <arg name="db" default="false" />
