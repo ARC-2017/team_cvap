@@ -54,15 +54,22 @@ class DroppingAction(object):
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
         self._as.start()
-        self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
-        self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
-        self._arms = moveit_commander.MoveGroupCommander('arms')
-        self._torso = moveit_commander.MoveGroupCommander('torso')
+        while not rospy.is_shutdown():
+            try:
+                self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
+                self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
+                self._arms = moveit_commander.MoveGroupCommander('arms')
+                self._torso = moveit_commander.MoveGroupCommander('torso')
+                break
+            except:
+                pass
         self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
         self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
         self._r_gripper_pub = rospy.Publisher('/r_gripper_controller/command', Pr2GripperCommand)
         self._gripper_pub_dict = {'left_gripper': self._l_gripper_pub, 'right_gripper': self._r_gripper_pub}
 
+        self.pub_dropped = rospy.Publisher('object_dropped', String, queue_size=10)
+        self.pub_rate = rospy.Rate(30)
 
         rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
@@ -75,16 +82,24 @@ class DroppingAction(object):
         self._item = words[1]
 
     def get_arm_to_move(self):
-        if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
-            return 'left_arm'
-        else:
-            return 'right_arm'
+        while not rospy.is_shutdown():
+            try:
+                if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
+                    return 'left_arm'
+                else:
+                    return 'right_arm'
+            except:
+                pass
 
     def get_gripper_to_open(self):
-        if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
-            return 'left_gripper'
-        else:
-            return 'right_gripper'
+        while not rospy.is_shutdown():
+            try:
+                if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
+                    return 'left_gripper'
+                else:
+                    return 'right_gripper'
+            except:
+                pass
 
     def execute_cb(self, goal):
         # publish info to the console for the user
@@ -164,7 +179,7 @@ class DroppingAction(object):
         t_print = rospy.Time.now()
 
         # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol:
+        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
             q_now = np.array(group.get_current_joint_values())
 
             if normalize_angles:
@@ -191,6 +206,8 @@ class DroppingAction(object):
 
     def set_status(self,status):
         if status == 'SUCCESS':
+            self.pub_dropped.publish("SUCCESS")
+            rospy.sleep(1)
             self._feedback.status = 1
             self._result.status = self._feedback.status
             rospy.loginfo('Action %s: Succeeded' % self._action_name)

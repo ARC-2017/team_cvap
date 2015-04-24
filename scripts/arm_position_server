@@ -54,11 +54,16 @@ class ArmPositionAction(object):
         self._as.start()
         self.pub_posed = rospy.Publisher('arm_posed', String, queue_size=10)
         self.pub_rate = rospy.Rate(30)
-        self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
-        self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
-        self._arms = moveit_commander.MoveGroupCommander('arms')
-        self._torso = moveit_commander.MoveGroupCommander('torso')
-        self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
+        while not rospy.is_shutdown():
+            try:
+                self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
+                self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
+                self._arms = moveit_commander.MoveGroupCommander('arms')
+                self._torso = moveit_commander.MoveGroupCommander('torso')
+                self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
+                break
+            except:
+                pass
 
         rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
@@ -82,8 +87,12 @@ class ArmPositionAction(object):
         '''
         # TODO finish this function
 
-        if self._bin=='bin_G' or self._bin=='bin_H' or self._bin=='bin_I':
-            return 'layer_3'
+        while not rospy.is_shutdown():
+            try:
+                if self._bin=='bin_G' or self._bin=='bin_H' or self._bin=='bin_I':
+                    return 'layer_3'
+            except:
+                pass
 
     def execute_cb(self, goal):
         # publish info to the console for the user
@@ -198,7 +207,7 @@ class ArmPositionAction(object):
         t_print = rospy.Time.now()
 
         # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol:
+        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
             q_now = np.array(group.get_current_joint_values())
 
             if normalize_angles:
