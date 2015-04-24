@@ -111,6 +111,13 @@ def go_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False, wait
     T_wrist_stamped.header.frame_id = base_frame_id
     T_wrist_stamped.header.stamp = rospy.Time.now()
 
-    return group.go(T_wrist_stamped, wait)
+
+    result = group.go(T_wrist_stamped, wait)
+    
+    if not result:
+        raise Exception('NO MOTION PLAN FOUND')
+
+
+    return result
 
 

@@ -46,11 +46,13 @@ if __name__ == "__main__":
     rospy.init_node('test_pr2_moveit_tool_frame')
     right_arm = moveit_commander.MoveGroupCommander('right_arm')
 
+    left_arm = moveit_commander.MoveGroupCommander('left_arm')
+
 
     # specify the torso to tool transform
-    T_torso_tool = kdl.Frame(kdl.Rotation.RPY(2.7429696524243528, 0.9886006739293244, -2.203256332732016), kdl.Vector( 0.755265,   -0.239342,   -0.207825))
+    T_torso_tool = kdl.Frame(kdl.Rotation.RPY(0,0,0), kdl.Vector( 0.6, 0, 0))
 
 
     # set ft=True in case the arm has an FT sensor
-    pr2_moveit_utils.go_tool_frame(right_arm, T_torso_tool, base_frame_id ='torso_lift_link', ft=False, wait=True)
+    pr2_moveit_utils.go_tool_frame(left_arm, T_torso_tool, base_frame_id ='torso_lift_link', ft=True, wait=True)
 
