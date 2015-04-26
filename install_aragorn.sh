@@ -2,6 +2,7 @@
 
 source /opt/ros/hydro/setup.bash
 sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* 
+sudo pip install termcolor
 
 WS=$HOME/amazon_challenge_ws
 
@@ -19,8 +20,8 @@ cd $WS
 catkin_make
 
 echo "source ~/amazon_challenge_ws/devel/setup.bash" >> ~/.bashrc
-echo "export ROS_MASTER_URI=http://pr2-c1:11311" >> ~/.bashrc
-echo "export ROS_IP=130.237.218.145" >> ~/.bashrc
+# echo "export ROS_MASTER_URI=http://pr2-c1:11311" >> ~/.bashrc
+# echo "export ROS_IP=130.237.218.145" >> ~/.bashrc
 source ~/.bashrc
 
 cd $WS/src
