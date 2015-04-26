@@ -52,6 +52,8 @@ import PyKDL as kdl
 if __name__=='__main__':
     rospy.init_node('shelf_collision_planning_scene')
 
+    rospy.sleep(15.0)
+
     base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')
     shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
 

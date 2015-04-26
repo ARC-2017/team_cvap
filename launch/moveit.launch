@@ -1,0 +1,19 @@
+<launch>
+
+  <arg name="sim" default="false" />
+
+
+  <!-- move_group -->
+  <include file="$(find pr2_moveit_config)/launch/move_group.launch" if="$(arg sim)"/>
+  <include file="$(find pr2_ft_moveit_config)/launch/move_group.launch" unless="$(arg sim)"/>
+
+
+  <!-- shelf collision model -->
+  <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene" output="screen" >
+    <param name="base_frame_id" value="/base_laser_link"/>
+    <param name="shelf_frame_id" value="/shelf_frame"/>
+    <param name="translation_tolerance" value="0.01"/>
+    <param name="rotation_tolerance" value="0.0873"/>
+  </node>
+
+</launch>
