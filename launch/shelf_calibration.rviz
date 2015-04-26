@@ -1532,239 +1532,243 @@ Visualization Manager:
       Frames:
         All Enabled: false
         base_bellow_link:
-          Value: false
+          Value: true
         base_footprint:
-          Value: false
+          Value: true
         base_laser_link:
-          Value: false
+          Value: true
         base_link:
-          Value: false
+          Value: true
         bl_caster_l_wheel_link:
-          Value: false
+          Value: true
         bl_caster_r_wheel_link:
-          Value: false
+          Value: true
         bl_caster_rotation_link:
-          Value: false
+          Value: true
         br_caster_l_wheel_link:
-          Value: false
+          Value: true
         br_caster_r_wheel_link:
-          Value: false
+          Value: true
         br_caster_rotation_link:
-          Value: false
+          Value: true
         double_stereo_link:
-          Value: false
+          Value: true
         fl_caster_l_wheel_link:
-          Value: false
+          Value: true
         fl_caster_r_wheel_link:
-          Value: false
+          Value: true
         fl_caster_rotation_link:
-          Value: false
+          Value: true
         fr_caster_l_wheel_link:
-          Value: false
+          Value: true
         fr_caster_r_wheel_link:
-          Value: false
+          Value: true
         fr_caster_rotation_link:
-          Value: false
+          Value: true
+        head_mount_kinect_depth_frame:
+          Value: true
+        head_mount_kinect_depth_optical_frame:
+          Value: true
         head_mount_kinect_ir_link:
-          Value: false
+          Value: true
         head_mount_kinect_ir_optical_frame:
-          Value: false
+          Value: true
         head_mount_kinect_rgb_link:
-          Value: false
+          Value: true
         head_mount_kinect_rgb_optical_frame:
-          Value: false
+          Value: true
         head_mount_link:
-          Value: false
+          Value: true
         head_mount_prosilica_link:
-          Value: false
+          Value: true
         head_mount_prosilica_optical_frame:
-          Value: false
+          Value: true
         head_pan_link:
-          Value: false
+          Value: true
         head_plate_frame:
-          Value: false
+          Value: true
         head_tilt_link:
-          Value: false
+          Value: true
         high_def_frame:
-          Value: false
+          Value: true
         high_def_optical_frame:
-          Value: false
+          Value: true
         imu_link:
-          Value: false
+          Value: true
         l_elbow_flex_link:
-          Value: false
+          Value: true
         l_force_torque_adapter_link:
-          Value: false
+          Value: true
         l_force_torque_link:
-          Value: false
+          Value: true
         l_forearm_cam_frame:
-          Value: false
+          Value: true
         l_forearm_cam_optical_frame:
-          Value: false
+          Value: true
         l_forearm_link:
-          Value: false
+          Value: true
         l_forearm_roll_link:
-          Value: false
+          Value: true
         l_gripper_l_finger_link:
-          Value: false
+          Value: true
         l_gripper_l_finger_tip_frame:
-          Value: false
+          Value: true
         l_gripper_l_finger_tip_link:
-          Value: false
+          Value: true
         l_gripper_led_frame:
-          Value: false
+          Value: true
         l_gripper_motor_accelerometer_link:
-          Value: false
+          Value: true
         l_gripper_motor_screw_link:
-          Value: false
+          Value: true
         l_gripper_motor_slider_link:
-          Value: false
+          Value: true
         l_gripper_palm_link:
-          Value: false
+          Value: true
         l_gripper_r_finger_link:
-          Value: false
+          Value: true
         l_gripper_r_finger_tip_link:
-          Value: false
+          Value: true
         l_gripper_tool_frame:
           Value: true
         l_shoulder_lift_link:
-          Value: false
+          Value: true
         l_shoulder_pan_link:
-          Value: false
+          Value: true
         l_torso_lift_side_plate_link:
-          Value: false
+          Value: true
         l_upper_arm_link:
-          Value: false
+          Value: true
         l_upper_arm_roll_link:
-          Value: false
+          Value: true
         l_wrist_flex_link:
-          Value: false
+          Value: true
         l_wrist_roll_link:
-          Value: false
+          Value: true
         laser_tilt_link:
-          Value: false
+          Value: true
         laser_tilt_mount_link:
-          Value: false
+          Value: true
         left_leg:
-          Value: false
+          Value: true
         narrow_stereo_l_stereo_camera_frame:
-          Value: false
+          Value: true
         narrow_stereo_l_stereo_camera_optical_frame:
-          Value: false
+          Value: true
         narrow_stereo_link:
-          Value: false
+          Value: true
         narrow_stereo_optical_frame:
-          Value: false
+          Value: true
         narrow_stereo_r_stereo_camera_frame:
-          Value: false
+          Value: true
         narrow_stereo_r_stereo_camera_optical_frame:
-          Value: false
+          Value: true
         odomL:
-          Value: false
+          Value: true
         odomR:
-          Value: false
+          Value: true
         odom_combined:
-          Value: false
+          Value: true
         projector_wg6802418_child_frame:
-          Value: false
+          Value: true
         projector_wg6802418_frame:
-          Value: false
+          Value: true
         r_elbow_flex_link:
-          Value: false
+          Value: true
         r_force_torque_adapter_link:
-          Value: false
+          Value: true
         r_force_torque_link:
-          Value: false
+          Value: true
         r_forearm_cam_frame:
-          Value: false
+          Value: true
         r_forearm_cam_optical_frame:
-          Value: false
+          Value: true
         r_forearm_link:
-          Value: false
+          Value: true
         r_forearm_roll_link:
-          Value: false
+          Value: true
         r_gripper_l_finger_link:
-          Value: false
+          Value: true
         r_gripper_l_finger_tip_frame:
-          Value: false
+          Value: true
         r_gripper_l_finger_tip_link:
-          Value: false
+          Value: true
         r_gripper_led_frame:
-          Value: false
+          Value: true
         r_gripper_motor_accelerometer_link:
-          Value: false
+          Value: true
         r_gripper_motor_screw_link:
-          Value: false
+          Value: true
         r_gripper_motor_slider_link:
-          Value: false
+          Value: true
         r_gripper_palm_link:
-          Value: false
+          Value: true
         r_gripper_r_finger_link:
-          Value: false
+          Value: true
         r_gripper_r_finger_tip_link:
-          Value: false
+          Value: true
         r_gripper_tool_frame:
-          Value: false
+          Value: true
         r_shoulder_lift_link:
-          Value: false
+          Value: true
         r_shoulder_pan_link:
-          Value: false
+          Value: true
         r_torso_lift_side_plate_link:
-          Value: false
+          Value: true
         r_upper_arm_link:
-          Value: false
+          Value: true
         r_upper_arm_roll_link:
-          Value: false
+          Value: true
         r_wrist_flex_link:
-          Value: false
+          Value: true
         r_wrist_roll_link:
-          Value: false
+          Value: true
         right_leg:
-          Value: false
+          Value: true
         sensor_mount_link:
-          Value: false
+          Value: true
         shelf_bin_A:
-          Value: false
+          Value: true
         shelf_bin_B:
-          Value: false
+          Value: true
         shelf_bin_C:
-          Value: false
+          Value: true
         shelf_bin_D:
-          Value: false
+          Value: true
         shelf_bin_E:
-          Value: false
+          Value: true
         shelf_bin_F:
-          Value: false
+          Value: true
         shelf_bin_G:
-          Value: false
+          Value: true
         shelf_bin_H:
-          Value: false
+          Value: true
         shelf_bin_I:
-          Value: false
+          Value: true
         shelf_bin_J:
-          Value: false
+          Value: true
         shelf_bin_K:
-          Value: false
+          Value: true
         shelf_bin_L:
-          Value: false
+          Value: true
         shelf_frame:
-          Value: false
+          Value: true
         torso_lift_link:
-          Value: false
+          Value: true
         torso_lift_motor_screw_link:
-          Value: false
+          Value: true
         wide_stereo_l_stereo_camera_frame:
-          Value: false
+          Value: true
         wide_stereo_l_stereo_camera_optical_frame:
-          Value: false
+          Value: true
         wide_stereo_link:
-          Value: false
+          Value: true
         wide_stereo_optical_frame:
-          Value: false
+          Value: true
         wide_stereo_r_stereo_camera_frame:
-          Value: false
+          Value: true
         wide_stereo_r_stereo_camera_optical_frame:
-          Value: false
+          Value: true
       Marker Scale: 1
       Name: TF
       Show Arrows: true
@@ -1836,7 +1840,9 @@ Visualization Manager:
                             {}
                           head_mount_kinect_rgb_link:
                             head_mount_kinect_rgb_optical_frame:
-                              {}
+                              head_mount_kinect_depth_optical_frame:
+                                head_mount_kinect_depth_frame:
+                                  {}
                         head_mount_prosilica_link:
                           head_mount_prosilica_optical_frame:
                             {}
@@ -1948,7 +1954,7 @@ Visualization Manager:
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48
-    Fixed Frame: base_footprint
+    Fixed Frame: odom_combined
     Frame Rate: 30
   Name: root
   Tools:
@@ -1960,7 +1966,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 2.97927
+      Distance: 4.12007
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -1972,10 +1978,10 @@ Visualization Manager:
         Z: 1.44452e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.324797
+      Pitch: 0.474797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 2.10453
+      Yaw: 2.28953
     Saved: ~
 Window Geometry:
   Displays:
