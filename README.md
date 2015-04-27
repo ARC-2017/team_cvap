@@ -12,6 +12,32 @@ BT node that initializes the arm position depending on the bin we will grasp fro
 roslaunch amazon_challenge_motion arm_position_server.launch
 ```
 
+
+## Launching MoveIt with shelf in planning scene ##
+
+```
+#!python
+
+roslaunch amazon_challenge_motion moveit.launch
+```
+
+## PR2 MoveIt simulation ##
+
+```
+#!python
+
+roslaunch amazon_challenge_motion shelf_planning_scene_sim.launch
+```
+
+## Launching nodes for initial shelf calibration ## 
+
+```
+#!python
+
+roslaunch amazon_challenge_motion shelf_calibration.launch
+```
+
+
 ## Saving joint position waypoints ##
 
 Make sure you have downloaded [Francisco's branch of the moveit_commander package](https://github.com/fevb/moveit_commander/tree/hydro-devel-normalize-angles) (it is also in the **.rosinstall** file of the **amazon_challenge_install** package.
