@@ -29,7 +29,7 @@ roslaunch amazon_challenge_motion moveit.launch
 roslaunch amazon_challenge_motion shelf_planning_scene_sim.launch
 ```
 
-## Launching nodes for initial shelf calibration ## 
+## Launching nodes for initial shelf calibration 
 
 ```
 #!python
