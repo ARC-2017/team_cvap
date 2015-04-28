@@ -12,8 +12,8 @@ sudo apt-get install ros-hydro-desktop-full
 # install ROS workspace
 
 source /opt/ros/hydro/setup.bash
-sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* 
-sudo pip install termcolor
+sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* ros-hydro-cmake-modules python-pip
+sudo easy_install wstool termcolor
 
 WS=$HOME/amazon_challenge_ws
 
@@ -40,5 +40,9 @@ cd $WS/src
 wstool merge amazon_challenge.rosinstall
 wstool update
 
+sudo rosdep init
+rosdep update
+
 cd $WS
+rosdep install --from-paths src --ignore-src
 catkin_make
