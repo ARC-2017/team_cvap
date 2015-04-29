@@ -13,7 +13,7 @@ Scripts and rosinstall files for getting things up and running for the amazon ch
   wstool update
 ```
 
-# Full system installation (ONLY RUN ONCE!!!) #
+# Full system installation #
 
 You should run this only once when installing the system.
 
