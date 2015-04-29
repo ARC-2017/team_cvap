@@ -1,5 +1,9 @@
 torso_joint_pos_dict: { start: [0.3],
 
+                        row_2: [0.32],
+                        row_3: [0.27],
+                        row_4: [0.02],
+
                         bin_A_start: [0.0],
                         bin_A_out: [0.0],
 

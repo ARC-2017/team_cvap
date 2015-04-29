@@ -5,6 +5,7 @@ Panels:
     Property Tree Widget:
       Expanded:
         - /MotionPlanning1
+        - /MotionPlanning1/Scene Geometry1
         - /MotionPlanning1/Scene Robot1
         - /MotionPlanning1/Planning Request1
         - /MotionPlanning1/Planned Path1
@@ -542,7 +543,7 @@ Visualization Manager:
       Planning Scene Topic: /move_group/monitored_planning_scene
       Robot Description: robot_description
       Scene Geometry:
-        Scene Alpha: 0.9
+        Scene Alpha: 1
         Scene Color: 50; 230; 50
         Scene Display Time: 0.2
         Show Scene Geometry: true
@@ -2000,10 +2001,10 @@ Visualization Manager:
         Z: -3.72528e-07
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.499798
+      Pitch: 0.484798
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 2.50676
+      Yaw: 2.42676
     Saved: ~
 Window Geometry:
   Displays:
@@ -2019,5 +2020,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1920
-  X: 0
+  X: 58
   Y: 24
