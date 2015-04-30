@@ -1015,7 +1015,7 @@ Visualization Manager:
             Show Trail: false
         Robot Alpha: 0.5
         Show Robot Collision: false
-        Show Robot Visual: false
+        Show Robot Visual: true
       Value: true
     - Attached Body Color: 150; 50; 150
       Class: moveit_rviz_plugin/RobotState
@@ -1565,6 +1565,10 @@ Visualization Manager:
           Value: true
         fr_caster_rotation_link:
           Value: true
+        head_mount_kinect_depth_frame:
+          Value: true
+        head_mount_kinect_depth_optical_frame:
+          Value: true
         head_mount_kinect_ir_link:
           Value: true
         head_mount_kinect_ir_optical_frame:
@@ -1645,6 +1649,8 @@ Visualization Manager:
           Value: true
         laser_tilt_mount_link:
           Value: true
+        left_leg:
+          Value: true
         narrow_stereo_l_stereo_camera_frame:
           Value: true
         narrow_stereo_l_stereo_camera_optical_frame:
@@ -1656,6 +1662,10 @@ Visualization Manager:
         narrow_stereo_r_stereo_camera_frame:
           Value: true
         narrow_stereo_r_stereo_camera_optical_frame:
+          Value: true
+        odomL:
+          Value: true
+        odomR:
           Value: true
         odom_combined:
           Value: true
@@ -1713,7 +1723,35 @@ Visualization Manager:
           Value: true
         r_wrist_roll_link:
           Value: true
+        right_leg:
+          Value: true
         sensor_mount_link:
+          Value: true
+        shelf_bin_A:
+          Value: true
+        shelf_bin_B:
+          Value: true
+        shelf_bin_C:
+          Value: true
+        shelf_bin_D:
+          Value: true
+        shelf_bin_E:
+          Value: true
+        shelf_bin_F:
+          Value: true
+        shelf_bin_G:
+          Value: true
+        shelf_bin_H:
+          Value: true
+        shelf_bin_I:
+          Value: true
+        shelf_bin_J:
+          Value: true
+        shelf_bin_K:
+          Value: true
+        shelf_bin_L:
+          Value: true
+        shelf_frame:
           Value: true
         torso_lift_link:
           Value: true
@@ -1743,7 +1781,35 @@ Visualization Manager:
               base_bellow_link:
                 {}
               base_laser_link:
-                {}
+                left_leg:
+                  {}
+                right_leg:
+                  {}
+                shelf_frame:
+                  shelf_bin_A:
+                    {}
+                  shelf_bin_B:
+                    {}
+                  shelf_bin_C:
+                    {}
+                  shelf_bin_D:
+                    {}
+                  shelf_bin_E:
+                    {}
+                  shelf_bin_F:
+                    {}
+                  shelf_bin_G:
+                    {}
+                  shelf_bin_H:
+                    {}
+                  shelf_bin_I:
+                    {}
+                  shelf_bin_J:
+                    {}
+                  shelf_bin_K:
+                    {}
+                  shelf_bin_L:
+                    {}
               bl_caster_rotation_link:
                 bl_caster_l_wheel_link:
                   {}
@@ -1774,7 +1840,9 @@ Visualization Manager:
                             {}
                           head_mount_kinect_rgb_link:
                             head_mount_kinect_rgb_optical_frame:
-                              {}
+                              head_mount_kinect_depth_optical_frame:
+                                head_mount_kinect_depth_frame:
+                                  {}
                         head_mount_prosilica_link:
                           head_mount_prosilica_optical_frame:
                             {}
@@ -1877,6 +1945,10 @@ Visualization Manager:
                   {}
               torso_lift_motor_screw_link:
                 {}
+          odomL:
+            {}
+          odomR:
+            {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -2364,22 +2436,22 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 5.6033
+      Distance: 2.67154
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
         Swap Stereo Eyes: false
         Value: false
       Focal Point:
-        X: 0.617079
-        Y: 0.14653
+        X: 0.413561
+        Y: 0.64012
         Z: 1.44452e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.569797
+      Pitch: 0.449797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 6.06772
+      Yaw: 2.7327
     Saved: ~
 Window Geometry:
   Displays:
@@ -2395,5 +2467,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1920
-  X: 1920
+  X: 1913
   Y: 24

@@ -18,8 +18,8 @@
   <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene" output="screen" >
     <param name="base_frame_id" value="/base_laser_link"/>
     <param name="shelf_frame_id" value="/shelf_frame"/>
-    <param name="translation_tolerance" value="0.01"/>
-    <param name="rotation_tolerance" value="0.0873"/>
+    <param name="translation_tolerance" value="0.003"/>
+    <param name="rotation_tolerance" value="0.016"/>
   </node>
 
 </launch>
