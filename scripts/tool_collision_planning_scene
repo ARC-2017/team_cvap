@@ -61,7 +61,7 @@ if __name__=='__main__':
 
     planning_scene = PlanningSceneInterface()
     rospy.sleep(10.0)
-    tool_size = rospy.get_param('tool_size', [0.16, 0.02, 0.04])
+    tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
 
     tool_pose = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(tool_size[0], tool_size[1], tool_size[2]))
     tool_pose.p[0] = tool_pose.p[0]*0.5

@@ -22,4 +22,8 @@
     <param name="rotation_tolerance" value="0.016"/>
   </node>
 
+  <!-- tool collision model -->
+
+  <node name="tool_collision_planning_scene" pkg="amazon_challenge_motion" type="tool_collision_planning_scene" output="screen"/>
+
 </launch>
