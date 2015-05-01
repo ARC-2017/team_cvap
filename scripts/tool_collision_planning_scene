@@ -65,7 +65,7 @@ if __name__=='__main__':
 
     tool_pose = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(tool_size[0], tool_size[1], tool_size[2]))
     tool_pose.p[0] = tool_pose.p[0]*0.5
-    tool_pose.p[1] = tool_pose.p[1]*0.5
+    tool_pose.p[1] = tool_pose.p[1]*0.5+0.016
     tool_pose.p[2] = 0.0
 
     tool_pose = posemath.toMsg(tool_pose)
@@ -74,10 +74,10 @@ if __name__=='__main__':
 
     l_tool_pose_stamped = PoseStamped()
     l_tool_pose_stamped.pose = copy.deepcopy(tool_pose)
-    # l_tool_pose_stamped.pose.position.y = tool_pose.position.y*-1
+    l_tool_pose_stamped.pose.position.y = tool_pose.position.y*-1
     l_tool_pose_stamped.header.frame_id = 'l_gripper_l_finger_tip_link'
     l_tool_pose_stamped.header.stamp = rospy.Time.now()
-    l_touch_links = ['l_gripper_l_finger_tip_link', 'l_gripper_l_finger_link']
+    l_touch_links = ['l_gripper_l_finger_tip_link', 'l_gripper_r_finger_tip_link', 'l_gripper_l_finger_link', 'l_gripper_r_finger_link', 'r_tool']
     planning_scene.attach_box('l_gripper_l_finger_tip_link', 'l_tool', l_tool_pose_stamped, tool_size, l_touch_links)
 
 
@@ -85,6 +85,6 @@ if __name__=='__main__':
     r_tool_pose_stamped.pose = copy.deepcopy(tool_pose)
     r_tool_pose_stamped.header.frame_id = 'l_gripper_r_finger_tip_link'
     r_tool_pose_stamped.header.stamp = rospy.Time.now()
-    r_touch_links = ['l_gripper_r_finger_tip_link', 'l_gripper_r_finger_link']
+    r_touch_links = ['l_gripper_l_finger_tip_link', 'l_gripper_r_finger_tip_link', 'l_gripper_l_finger_link', 'l_gripper_r_finger_link',  'l_tool']
     planning_scene.attach_box('l_gripper_r_finger_tip_link', 'r_tool', r_tool_pose_stamped, tool_size, r_touch_links)
 
