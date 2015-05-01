@@ -55,7 +55,8 @@ if __name__=='__main__':
     rospy.loginfo('[shelf_planning_scene]: Waiting for Moveit to load')
     rospy.wait_for_service('/move_group/ompl/set_parameters')
 
-    rospy.sleep(20.0)
+    planning_scene = PlanningSceneInterface()
+    rospy.sleep(15.0)
 
     base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')
     shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
@@ -70,7 +71,6 @@ if __name__=='__main__':
 
     tf_listener = TransformListener()
 
-    planning_scene = PlanningSceneInterface()
     object_added = False
 
     # get filepath of shelf stl file
