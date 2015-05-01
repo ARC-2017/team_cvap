@@ -1,6 +1,0 @@
-<launch>
-
-  <!-- spawn the 'robot pose initializer'  -->
-  <node name="arm_position_server" pkg="amazon_challenge_motion" type="arm_position_server" output="screen"/>
-      
-</launch>
