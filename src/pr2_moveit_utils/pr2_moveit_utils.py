@@ -42,18 +42,19 @@ import moveit_msgs.msg
 from geometry_msgs.msg import Pose, PoseStamped
 
 
-def transform_wrist_frame(T_tool, ft):
+def transform_wrist_frame(T_tool, ft, tool_x_offset=0.0):
     '''
     :param T_tool: desired  *_gripper_tool_frame pose w.r.t. some reference frame. Can be of type kdl.Frame or geometry_msgs.Pose.
     :param ft: bool. True if the arm has a force-torque sensor
+    :param tool_x_offset: (double) offset in tool length
     :return: T_torso_wrist. geometry_msgs.Pose type. Wrist pose w.r.t. same ref frame as T_tool
     '''
 
     if ft:
-        T_wrist_tool = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.216, 0.0, 0.0))
+        T_wrist_tool = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.216 + tool_x_offset, 0.0, 0.0))
 
     else:
-        T_wrist_tool = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.180, 0.0, 0.0))
+        T_wrist_tool = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.180 + tool_x_offset, 0.0, 0.0))
 
     if type(T_tool) is Pose:
 
@@ -72,17 +73,18 @@ def transform_wrist_frame(T_tool, ft):
 
     return T_wrist
 
-def plan_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False):
+def plan_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False, tool_x_offset=0.0):
     '''
     Calculates a moveit motion plan of the PR2 arm's tool frame (l/r_gripper_tool_frame) w.r.t. some base ref frame (default: 'torso_lift_link')
     :param group: MoveGroupCommander type (left_arm or right_arm).
     :param T_tool: kdl.Frame or geometry_msgs.Pose. Desired pose of the tool frame w.r.t some base frame.
     :param base_frame_id: string, frame ID of the base in which T_tool is expressed. Default: 'torso_lift_link'
     :param ft: bool. True if the arm has a force-torque sensor, false otherwise
+    :param tool_x_offset: (double) offset in tool length
     :return: moveit plan from group.plan()
     '''
 
-    T_wrist = transform_wrist_frame(T_tool, ft)
+    T_wrist = transform_wrist_frame(T_tool, ft, tool_x_offset)
 
     T_wrist_stamped = PoseStamped()
     T_wrist_stamped.pose = T_wrist
@@ -92,7 +94,7 @@ def plan_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False):
     return group.plan(T_wrist_stamped)
 
 
-def go_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False, wait=True):
+def go_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False, wait=True, tool_x_offset=0.0):
     '''
     Plans and executes a moveit motion plan of the PR2 arm's tool frame (l/r_gripper_tool_frame) w.r.t. some base ref frame (default: 'torso_lift_link')
     :param group: MoveGroupCommander type (left_arm or right_arm).
@@ -100,11 +102,12 @@ def go_tool_frame(group, T_tool, base_frame_id='torso_lift_link', ft=False, wait
     :param base_frame_id: string, frame ID of the base in which T_tool is expressed. Default: 'torso_lift_link'
     :param ft: bool. True if the arm has a force-torque sensor, false otherwise
     :param wait: True/False to wait for execution of motion plan
+    :param tool_x_offset: (double) offset in tool length
     :return:
     '''
 
 
-    T_wrist = transform_wrist_frame(T_tool, ft)
+    T_wrist = transform_wrist_frame(T_tool, ft, tool_x_offset)
 
     T_wrist_stamped = PoseStamped()
     T_wrist_stamped.pose = T_wrist
