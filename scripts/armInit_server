@@ -105,12 +105,12 @@ class PreGraspAction(BTMotion):
         ######################################
         # move left arm to start pose for given bin
 
-        rospy.loginfo('[pregrasp_server]: moving left_arm' + 'to ' + row)
-        joint_pos_goal =  left_arm_joint_pos_dict[row]
+        # rospy.loginfo('[pregrasp_server]: moving left_arm' + 'to ' + row)
+        # joint_pos_goal =  left_arm_joint_pos_dict[row]
 
-        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal):
-            self.set_status('FAILURE')
-            return
+        # if not self.go_joint_goal_async(self._left_arm, joint_pos_goal):
+        #     self.set_status('FAILURE')
+        #     return
 
 
         #IF THE ACTION HAS SUCCEEDED
@@ -121,6 +121,6 @@ class PreGraspAction(BTMotion):
 
 if __name__ == "__main__":
 
-    rospy.init_node('pregrasp_server')
+    rospy.init_node('armInit_server')
     PreGraspAction(rospy.get_name())
     rospy.spin()
