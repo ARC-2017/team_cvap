@@ -209,15 +209,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          l_force_torque_adapter_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          l_force_torque_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           l_forearm_cam_frame:
             Alpha: 1
             Show Axes: false
@@ -362,15 +353,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
           r_elbow_flex_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
-          r_force_torque_adapter_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          r_force_torque_link:
             Alpha: 1
             Show Axes: false
             Show Trail: false
@@ -706,15 +688,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          l_force_torque_adapter_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          l_force_torque_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           l_forearm_cam_frame:
             Alpha: 1
             Show Axes: false
@@ -863,15 +836,6 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
             Value: true
-          r_force_torque_adapter_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-          r_force_torque_link:
-            Alpha: 1
-            Show Axes: false
-            Show Trail: false
-            Value: true
           r_forearm_cam_frame:
             Alpha: 1
             Show Axes: false
@@ -1013,8 +977,8 @@ Visualization Manager:
             Show Axes: false
             Show Trail: false
         Robot Alpha: 0.5
-        Show Robot Collision: true
-        Show Robot Visual: false
+        Show Robot Collision: false
+        Show Robot Visual: true
       Value: true
     - Attached Body Color: 150; 50; 150
       Class: moveit_rviz_plugin/RobotState
@@ -1174,15 +1138,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        l_force_torque_adapter_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        l_force_torque_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         l_forearm_cam_frame:
           Alpha: 1
           Show Axes: false
@@ -1327,15 +1282,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
         r_elbow_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        r_force_torque_adapter_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        r_force_torque_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -1511,9 +1457,9 @@ Visualization Manager:
       Enabled: true
       Invert Rainbow: false
       Max Color: 255; 255; 255
-      Max Intensity: 2.92871e-43
+      Max Intensity: 0
       Min Color: 0; 0; 0
-      Min Intensity: 2.92871e-43
+      Min Intensity: 0
       Name: LaserScan
       Position Transformer: XYZ
       Queue Size: 10
@@ -1550,16 +1496,8 @@ Visualization Manager:
           Value: false
         br_caster_rotation_link:
           Value: false
-        cheezit_big_original:
-          Value: true
-        crayola_64_ct:
-          Value: true
-        crayola_64_ct_detector:
-          Value: true
         double_stereo_link:
           Value: false
-        empty_detector:
-          Value: true
         fl_caster_l_wheel_link:
           Value: false
         fl_caster_r_wheel_link:
@@ -1571,10 +1509,6 @@ Visualization Manager:
         fr_caster_r_wheel_link:
           Value: false
         fr_caster_rotation_link:
-          Value: false
-        head_mount_kinect_depth_frame:
-          Value: false
-        head_mount_kinect_depth_optical_frame:
           Value: false
         head_mount_kinect_ir_link:
           Value: false
@@ -1603,10 +1537,6 @@ Visualization Manager:
         imu_link:
           Value: false
         l_elbow_flex_link:
-          Value: false
-        l_force_torque_adapter_link:
-          Value: false
-        l_force_torque_link:
           Value: false
         l_forearm_cam_frame:
           Value: false
@@ -1682,10 +1612,6 @@ Visualization Manager:
           Value: false
         r_elbow_flex_link:
           Value: false
-        r_force_torque_adapter_link:
-          Value: false
-        r_force_torque_link:
-          Value: false
         r_forearm_cam_frame:
           Value: false
         r_forearm_cam_optical_frame:
@@ -1758,8 +1684,6 @@ Visualization Manager:
           Value: false
         shelf_bin_L:
           Value: false
-        shelf_empty:
-          Value: true
         shelf_frame:
           Value: false
         torso_lift_link:
@@ -1808,8 +1732,7 @@ Visualization Manager:
                   shelf_bin_F:
                     {}
                   shelf_bin_G:
-                    crayola_64_ct_detector:
-                      {}
+                    {}
                   shelf_bin_H:
                     {}
                   shelf_bin_I:
@@ -1850,9 +1773,7 @@ Visualization Manager:
                             {}
                           head_mount_kinect_rgb_link:
                             head_mount_kinect_rgb_optical_frame:
-                              head_mount_kinect_depth_optical_frame:
-                                head_mount_kinect_depth_frame:
-                                  {}
+                              {}
                         head_mount_prosilica_link:
                           head_mount_prosilica_optical_frame:
                             {}
@@ -1896,25 +1817,23 @@ Visualization Manager:
                             l_forearm_link:
                               l_wrist_flex_link:
                                 l_wrist_roll_link:
-                                  l_force_torque_adapter_link:
-                                    l_force_torque_link:
-                                      l_gripper_palm_link:
-                                        l_gripper_l_finger_link:
-                                          l_gripper_l_finger_tip_link:
-                                            {}
-                                        l_gripper_led_frame:
+                                  l_gripper_palm_link:
+                                    l_gripper_l_finger_link:
+                                      l_gripper_l_finger_tip_link:
+                                        {}
+                                    l_gripper_led_frame:
+                                      {}
+                                    l_gripper_motor_accelerometer_link:
+                                      {}
+                                    l_gripper_motor_slider_link:
+                                      l_gripper_motor_screw_link:
+                                        {}
+                                    l_gripper_r_finger_link:
+                                      l_gripper_r_finger_tip_link:
+                                        l_gripper_l_finger_tip_frame:
                                           {}
-                                        l_gripper_motor_accelerometer_link:
-                                          {}
-                                        l_gripper_motor_slider_link:
-                                          l_gripper_motor_screw_link:
-                                            {}
-                                        l_gripper_r_finger_link:
-                                          l_gripper_r_finger_tip_link:
-                                            l_gripper_l_finger_tip_frame:
-                                              {}
-                                        l_gripper_tool_frame:
-                                          {}
+                                    l_gripper_tool_frame:
+                                      {}
                 l_torso_lift_side_plate_link:
                   {}
                 laser_tilt_mount_link:
@@ -1932,33 +1851,27 @@ Visualization Manager:
                             r_forearm_link:
                               r_wrist_flex_link:
                                 r_wrist_roll_link:
-                                  r_force_torque_adapter_link:
-                                    r_force_torque_link:
-                                      r_gripper_palm_link:
-                                        r_gripper_l_finger_link:
-                                          r_gripper_l_finger_tip_link:
-                                            {}
-                                        r_gripper_led_frame:
+                                  r_gripper_palm_link:
+                                    r_gripper_l_finger_link:
+                                      r_gripper_l_finger_tip_link:
+                                        {}
+                                    r_gripper_led_frame:
+                                      {}
+                                    r_gripper_motor_accelerometer_link:
+                                      {}
+                                    r_gripper_motor_slider_link:
+                                      r_gripper_motor_screw_link:
+                                        {}
+                                    r_gripper_r_finger_link:
+                                      r_gripper_r_finger_tip_link:
+                                        r_gripper_l_finger_tip_frame:
                                           {}
-                                        r_gripper_motor_accelerometer_link:
-                                          {}
-                                        r_gripper_motor_slider_link:
-                                          r_gripper_motor_screw_link:
-                                            {}
-                                        r_gripper_r_finger_link:
-                                          r_gripper_r_finger_tip_link:
-                                            r_gripper_l_finger_tip_frame:
-                                              {}
-                                        r_gripper_tool_frame:
-                                          {}
+                                    r_gripper_tool_frame:
+                                      {}
                 r_torso_lift_side_plate_link:
                   {}
               torso_lift_motor_screw_link:
                 {}
-            cheezit_big_original:
-              {}
-            crayola_64_ct:
-              {}
           odomL:
             {}
           odomR:
@@ -2123,15 +2036,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
           Value: true
-        l_force_torque_adapter_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        l_force_torque_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
         l_forearm_cam_frame:
           Alpha: 1
           Show Axes: false
@@ -2276,15 +2180,6 @@ Visualization Manager:
           Show Axes: false
           Show Trail: false
         r_elbow_flex_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-          Value: true
-        r_force_torque_adapter_link:
-          Alpha: 1
-          Show Axes: false
-          Show Trail: false
-        r_force_torque_link:
           Alpha: 1
           Show Axes: false
           Show Trail: false
@@ -2461,7 +2356,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.0019
+      Distance: 3.51253
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -2473,10 +2368,10 @@ Visualization Manager:
         Z: 1.32531e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 0.664797
+      Pitch: 0.689797
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 1.7227
+      Yaw: 2.1327
     Saved: ~
 Window Geometry:
   Displays:
@@ -2494,5 +2389,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1920
-  X: 1912
-  Y: -4
+  X: -7
+  Y: 24

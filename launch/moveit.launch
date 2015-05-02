@@ -12,6 +12,7 @@
   <rosparam command="load" file="$(find amazon_challenge_motion)/config/right_arm_joint_pos_dict.yaml" />
   <rosparam command="load" file="$(find amazon_challenge_motion)/config/torso_joint_pos_dict.yaml" />
   <rosparam command="load" file="$(find amazon_challenge_motion)/config/base_pos_dict.yaml" />
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/head_joint_pos_dict.yaml" />
       
 
   <!-- shelf collision model -->
