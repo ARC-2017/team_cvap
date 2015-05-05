@@ -13,7 +13,7 @@ sudo apt-get install ros-hydro-desktop-full
 
 source /opt/ros/hydro/setup.bash
 sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* ros-hydro-cmake-modules python-pip
-sudo easy_install wstool termcolor
+sudo easy_install wstool
 
 WS=$HOME/amazon_challenge_ws
 
