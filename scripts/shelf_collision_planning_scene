@@ -81,7 +81,7 @@ if __name__=='__main__':
         rospy.logerr('[shelf_collision_planning_scene]: shelf mesh file not found!')
         sys.exit(1)
 
-    shelf_mesh_fp = shelf_mesh_fp + '/kiva_pod/meshes/pod_lowres.stl'
+    shelf_mesh_fp = shelf_mesh_fp + 'gazebo_models/kiva_pod/meshes/pod_lowres.stl'
 
     r = rospy.Rate(1.0)
 
