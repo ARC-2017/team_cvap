@@ -59,6 +59,7 @@ class BTMotion():
                 self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
                 self._arms = moveit_commander.MoveGroupCommander('arms')
                 self._torso = moveit_commander.MoveGroupCommander('torso')
+                self._head = moveit_commander.MoveGroupCommander('head')
                 self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
                 break
             except:
@@ -126,19 +127,24 @@ class BTMotion():
             except:
                 pass
 
-    def go_joint_goal_async(self, group, joint_pos_goal):
+    def go_joint_goal_async(self, group, joint_pos_goal, normalize_angles=False):
 
-        q_goal = self.normalize_angles(joint_pos_goal)
+        q_goal = np.array(joint_pos_goal)
+        if normalize_angles:
+            q_goal = self.normalize_angles(joint_pos_goal)
+
         group.set_joint_value_target(joint_pos_goal)
         group.go(wait=False)
 
+        q_now = np.array(group.get_current_joint_values())
 
-        q_now = self.normalize_angles(group.get_current_joint_values())
+        if normalize_angles:
+            q_now = self.normalize_angles(q_now)
 
 
         q_tol = group.get_goal_joint_tolerance()
-        if group.get_name()=='left_arm' or group.get_name()=='right_arm' or group.get_name()=='arms':
-            q_tol = 0.02
+        if group.get_name()=='left_arm' or group.get_name()=='right_arm' or group.get_name()=='arms' or group.get_name()=='head':
+            q_tol = 0.04
 
         elif group.get_name()=='torso':
             q_tol = 0.003
@@ -148,20 +154,24 @@ class BTMotion():
         # TODO: add timeouts for motion
         # check for preemption while the arm hasn't reach goal configuration
         while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
-            q_now = self.normalize_angles(group.get_current_joint_values())
+
+            q_now = np.array(group.get_current_joint_values())
+
+            if normalize_angles:
+                q_now = self.normalize_angles(q_now)
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 group.stop()
-                rospy.loginfo('[pregrasp_server]: action halted')
+                rospy.loginfo('action halted')
                 self._as.set_preempted()
                 self._success = False
                 return False
 
             if (rospy.Time.now()-t_print).to_sec()>3.0:
                 t_print = rospy.Time.now()
-                rospy.loginfo('[pregrasp_server]: executing action')
+                rospy.loginfo('executing action')
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             rospy.sleep(0.1)

@@ -67,7 +67,7 @@ class PreGraspAction(BTMotion):
         right_arm_joint_pos_goal = right_arm_joint_pos_dict['start']
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
-        if not self.go_joint_goal_async(self._arms, joint_pos_goal):
+        if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
             self.set_status('FAILURE')
             return
 
@@ -108,7 +108,7 @@ class PreGraspAction(BTMotion):
         rospy.loginfo('[pregrasp_server]: moving left_arm ' + 'to ' + row)
         joint_pos_goal =  left_arm_joint_pos_dict['pregrasp'][row]
 
-        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal):
+        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
             self.set_status('FAILURE')
             return
 

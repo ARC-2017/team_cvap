@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-#   pregrasp_server
+#   base_torso_head_init_server
 #
-#   Created on: April 13, 2015
+#   Created on: May 6, 2015
 #   Authors:   Francisco Vina
 #             fevb <at> kth.se
 #
@@ -42,11 +42,11 @@ from std_msgs.msg import String
 from calibrateBase import baseMove
 from amazon_challenge_motion.bt_motion import BTMotion
 
-class PreGraspAction(BTMotion):
+class BaseTorsoHeadInitAction(BTMotion):
 
     def execute_cb(self, goal):
         # publish info to the console for the user
-        rospy.loginfo('[pregrasp_server]: started action')
+        rospy.loginfo('[base_torso_head_init_server]: started action')
         self._success = True
 
         # read dictionary
@@ -55,6 +55,7 @@ class PreGraspAction(BTMotion):
         arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
         torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
         base_pos_dict = rospy.get_param('/base_pos_dict')
+        head_joint_pos_dict = rospy.get_param('/head_joint_pos_dict')
 
         # start executing the action
 
@@ -62,12 +63,12 @@ class PreGraspAction(BTMotion):
         ######################################
         # move arms to start pose
 
-        rospy.loginfo('[pregrasp_server]: moving arms to start pos')
+        rospy.loginfo('[base_torso_head_init_server]: moving arms to start pos')
         left_arm_joint_pos_goal = left_arm_joint_pos_dict['start']
         right_arm_joint_pos_goal = right_arm_joint_pos_dict['start']
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
-        if not self.go_joint_goal_async(self._arms, joint_pos_goal):
+        if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
             self.set_status('FAILURE')
             return
 
@@ -76,7 +77,7 @@ class PreGraspAction(BTMotion):
         # move torso to appropriate row
 
         row = self.get_row()
-        rospy.loginfo('[pregrasp_server]: moving torso to ' + row)
+        rospy.loginfo('[base_torso_head_init_server]: moving torso to ' + row)
         joint_pos_goal = torso_joint_pos_dict[row]
 
         if not self.go_joint_goal_async(self._torso, joint_pos_goal):
@@ -88,32 +89,24 @@ class PreGraspAction(BTMotion):
 
         column = self.get_column()
         base_pos_goal = base_pos_dict[column]
-        rospy.loginfo('[pregrasp_server]: moving base to ' + column)
+        rospy.loginfo('[base_torso_head_init_server]: moving base to ' + column)
 
         r = rospy.Rate(100.0)
 
         self.go_base_pos_async(base_pos_goal)
 
 
-
-        # request a new detection
-        # TODO: check this with Michele
-        # this is a node in the BT now, never call from here
-        #self.request_detection()
-
-
         ######################################
-        # move left arm to start pose for given bin
+        # move head to appropriate row
 
-        # rospy.loginfo('[pregrasp_server]: moving left_arm' + 'to ' + row)
-        # joint_pos_goal =  left_arm_joint_pos_dict[row]
+        joint_pos_goal = head_joint_pos_dict[row]
 
-        # if not self.go_joint_goal_async(self._left_arm, joint_pos_goal):
-        #     self.set_status('FAILURE')
-        #     return
+        rospy.loginfo('[base_torso_head_init_server]: moving head to ' + row)
 
+        if not self.go_joint_goal_async(self._head, joint_pos_goal):
+            self.set_status('FAILURE')
+            return
 
-        #IF THE ACTION HAS SUCCEEDED
 
         self.set_status('SUCCESS')
         return
@@ -121,6 +114,6 @@ class PreGraspAction(BTMotion):
 
 if __name__ == "__main__":
 
-    rospy.init_node('armInit_server')
-    PreGraspAction(rospy.get_name())
+    rospy.init_node('base_torso_head_init_server')
+    BaseTorsoHeadInitAction(rospy.get_name())
     rospy.spin()
