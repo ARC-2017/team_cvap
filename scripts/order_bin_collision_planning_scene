@@ -1,10 +1,8 @@
 #!/usr/bin/env python
 
-
-
-#   shelf_collision_planning_scene
+#   bin_collision_planning_scene
 #
-#   Created on: April 15, 2015
+#   Created on: May 7, 2015
 #   Authors:   Francisco Vina
 #             fevb <at> kth.se
 #
@@ -37,22 +35,20 @@
 
 import rospy
 from moveit_commander import PlanningSceneInterface
-import shape_msgs.msg
 import moveit_msgs.msg
-from tf import TransformListener
+from tf import TransformListener, TransformBroadcaster
 import tf
 from tf_conversions import posemath
-from geometry_msgs.msg import Pose, PoseStamped
-import rospkg
-import sys
+from geometry_msgs.msg import PoseStamped
 import numpy as np
 import PyKDL as kdl
 import copy
 
-if __name__=='__main__':
-    rospy.init_node('shelf_collision_planning_scene')
 
-    rospy.loginfo('[shelf_planning_scene]: Waiting for Moveit to load')
+if __name__=='__main__':
+    rospy.init_node('order_bin_collision_planning_scene')
+
+    rospy.loginfo('[order_bin_collision_planning_scene]: Waiting for Moveit to load')
     rospy.wait_for_service('/move_group/ompl/set_parameters')
 
     planning_scene = PlanningSceneInterface()
@@ -60,34 +56,49 @@ if __name__=='__main__':
 
     base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')
     shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
-
-    translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
-    rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
+    translation_tolerance = rospy.get_param('translation_tolerance', 1e-3)
+    rotation_tolerance = rospy.get_param('rotation_tolerance', 0.1*np.pi/180.0)
 
     collision_object_pub = rospy.Publisher('/collision_object', moveit_msgs.msg.CollisionObject)
 
-    F_shelf_real_cad = kdl.Frame(kdl.Rotation.RPY(np.pi*0.5, 0.0, np.pi*0.5), kdl.Vector(0.4421, 0.0, -0.303))
+    # get ros parameters for order bin
+    order_bin_params = rospy.get_param('/order_bin')
 
+    order_bin_pose = order_bin_params['pose']
+    order_bin_size = order_bin_params['size']
 
-    tf_listener = TransformListener()
+    x = order_bin_pose[0]
+    y = order_bin_pose[1]
+    z = order_bin_pose[2]
 
-    object_added = False
+    R = order_bin_pose[3]
+    P = order_bin_pose[4]
+    Y = order_bin_pose[5]
 
-    # get filepath of shelf stl file
-    rp = rospkg.RosPack()
-    try:
-        shelf_mesh_fp = rp.get_path('pr2_amazon_challenge_sim')
-    except:
-        rospy.logerr('[shelf_collision_planning_scene]: shelf mesh file not found!')
-        sys.exit(1)
+    F_shelf_order_bin = kdl.Frame(kdl.Rotation.RPY(R, P, Y), kdl.Vector(x, y, z))
 
-    shelf_mesh_fp = shelf_mesh_fp + '/gazebo_models/kiva_pod/meshes/pod_lowres.stl'
+    F_shelf_order_bin.p[2] = F_shelf_order_bin.p[2] + order_bin_size[2]*0.5
 
-    r = rospy.Rate(1.0)
+    # collision object stuff
+    pose_shelf_order_bin = PoseStamped()
+    pose_shelf_order_bin.pose = posemath.toMsg(F_shelf_order_bin)
+    pose_shelf_order_bin.header.frame_id = shelf_frame_id
+
+    order_bin_collision_object_msg = moveit_msgs.msg.CollisionObject()
 
     F_shelf_previous = kdl.Frame()
 
-    shelf_collision_object_msg = moveit_msgs.msg.CollisionObject()
+    # tf stuff
+    translation_shelf_order_bin, rotation_shelf_order_bin = posemath.toTf(F_shelf_order_bin)
+    translation_shelf_order_bin[2] = translation_shelf_order_bin[2] - order_bin_size[2]*0.5
+    tf_listener = TransformListener()
+    tf_broadcaster = TransformBroadcaster()
+
+
+    object_added = False
+
+
+    r = rospy.Rate(1.0)
 
     print_err_count = 0
 
@@ -95,15 +106,10 @@ if __name__=='__main__':
         try:
             T_shelf = tf_listener.lookupTransform(base_frame_id, shelf_frame_id, rospy.Time(0))
 
-            # transform to cad model reference frame
-            F_shelf_real = posemath.fromTf(T_shelf)
-            F_shelf_cad = F_shelf_real*F_shelf_real_cad
-            T_shelf = posemath.toTf(F_shelf_cad)
-
         except (tf.LookupException, tf.ConnectivityException, tf.ExtrapolationException):
             if print_err_count > 3:
                 print_err_count = 0
-                rospy.logerr('[shelf_collision_planning_scene]: transform unavailable between ' + base_frame_id + ' and ' + shelf_frame_id)
+                rospy.logerr('[order_bin_collision_planning_scene]: transform unavailable between ' + base_frame_id + ' and ' + shelf_frame_id)
 
             print_err_count = print_err_count + 1
             r.sleep()
@@ -113,37 +119,37 @@ if __name__=='__main__':
 
         if not object_added:
 
-            shelf_pose_stamped = PoseStamped()
-            shelf_pose_stamped.pose = posemath.toMsg(F_shelf)
-            shelf_pose_stamped.header.stamp = rospy.Time.now()
-            shelf_pose_stamped.header.frame_id = base_frame_id
-
-            planning_scene.add_mesh('shelf', shelf_pose_stamped, shelf_mesh_fp)
+            pose_shelf_order_bin.header.stamp = rospy.Time.now()
+            planning_scene.add_box('order_bin', pose_shelf_order_bin, order_bin_size)
             object_added = True
+            F_shelf_previous = copy.deepcopy(F_shelf)
 
-            F_shelf_previous = posemath.fromMsg(shelf_pose_stamped.pose)
-
+            # publish tf
+            tf_broadcaster.sendTransform(translation_shelf_order_bin, rotation_shelf_order_bin, rospy.Time.now(), 'order_bin', shelf_frame_id)
 
         else:
 
 
             # update only if there is significant change of shelf pose
             (angle_rotation, axis_rotation) = (F_shelf.M.Inverse()*F_shelf_previous.M).GetRotAngle()
-
             angle_rotation = np.abs(angle_rotation)
+
+
             translation = (F_shelf.p-F_shelf_previous.p).Norm()
 
             if (translation>translation_tolerance) or (angle_rotation>rotation_tolerance):
-                shelf_pose = posemath.toMsg(F_shelf)
-                shelf_collision_object_msg.operation = shelf_collision_object_msg.MOVE
-                shelf_collision_object_msg.id = 'shelf'
-                shelf_collision_object_msg.mesh_poses = [shelf_pose]
-                shelf_collision_object_msg.header.stamp = rospy.Time.now()
-                shelf_collision_object_msg.header.frame_id = base_frame_id
+                
+                order_bin_collision_object_msg.operation = order_bin_collision_object_msg.MOVE
+                order_bin_collision_object_msg.id = 'order_bin'
+                order_bin_collision_object_msg.mesh_poses = [pose_shelf_order_bin.pose]
+                order_bin_collision_object_msg.header.stamp = rospy.Time.now()
+                order_bin_collision_object_msg.header.frame_id = shelf_frame_id
 
-                collision_object_pub.publish(shelf_collision_object_msg)
+                collision_object_pub.publish(order_bin_collision_object_msg)
 
                 F_shelf_previous = copy.deepcopy(F_shelf)
 
-        r.sleep()
+            # publish tf
+            tf_broadcaster.sendTransform(translation_shelf_order_bin, rotation_shelf_order_bin, rospy.Time.now(), 'order_bin', shelf_frame_id)
 
+        r.sleep()

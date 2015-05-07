@@ -39,69 +39,14 @@ import numpy as np
 import amazon_challenge_bt_actions.msg
 import actionlib
 from std_msgs.msg import String
-
+from calibrateBase import baseMove
+from amazon_challenge_motion.bt_motion import BTMotion
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 
 
+class DroppingAction(BTMotion):
 
-class DroppingAction(object):
-
-    # create messages that are used to publish feedback/result
-    _feedback = amazon_challenge_bt_actions.msg.BTFeedback()
-    _result   = amazon_challenge_bt_actions.msg.BTResult()
-
-    def __init__(self, name):
-        self._action_name = name
-        self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
-        self._as.start()
-        while not rospy.is_shutdown():
-            try:
-                self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
-                self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
-                self._arms = moveit_commander.MoveGroupCommander('arms')
-                self._torso = moveit_commander.MoveGroupCommander('torso')
-                break
-            except:
-                pass
-        self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
-        self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
-        self._r_gripper_pub = rospy.Publisher('/r_gripper_controller/command', Pr2GripperCommand)
-        self._gripper_pub_dict = {'left_gripper': self._l_gripper_pub, 'right_gripper': self._r_gripper_pub}
-
-        self.pub_dropped = rospy.Publisher('object_dropped', String, queue_size=10)
-        self.pub_rate = rospy.Rate(30)
-
-        rospy.Subscriber("/amazon_next_task", String, self.get_task)
-
-    def get_task(self, msg):
-        text = msg.data
-        text = text.replace('[','')
-        text = text.replace(']','')
-        words = text.split(',')
-        self._bin = words[0]
-        self._item = words[1]
-
-    def get_arm_to_move(self):
-        while not rospy.is_shutdown():
-            try:
-                if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
-                    return 'left_arm'
-                else:
-                    return 'right_arm'
-            except:
-                pass
-
-    def get_gripper_to_open(self):
-        while not rospy.is_shutdown():
-            try:
-                if self._bin == 'bin_A' or self._bin == 'bin_D' or self._bin == 'bin_G' or self._bin == 'bin_H' or self._bin == 'bin_J':
-                    return 'left_gripper'
-                else:
-                    return 'right_gripper'
-            except:
-                pass
-
-    def execute_cb(self, goal):
+   def execute_cb(self, goal):
         # publish info to the console for the user
         rospy.loginfo('[dropping_server]: started action')
         self._success = True
@@ -111,128 +56,92 @@ class DroppingAction(object):
         right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
         arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
         torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
+        base_pos_dict = rospy.get_param('/base_pos_dict')
+
+        order_bin_params = rospy.get_param('/order_bin')
+        order_bin_size = order_bin_params['size']
 
         # start executing the action
 
+        ######################################
+        # move base to drop_1 position (to the right)
+
+        base_pos_goal = base_pos_dict['drop_1']
+        rospy.loginfo('[dropping_server]: moving base to drop_1 position')
+
+
+        self.go_base_pos_async(base_pos_goal)
 
 
         ######################################
-        # move arm out of the bin
-        arm_to_move = self.get_arm_to_move()
-        rospy.loginfo('[dropping_server]: moving ' + arm_to_move + 'to ' +self._bin+  ' drop position')
-        joint_pos_goal = (arms_joint_pos_dict[arm_to_move])[self._bin + '_drop']
+        # move base to drop position (backwards)
 
-        if not self.go_joint_goal_async(self._arms_dict[arm_to_move], joint_pos_goal, True):
+        base_pos_goal = base_pos_dict['drop']
+        rospy.loginfo('[dropping_server]: moving base to drop position')
+
+
+        self.go_base_pos_async(base_pos_goal)
+
+
+        ######################################
+        # move torso to drop position (high, to avoid collisions with bin)
+
+        joint_pos_goal = torso_joint_pos_dict['drop_1']
+        rospy.loginfo('[dropping_server]: moving torso to drop_1 position')
+
+        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
             self.set_status('FAILURE')
             return
 
 
+        ######################################
+        # move left arm to drop position
+
+        rospy.loginfo('[dropping_server]: moving left_arm to drop pos')
+        joint_pos_goal =  left_arm_joint_pos_dict['drop']
+
+        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
+            self.set_status('FAILURE')
+            return
+
 
         ######################################
-        # go to box drop position
-        arm_to_move = self.get_arm_to_move()
-        rospy.loginfo('[dropping_server]: moving ' + arm_to_move + 'to box drop position')
-        joint_pos_goal = (arms_joint_pos_dict[arm_to_move])['box_drop']
+        # move left arm in bin (z, y) direction depending on object for dropping
 
-        if not self.go_joint_goal_async(self._arms_dict[arm_to_move], joint_pos_goal, True):
+        # TODO
+
+        ######################################
+        # move left arm down to 0.41 cm height (x direction)
+
+        # calculate how much to go down
+        h_torso = torso_joint_pos_dict['drop_1'][0] - torso_joint_pos_dict['drop'][0]
+
+        pose = self._left.get_current_pose()
+
+        pose.pose.position.z
+
+
+        ######################################
+        # move torso down
+
+        joint_pos_goal = torso_joint_pos_dict['drop']
+        rospy.loginfo('[dropping_server]: moving base to drop position')
+
+        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
             self.set_status('FAILURE')
             return
 
         ######################################
-        # release the gripper
-        gripper = self.get_gripper_to_open()
+        # check current end effector pose to make sure its low enough
 
-        gripper_open_msg = Pr2GripperCommand()
-        gripper_open_msg.max_effort = 30.0
-        gripper_open_msg.position = 10.0
 
-        self._gripper_pub_dict[gripper].publish(gripper_open_msg)
+
 
 
         #IF THE ACTION HAS SUCCEEDED
+
         self.set_status('SUCCESS')
         return
-
-    def go_joint_goal_async(self, group, joint_pos_goal, normalize_angles=False):
-        # normalize angles between -pi -> pi
-        q_goal = np.array(joint_pos_goal)
-
-
-        # TODO normalize angles
-        if normalize_angles:
-            q_goal = self.normalize_angles(q_goal)
-
-
-        group.set_joint_value_target(list(q_goal))
-        group.go(wait=False)
-
-
-        q_now = np.array(group.get_current_joint_values())
-
-        if normalize_angles:
-            q_now = self.normalize_angles(q_now)
-
-        q_tol = group.get_goal_joint_tolerance()
-        if group.get_name()=='left_arm' or group.get_name()=='right_arm' or group.get_name()=='arms':
-            q_tol = q_tol + 0.01
-
-        t_print = rospy.Time.now()
-
-        # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
-            q_now = np.array(group.get_current_joint_values())
-
-            if normalize_angles:
-                q_now = self.normalize_angles(q_now)
-
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                group.stop()
-                rospy.loginfo('[dropping_server]: action halted')
-                self._as.set_preempted()
-                self._success = False
-                return False
-
-            if (rospy.Time.now()-t_print).to_sec()>1.0:
-                t_print = rospy.Time.now()
-                rospy.loginfo('[dropping_server]: executing action')
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            rospy.sleep(0.1)
-
-        return True
-
-
-    def set_status(self,status):
-        if status == 'SUCCESS':
-            self.pub_dropped.publish("SUCCESS")
-            rospy.sleep(1)
-            self._feedback.status = 1
-            self._result.status = self._feedback.status
-            rospy.loginfo('Action %s: Succeeded' % self._action_name)
-            self._as.set_succeeded(self._result)
-
-        elif status == 'FAILURE':
-            self._feedback.status = 2
-            self._result.status = self._feedback.status
-            rospy.loginfo('Action %s: Failed' % self._action_name)
-            self._as.set_succeeded(self._result)
-
-        else:
-            rospy.logerr('Action %s: has a wrong return status' % self._action_name)
-
-    def normalize_angles(self, q):
-        '''
-        normalize angles to -pi, pi
-        '''
-        q_normalized = np.mod(q, 2*np.pi)
-
-        for i in xrange(np.size(q)):
-            if q_normalized[i] > np.pi:
-                q_normalized[i] = -(2*np.pi - q_normalized[i])
-
-        return q_normalized
 
 
 if __name__ == "__main__":
