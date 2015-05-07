@@ -2,7 +2,6 @@
 
   <arg name="sim" default="false"/>
 
-  <!-- spawn the 'robot pose initializer'  -->
   <node name="pregrasp_server" pkg="amazon_challenge_motion" type="pregrasp_server" output="screen"/>
 
   <group if="$(arg sim)">

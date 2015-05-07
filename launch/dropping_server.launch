@@ -1,11 +1,14 @@
 <launch>
 
-  <!-- Load the pose dictionaries to the parameter server -->
-  <rosparam command="load" file="$(find amazon_challenge_motion)/config/left_arm_joint_pos_dict.yaml" />
-  <rosparam command="load" file="$(find amazon_challenge_motion)/config/right_arm_joint_pos_dict.yaml" />
-  <rosparam command="load" file="$(find amazon_challenge_motion)/config/torso_joint_pos_dict.yaml" />
+  <arg name="sim" default="false"/>
 
-  <!-- spawn the 'robot pose initializer'  -->
   <node name="dropping_server" pkg="amazon_challenge_motion" type="dropping_server" output="screen"/>
-      
+
+  <group if="$(arg sim)">
+    <node name="action_client" pkg="amazon_challenge_bt_actions" type="ActionClient" output="screen">
+      <param name="action_server_name" value="dropping_server" />
+    </node>
+    <node name="task_manager" pkg="amazon_challenge_bt_actions" type="task_manager" output="screen"/>
+  </group>
+
 </launch>

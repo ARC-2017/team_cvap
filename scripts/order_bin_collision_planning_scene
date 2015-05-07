@@ -89,8 +89,8 @@ if __name__=='__main__':
     F_shelf_previous = kdl.Frame()
 
     # tf stuff
+    F_shelf_order_bin.p[2] = F_shelf_order_bin.p[2] - order_bin_size[2]*0.5
     translation_shelf_order_bin, rotation_shelf_order_bin = posemath.toTf(F_shelf_order_bin)
-    translation_shelf_order_bin[2] = translation_shelf_order_bin[2] - order_bin_size[2]*0.5
     tf_listener = TransformListener()
     tf_broadcaster = TransformBroadcaster()
 

@@ -42,7 +42,7 @@ from std_msgs.msg import String
 from calibrateBase import baseMove
 from amazon_challenge_motion.bt_motion import BTMotion
 from pr2_controllers_msgs.msg import Pr2GripperCommand
-
+from geometry_msgs.msg import Pose
 
 class DroppingAction(BTMotion):
 
@@ -58,26 +58,35 @@ class DroppingAction(BTMotion):
         torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
         base_pos_dict = rospy.get_param('/base_pos_dict')
 
+
         order_bin_params = rospy.get_param('/order_bin')
         order_bin_size = order_bin_params['size']
+
+        dropping_height = rospy.get_param('/dropping_height', 0.255)
+
+
 
         # start executing the action
 
         ######################################
         # move base to drop_1 position (to the right)
 
-        base_pos_goal = base_pos_dict['drop_1']
-        rospy.loginfo('[dropping_server]: moving base to drop_1 position')
+        base_pos_goal = base_pos_dict['drop']['move_right']
+        rospy.loginfo('[dropping_server]: moving base to drop: move_right position')
 
 
         self.go_base_pos_async(base_pos_goal)
 
 
         ######################################
-        # move base to drop position (backwards)
+        # move base to drop retreat position (backwards)
 
-        base_pos_goal = base_pos_dict['drop']
-        rospy.loginfo('[dropping_server]: moving base to drop position')
+        base_pos_dict_key = 'retreat'
+        if self._item=='cheezit_big_original' or self._item=='oreo_mega_stuf':
+            base_pos_dict_key = base_pos_dict_key+'_'+self._item
+
+        base_pos_goal = base_pos_dict['drop'][base_pos_dict_key]
+        rospy.loginfo('[dropping_server]: moving base to drop: '+ base_pos_dict_key + ' position')
 
 
         self.go_base_pos_async(base_pos_goal)
@@ -86,8 +95,8 @@ class DroppingAction(BTMotion):
         ######################################
         # move torso to drop position (high, to avoid collisions with bin)
 
-        joint_pos_goal = torso_joint_pos_dict['drop_1']
-        rospy.loginfo('[dropping_server]: moving torso to drop_1 position')
+        joint_pos_goal = torso_joint_pos_dict['drop']
+        rospy.loginfo('[dropping_server]: moving torso to drop position')
 
         if not self.go_joint_goal_async(self._torso, joint_pos_goal):
             self.set_status('FAILURE')
@@ -106,35 +115,37 @@ class DroppingAction(BTMotion):
 
 
         ######################################
-        # move left arm in bin (z, y) direction depending on object for dropping
+        # move base to the left towards the bin
+        move_base_y = base_pos_dict['drop']['move_left_y']
+        base_pos_goal[1] = move_base_y
 
-        # TODO
+        rospy.loginfo('[dropping_server]: moving base left towards the bin')
+        self.go_base_pos_async(base_pos_goal)
+
 
         ######################################
-        # move left arm down to 0.41 cm height (x direction)
-
+        # move left arm down
+        rospy.loginfo('[dropping_server]: moving left arm down for dropping')
         # calculate how much to go down
-        h_torso = torso_joint_pos_dict['drop_1'][0] - torso_joint_pos_dict['drop'][0]
+        z_init = self._left_arm.get_current_pose().pose.position.z
 
-        pose = self._left.get_current_pose()
-
-        pose.pose.position.z
+        z_desired = dropping_height # maximum 30 cm dropping height
+        self.move_l_arm_z(z_desired)
 
 
         ######################################
-        # move torso down
+        # release gripper
 
-        joint_pos_goal = torso_joint_pos_dict['drop']
-        rospy.loginfo('[dropping_server]: moving base to drop position')
-
-        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.set_status('FAILURE')
-            return
+        rospy.loginfo('[dropping_server]: opening gripper')
+        self.open_l_gripper()
 
         ######################################
-        # check current end effector pose to make sure its low enough
+        # move left arm back up
 
-
+        rospy.loginfo('[dropping_server]: moving left arm up')
+        # calculate where to go up
+        z_desired = z_init
+        self.move_l_arm_z(z_desired)
 
 
 

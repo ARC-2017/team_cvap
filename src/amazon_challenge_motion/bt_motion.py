@@ -40,7 +40,8 @@ import amazon_challenge_bt_actions.msg
 import actionlib
 from std_msgs.msg import String
 from calibrateBase import baseMove
-
+from pr2_controllers_msgs.msg import Pr2GripperCommand
+import copy
 
 class BTMotion():
 
@@ -72,6 +73,16 @@ class BTMotion():
         self._bm.setAngularGain(1)
 
         rospy.Subscriber("/amazon_next_task", String, self.get_task)
+
+        self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
+
+        self._tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
+        self._contest = rospy.get_param('/contest', True)
+
+        if self._contest:
+            self._length_tool = 0.18 + self._tool_size[0]
+        else:
+            self._length_tool = 0.216 + self._tool_size[0]
 
 
     def execute_cb(self, goal):
@@ -205,8 +216,7 @@ class BTMotion():
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                group.stop()
-                rospy.loginfo('[pregrasp_server]: action halted while moving base')
+                rospy.loginfo('action halted while moving base')
                 self._as.set_preempted()
                 self._success = False
                 return False
@@ -219,8 +229,7 @@ class BTMotion():
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                group.stop()
-                rospy.loginfo('[pregrasp_server]: action halted while moving base')
+                rospy.loginfo('action halted while moving base')
                 self._as.set_preempted()
                 self._success = False
                 return False
@@ -233,8 +242,7 @@ class BTMotion():
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                group.stop()
-                rospy.loginfo('[pregrasp_server]: action halted while moving base')
+                rospy.loginfo('action halted while moving base')
                 self._as.set_preempted()
                 self._success = False
                 return False
@@ -279,3 +287,46 @@ class BTMotion():
 
         else:
             rospy.logerr('Action %s: has a wrong return status' % self._action_name)
+
+    def open_l_gripper(self):
+        gripper_command_msg = Pr2GripperCommand()
+        gripper_command_msg.max_effort = 40.0
+        gripper_command_msg.position = 10.0
+
+        r = rospy.Rate(10.0)
+        t_init = rospy.Time.now()
+
+        while (rospy.Time.now()-t_init).to_sec()<5.0 and not rospy.is_shutdown():
+
+            self._l_gripper_pub.publish(gripper_command_msg)
+              # check that preempt has not been requested by the client
+            if self._as.is_preempt_requested():
+                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+                rospy.loginfo('action halted while opening gripper')
+                self._as.set_preempted()
+                self._success = False
+                return False
+
+            r.sleep()
+
+    def move_l_arm_z(self, z_desired):
+        '''
+        computes straight line cartesian path in z direction
+        :param z_desired:  of tool tip w.r.t. odom_combined
+        :return:
+        '''
+
+        waypoints = []
+
+        waypoints.append(self._left_arm.get_current_pose().pose)
+
+        wpose = copy.deepcopy(waypoints[0])
+        wpose.position.z = z_desired + self._length_tool
+
+        waypoints.append(copy.deepcopy(wpose))
+
+        (plan, fraction) = self._left_arm.compute_cartesian_path(waypoints, 0.005, 0.0)
+
+
+        # TODO make this asynchronous
+        self._left_arm.execute(plan)
