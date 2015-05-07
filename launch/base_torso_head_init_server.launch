@@ -1,0 +1,15 @@
+<launch>
+
+  <arg name="sim" default="false"/>
+
+  <!-- spawn the 'robot pose initializer'  -->
+  <node name="base_torso_head_init_server" pkg="amazon_challenge_motion" type="base_torso_head_init_server" output="screen"/>
+
+  <group if="$(arg sim)">
+    <node name="action_client" pkg="amazon_challenge_bt_actions" type="ActionClient" output="screen">
+      <param name="action_server_name" value="base_torso_head_init_server" />
+    </node>
+    <node name="task_manager" pkg="amazon_challenge_bt_actions" type="task_manager" output="screen"/>
+  </group>
+
+</launch>
