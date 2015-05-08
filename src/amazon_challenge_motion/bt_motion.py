@@ -318,9 +318,9 @@ class BTMotion():
 
         waypoints = []
 
-        waypoints.append(self._left_arm.get_current_pose().pose)
+        # waypoints.append(self._left_arm.get_current_pose().pose)
 
-        wpose = copy.deepcopy(waypoints[0])
+        wpose = copy.deepcopy(self._left_arm.get_current_pose().pose)
         wpose.position.z = z_desired + self._length_tool
 
         waypoints.append(copy.deepcopy(wpose))

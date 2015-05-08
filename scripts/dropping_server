@@ -93,7 +93,7 @@ class DroppingAction(BTMotion):
 
 
         ######################################
-        # move torso to drop position (high, to avoid collisions with bin)
+        # move torso to drop position
 
         joint_pos_goal = torso_joint_pos_dict['drop']
         rospy.loginfo('[dropping_server]: moving torso to drop position')
