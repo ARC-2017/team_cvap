@@ -7,11 +7,11 @@ base_pos_dict:
   column_3: [-0.82, -0.54, 0.0, 0.0, 0.0, 0.0]
       
   drop:
-    move_right: [-1.33, -0.4, 0.0, 0.0, 0.0, 0.0]
+    move_right: [-1.33, -0.5, 0.0, 0.0, 0.0, 0.0]
 
-    retreat_cheezit_big_original: [-1.571, -0.4, 0.0, 0.0, 0.0, 0.0]
-    retreat_oreo_mega_stuf: [-1.321, -0.4, 0.0, 0.0, 0.0, 0.0]
-    retreat: [-1.451, -0.4, 0.0, 0.0, 0.0, 0.0]
+    retreat_cheezit_big_original: [-1.571, -0.5, 0.0, 0.0, 0.0, 0.0]
+    retreat_oreo_mega_stuf: [-1.321, -0.5, 0.0, 0.0, 0.0, 0.0]
+    retreat: [-1.451, -0.5, 0.0, 0.0, 0.0, 0.0]
 
     # y coordinate when moving left before dropping
     move_left_y: -0.1275
