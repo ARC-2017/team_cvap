@@ -25,6 +25,9 @@
   <!-- tool parameters -->
   <rosparam command="load" file="$(find amazon_challenge_motion)/config/tool_size.yaml" />
 
+  <!-- base move parameters -->
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/base_move.yaml" />
+
   <!-- shelf collision model -->
   <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene" output="screen" >
     <param name="base_frame_id" value="/base_laser_link"/>
