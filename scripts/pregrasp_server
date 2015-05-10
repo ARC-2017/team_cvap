@@ -41,6 +41,7 @@ import actionlib
 from std_msgs.msg import String
 from calibrateBase import baseMove
 from amazon_challenge_motion.bt_motion import BTMotion
+import random
 
 class PreGraspAction(BTMotion):
 
@@ -50,12 +51,17 @@ class PreGraspAction(BTMotion):
         self._success = True
 
         # read dictionary
-        left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
-        right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
-        arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
-        torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
-        base_pos_dict = rospy.get_param('/base_pos_dict')
-
+        while not rospy.is_shutdown():
+            try:
+                left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
+                right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
+                arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
+                torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
+                base_pos_dict = rospy.get_param('/base_pos_dict')
+                break
+            except:
+                rospy.sleep(random.uniform(0,1))
+                continue
         # start executing the action
 
 

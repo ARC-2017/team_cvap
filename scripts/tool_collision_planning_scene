@@ -48,6 +48,7 @@ import sys
 import numpy as np
 import PyKDL as kdl
 import copy
+import random
 
 if __name__=='__main__':
     rospy.init_node('tool_collision_planning_scene')
@@ -61,8 +62,13 @@ if __name__=='__main__':
 
     planning_scene = PlanningSceneInterface()
     rospy.sleep(10.0)
-    tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
-
+    while not rospy.is_shutdown():
+        try:
+            tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
+            break
+        except:
+            rospy.sleep(random.uniform(0,1))
+            continue
     tool_pose = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(tool_size[0], tool_size[1], tool_size[2]))
     tool_pose.p[0] = tool_pose.p[0]*0.5+0.015
     tool_pose.p[1] = tool_pose.p[1]*0.5-0.01

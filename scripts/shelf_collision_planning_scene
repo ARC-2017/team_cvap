@@ -48,6 +48,7 @@ import sys
 import numpy as np
 import PyKDL as kdl
 import copy
+import random
 
 if __name__=='__main__':
     rospy.init_node('shelf_collision_planning_scene')
@@ -57,12 +58,17 @@ if __name__=='__main__':
 
     planning_scene = PlanningSceneInterface()
     rospy.sleep(15.0)
+    while not rospy.is_shutdown():
+        try:
+            base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')
+            shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
 
-    base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')
-    shelf_frame_id = rospy.get_param('shelf_frame_id', '/shelf_frame')
-
-    translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
-    rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
+            translation_tolerance = rospy.get_param('translation_tolerance', 1e-2)
+            rotation_tolerance = rospy.get_param('rotation_tolerance', 5*np.pi/180.0)
+            break
+        except:
+            rospy.sleep(random.uniform(0,1))
+            continue
 
     collision_object_pub = rospy.Publisher('/collision_object', moveit_msgs.msg.CollisionObject)
 
