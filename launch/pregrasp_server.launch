@@ -2,7 +2,7 @@
 
   <arg name="sim" default="false"/>
 
-  <node name="pregrasp_server" pkg="amazon_challenge_motion" type="pregrasp_server" output="screen"/>
+  <node name="pregrasp_server" pkg="amazon_challenge_motion" type="pregrasp_server" output="screen" respawn="true"/>
 
   <group if="$(arg sim)">
     <node name="action_client" pkg="amazon_challenge_bt_actions" type="ActionClient" output="screen">
