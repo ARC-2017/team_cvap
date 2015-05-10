@@ -29,7 +29,7 @@
   <rosparam command="load" file="$(find amazon_challenge_motion)/config/base_move.yaml" />
 
   <!-- shelf collision model -->
-  <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene" output="screen" >
+  <node name="shelf_collision_planning_scene" pkg="amazon_challenge_motion" type="shelf_collision_planning_scene" output="screen" respawn="true">
     <param name="base_frame_id" value="/base_laser_link"/>
     <param name="shelf_frame_id" value="/shelf_frame"/>
     <param name="translation_tolerance" value="0.003"/>
@@ -42,6 +42,6 @@
 
 
   <!-- order bin collision model -->
-  <node name="order_bin_collision_planning_scene" pkg="amazon_challenge_motion" type="order_bin_collision_planning_scene" output="screen"/>
+  <node name="order_bin_collision_planning_scene" pkg="amazon_challenge_motion" type="order_bin_collision_planning_scene" output="screen" respawn="true"/>
 
 </launch>
