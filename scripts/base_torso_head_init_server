@@ -84,13 +84,13 @@ class BaseTorsoHeadInitAction(BTMotion):
         ######################################
         # move torso to appropriate row
 
-        row = self.get_row()
-        rospy.loginfo('[base_torso_head_init_server]: moving torso to ' + row)
-        joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
-
-        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.set_status('FAILURE')
-            return
+        # row = self.get_row()
+        # rospy.loginfo('[base_torso_head_init_server]: moving torso to ' + row)
+        # joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
+        #
+        # if not self.go_joint_goal_async(self._torso, joint_pos_goal):
+        #     self.set_status('FAILURE')
+        #     return
 
         #####################################
         # move base to appropriate column
