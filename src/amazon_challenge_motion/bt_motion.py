@@ -42,6 +42,7 @@ from std_msgs.msg import String
 from calibrateBase import baseMove
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 import copy
+import random
 
 class BTMotion():
 
@@ -67,7 +68,14 @@ class BTMotion():
                 pass
 
         # get base_move parameters
-        base_move_params = rospy.get_param('/base_move')
+        while not rospy.is_shutdown():
+            try:
+                base_move_params = rospy.get_param('/base_move')
+                break
+            except:
+                rospy.sleep(random.uniform(0,1))
+                continue
+
         self._bm = baseMove.baseMove(verbose=False)
         self._bm.setPosTolerance(base_move_params['pos_tolerance'])
         self._bm.setAngTolerance(base_move_params['ang_tolerance'])
@@ -77,9 +85,14 @@ class BTMotion():
         rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
         self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
-
-        self._tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
-        self._contest = rospy.get_param('/contest', True)
+        while not rospy.is_shutdown():
+            try:
+                self._tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])
+                self._contest = rospy.get_param('/contest', True)
+                break
+            except:
+                rospy.sleep(random.uniform(0,1))
+                continue
 
         if self._contest:
             self._length_tool = 0.18 + self._tool_size[0]

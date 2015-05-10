@@ -43,6 +43,7 @@ from calibrateBase import baseMove
 from amazon_challenge_motion.bt_motion import BTMotion
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 from geometry_msgs.msg import Pose
+import random
 
 class DroppingAction(BTMotion):
 
@@ -52,18 +53,23 @@ class DroppingAction(BTMotion):
         self._success = True
 
         # read dictionary
-        left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
-        right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
-        arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
-        torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
-        base_pos_dict = rospy.get_param('/base_pos_dict')
+        while not rospy.is_shutdown():
+            try:
+                left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
+                right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
+                arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
+                torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
+                base_pos_dict = rospy.get_param('/base_pos_dict')
 
 
-        order_bin_params = rospy.get_param('/order_bin')
-        order_bin_size = order_bin_params['size']
+                order_bin_params = rospy.get_param('/order_bin')
+                order_bin_size = order_bin_params['size']
 
-        dropping_height = rospy.get_param('/dropping_height', 0.255)
-
+                dropping_height = rospy.get_param('/dropping_height', 0.255)
+                break
+            except:
+                rospy.sleep(random.uniform(0,1))
+                continue
 
 
         # start executing the action
