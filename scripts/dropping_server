@@ -99,23 +99,22 @@ class DroppingAction(BTMotion):
 
 
         ######################################
-        # move torso to drop position
-
-        joint_pos_goal = torso_joint_pos_dict['drop']
-        rospy.loginfo('[dropping_server]: moving torso to drop position')
-
-        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.set_status('FAILURE')
-            return
-
-
-        ######################################
         # move left arm to drop position
 
         rospy.loginfo('[dropping_server]: moving left_arm to drop pos')
         joint_pos_goal =  left_arm_joint_pos_dict['drop']
 
         if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
+            self.set_status('FAILURE')
+            return
+
+        ######################################
+        # move torso to drop position
+
+        joint_pos_goal = torso_joint_pos_dict['drop']
+        rospy.loginfo('[dropping_server]: moving torso to drop position')
+
+        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
             self.set_status('FAILURE')
             return
 

@@ -340,7 +340,7 @@ class BTMotion():
 
         waypoints.append(copy.deepcopy(wpose))
 
-        (plan, fraction) = self._left_arm.compute_cartesian_path(waypoints, 0.005, 0.0)
+        (plan, fraction) = self._left_arm.compute_cartesian_path(waypoints, 0.05, 0.0)
 
 
         # TODO make this asynchronous
