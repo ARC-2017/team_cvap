@@ -1,8 +1,12 @@
 <launch>
 
   <arg name="sim" default="false"/>
+  <arg name="timeout" default="45.0"/>
 
-  <node name="pregrasp_server" pkg="amazon_challenge_motion" type="pregrasp_server" output="screen" respawn="true"/>
+  <node name="pregrasp_server" pkg="amazon_challenge_motion" type="pregrasp_server" output="screen" respawn="true">
+    <param name="timeout" value="$(arg timeout)"/>
+    <param name="sim" value="$(arg sim)"/>
+  </node>
 
   <group if="$(arg sim)">
     <node name="action_client" pkg="amazon_challenge_bt_actions" type="ActionClient" output="screen">
