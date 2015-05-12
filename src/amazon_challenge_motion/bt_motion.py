@@ -65,7 +65,7 @@ class BTMotion:
                 self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
                 break
             except:
-                rospy.sleep(random.uniform(0,1))
+                rospy.sleep(random.uniform(0,2))
                 continue
 
         # get ROS parameters
@@ -80,7 +80,7 @@ class BTMotion:
                 self._right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
                 break
             except:
-                rospy.sleep(random.uniform(0,1))
+                rospy.sleep(random.uniform(0,2))
                 continue
 
         self._exit = False

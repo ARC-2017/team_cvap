@@ -72,7 +72,7 @@ class DroppingAction(BTMotion):
                dropping_height = rospy.get_param('/dropping_height', 0.255)
                break
            except:
-               rospy.sleep(random.uniform(0,1))
+               rospy.sleep(random.uniform(0,2))
                continue
 
 

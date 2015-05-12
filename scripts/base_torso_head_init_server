@@ -63,7 +63,7 @@ class BaseTorsoHeadInitAction(BTMotion):
                 head_joint_pos_dict = rospy.get_param('/head_joint_pos_dict')
                 break
             except:
-                rospy.sleep(random.uniform(0,1))
+                rospy.sleep(random.uniform(0,2))
                 continue
 
 
