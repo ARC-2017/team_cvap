@@ -46,6 +46,8 @@ import random
 class PreGraspAction(BTMotion):
 
     def execute_cb(self, goal):
+        self._exit = False
+        rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
         # publish info to the console for the user
         rospy.loginfo('[pregrasp_server]: started action')
         self._success = True

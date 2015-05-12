@@ -44,7 +44,7 @@ from pr2_controllers_msgs.msg import Pr2GripperCommand
 import copy
 import random
 
-class BTMotion():
+class BTMotion:
 
     def __init__(self, name):
         # create messages that are used to publish feedback/result
@@ -65,17 +65,25 @@ class BTMotion():
                 self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
                 break
             except:
-                pass
+                rospy.sleep(random.uniform(0,1))
+                continue
 
-        # get base_move parameters
+        # get ROS parameters
+        rospy.loginfo('Getting parameters...')
         while not rospy.is_shutdown():
             try:
                 base_move_params = rospy.get_param('/base_move')
+                self._timeout = rospy.get_param(name + '/timeout')
+                self._sim = rospy.get_param(name + '/sim')
+                self._base_pos_dict = rospy.get_param('/base_pos_dict')
+                self._left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
+                self._right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
                 break
             except:
                 rospy.sleep(random.uniform(0,1))
                 continue
 
+        self._exit = False
         self._bm = baseMove.baseMove(verbose=False)
         self._bm.setPosTolerance(base_move_params['pos_tolerance'])
         self._bm.setAngTolerance(base_move_params['ang_tolerance'])
@@ -98,6 +106,32 @@ class BTMotion():
             self._length_tool = 0.18 + self._tool_size[0]
         else:
             self._length_tool = 0.216 + self._tool_size[0]
+
+
+    def timer_callback(self, event):
+        rospy.logerr('[' + rospy.get_name() + ']: TIMED OUT!')
+        self._exit = True
+
+        # pull the base back 60 cm
+
+        self._left_arm.stop()
+        self._right_arm.stop()
+
+        base_pos_goal = [-1.42, self._bm.trans[1], self._bm.trans[2], 0.0, 0.0, 0.0]
+
+        self._bm.goAngle(base_pos_goal[5])
+        self._bm.goPosition(base_pos_goal[0:2])
+        self._bm.goAngle(base_pos_goal[5])
+
+        left_arm_joint_pos_goal = self._left_arm_joint_pos_dict['start']
+        right_arm_joint_pos_goal = self._right_arm_joint_pos_dict['start']
+
+        joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
+
+        self._arms.set_joint_value_target(joint_pos_goal)
+        self._arms.go()
+
+
 
 
     def execute_cb(self, goal):
@@ -177,9 +211,8 @@ class BTMotion():
 
         t_print = rospy.Time.now()
 
-        # TODO: add timeouts for motion
         # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
+        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown() and not self._exit:
 
             q_now = np.array(group.get_current_joint_values())
 
@@ -201,6 +234,10 @@ class BTMotion():
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             rospy.sleep(0.1)
+
+        if self._exit:
+            self._success = False
+            return False
 
         return True
 
@@ -226,7 +263,7 @@ class BTMotion():
         r = rospy.Rate(100.0)
 
         # check for preemption while the base hasn't reach goal configuration
-        while not self._bm.goAngle(angle) and not rospy.is_shutdown():
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown() and not self._exit:
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
@@ -239,7 +276,11 @@ class BTMotion():
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
-        while not self._bm.goPosition(pos) and not rospy.is_shutdown():
+        if self._exit:
+            self._success = False
+            return False
+
+        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown() and not self._exit:
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
@@ -252,18 +293,25 @@ class BTMotion():
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
-        while not self._bm.goAngle(angle) and not rospy.is_shutdown():
+        if self._exit:
+            self._success = False
+            return False
+
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown() and not self._exit:
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
                 self._success = False
                 return False
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
+
+        if self._exit:
+            self._success = False
+            return False
 
         return True
 
@@ -311,7 +359,7 @@ class BTMotion():
         r = rospy.Rate(10.0)
         t_init = rospy.Time.now()
 
-        while (rospy.Time.now()-t_init).to_sec()<5.0 and not rospy.is_shutdown():
+        while (rospy.Time.now()-t_init).to_sec()<3.0 and not rospy.is_shutdown() and not self._exit:
 
             self._l_gripper_pub.publish(gripper_command_msg)
               # check that preempt has not been requested by the client
@@ -323,6 +371,12 @@ class BTMotion():
                 return False
 
             r.sleep()
+
+        if self._exit:
+            self._success = False
+            return False
+
+        return True
 
     def move_l_arm_z(self, z_desired):
         '''

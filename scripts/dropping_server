@@ -48,116 +48,120 @@ import random
 class DroppingAction(BTMotion):
 
    def execute_cb(self, goal):
-        # publish info to the console for the user
-        rospy.loginfo('[dropping_server]: started action')
-        self._success = True
 
-        # read dictionary
-        while not rospy.is_shutdown():
-            try:
-                left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
-                right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
-                arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
-                torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
-                base_pos_dict = rospy.get_param('/base_pos_dict')
+       self._exit=False
+       rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
 
+       # publish info to the console for the user
+       rospy.loginfo('[dropping_server]: started action')
+       self._success = True
 
-                order_bin_params = rospy.get_param('/order_bin')
-                order_bin_size = order_bin_params['size']
-
-                dropping_height = rospy.get_param('/dropping_height', 0.255)
-                break
-            except:
-                rospy.sleep(random.uniform(0,1))
-                continue
+       # read dictionary
+       while not rospy.is_shutdown():
+           try:
+               left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
+               right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
+               arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
+               torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
+               base_pos_dict = rospy.get_param('/base_pos_dict')
 
 
-        # start executing the action
+               order_bin_params = rospy.get_param('/order_bin')
+               order_bin_size = order_bin_params['size']
 
-        ######################################
-        # move base to drop_1 position (to the right)
-
-        base_pos_goal = base_pos_dict['drop']['move_right']
-        rospy.loginfo('[dropping_server]: moving base to drop: move_right position')
-
-
-        self.go_base_pos_async(base_pos_goal)
+               dropping_height = rospy.get_param('/dropping_height', 0.255)
+               break
+           except:
+               rospy.sleep(random.uniform(0,1))
+               continue
 
 
-        ######################################
-        # move base to drop retreat position (backwards)
+           # start executing the action
 
-        base_pos_dict_key = 'retreat'
-        if self._item=='cheezit_big_original' or self._item=='oreo_mega_stuf':
-            base_pos_dict_key = base_pos_dict_key+'_'+self._item
+           ######################################
+           # move base to drop_1 position (to the right)
 
-        base_pos_goal = base_pos_dict['drop'][base_pos_dict_key]
-        rospy.loginfo('[dropping_server]: moving base to drop: '+ base_pos_dict_key + ' position')
+       base_pos_goal = base_pos_dict['drop']['move_right']
+       rospy.loginfo('[dropping_server]: moving base to drop: move_right position')
 
 
-        self.go_base_pos_async(base_pos_goal)
+       self.go_base_pos_async(base_pos_goal)
 
 
-        ######################################
-        # move left arm to drop position
+       ######################################
+       # move base to drop retreat position (backwards)
 
-        rospy.loginfo('[dropping_server]: moving left_arm to drop pos')
-        joint_pos_goal =  left_arm_joint_pos_dict['drop']
+       base_pos_dict_key = 'retreat'
+       if self._item=='cheezit_big_original' or self._item=='oreo_mega_stuf':
+           base_pos_dict_key = base_pos_dict_key+'_'+self._item
 
-        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
-            self.set_status('FAILURE')
-            return
-
-        ######################################
-        # move torso to drop position
-
-        joint_pos_goal = torso_joint_pos_dict['drop']
-        rospy.loginfo('[dropping_server]: moving torso to drop position')
-
-        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.set_status('FAILURE')
-            return
+       base_pos_goal = base_pos_dict['drop'][base_pos_dict_key]
+       rospy.loginfo('[dropping_server]: moving base to drop: '+ base_pos_dict_key + ' position')
 
 
-        ######################################
-        # move base to the left towards the bin
-        move_base_y = base_pos_dict['drop']['move_left_y']
-        base_pos_goal[1] = move_base_y
-
-        rospy.loginfo('[dropping_server]: moving base left towards the bin')
-        self.go_base_pos_async(base_pos_goal)
+       self.go_base_pos_async(base_pos_goal)
 
 
-        ######################################
-        # move left arm down
-        rospy.loginfo('[dropping_server]: moving left arm down for dropping')
-        # calculate how much to go down
-        z_init = self._left_arm.get_current_pose().pose.position.z
+       ######################################
+       # move left arm to drop position
 
-        z_desired = dropping_height # maximum 30 cm dropping height
-        self.move_l_arm_z(z_desired)
+       rospy.loginfo('[dropping_server]: moving left_arm to drop pos')
+       joint_pos_goal =  left_arm_joint_pos_dict['drop']
 
+       if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
+           self.set_status('FAILURE')
+           return
 
-        ######################################
-        # release gripper
+       ######################################
+       # move torso to drop position
 
-        rospy.loginfo('[dropping_server]: opening gripper')
-        self.open_l_gripper()
+       joint_pos_goal = torso_joint_pos_dict['drop']
+       rospy.loginfo('[dropping_server]: moving torso to drop position')
 
-        ######################################
-        # move left arm back up
-
-        rospy.loginfo('[dropping_server]: moving left arm up')
-        # calculate where to go up
-        z_desired = z_init
-        self.move_l_arm_z(z_desired)
+       if not self.go_joint_goal_async(self._torso, joint_pos_goal):
+           self.set_status('FAILURE')
+           return
 
 
+       ######################################
+       # move base to the left towards the bin
+       move_base_y = base_pos_dict['drop']['move_left_y']
+       base_pos_goal[1] = move_base_y
 
-        #IF THE ACTION HAS SUCCEEDED
+       rospy.loginfo('[dropping_server]: moving base left towards the bin')
+       self.go_base_pos_async(base_pos_goal)
 
-        self.set_status('SUCCESS')
-        return
+
+       ######################################
+       # move left arm down
+       rospy.loginfo('[dropping_server]: moving left arm down for dropping')
+       # calculate how much to go down
+       z_init = self._left_arm.get_current_pose().pose.position.z
+
+       z_desired = dropping_height # maximum 30 cm dropping height
+       self.move_l_arm_z(z_desired)
+
+
+       ######################################
+       # release gripper
+
+       rospy.loginfo('[dropping_server]: opening gripper')
+       self.open_l_gripper()
+
+       ######################################
+       # move left arm back up
+
+       rospy.loginfo('[dropping_server]: moving left arm up')
+       # calculate where to go up
+       z_desired = z_init
+       self.move_l_arm_z(z_desired)
+
+
+
+       #IF THE ACTION HAS SUCCEEDED
+
+       self.set_status('SUCCESS')
+       return
 
 
 if __name__ == "__main__":
