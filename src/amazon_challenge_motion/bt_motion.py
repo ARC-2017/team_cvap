@@ -211,6 +211,7 @@ class BTMotion:
 
         t_print = rospy.Time.now()
 
+        r = rospy.Rate(1.0)
         # check for preemption while the arm hasn't reach goal configuration
         while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown() and not self._exit:
 
@@ -233,7 +234,7 @@ class BTMotion:
                 rospy.loginfo('executing action')
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            rospy.sleep(0.1)
+            r.sleep()
 
         if self._exit:
             self._success = False
