@@ -115,6 +115,7 @@ class BaseTorsoHeadInitAction(BTMotion):
 
 
         self.set_status('SUCCESS')
+        self._timer.shutdown()
         return
 
 

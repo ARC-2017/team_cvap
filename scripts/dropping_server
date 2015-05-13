@@ -162,6 +162,7 @@ class DroppingAction(BTMotion):
        #IF THE ACTION HAS SUCCEEDED
 
        self.set_status('SUCCESS')
+       self._timer.shutdown()
        return
 
 
