@@ -12,7 +12,7 @@ sudo apt-get install ros-hydro-desktop-full
 # install ROS workspace
 
 source /opt/ros/hydro/setup.bash
-sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* ros-hydro-cmake-modules python-pip
+sudo apt-get install ros-hydro-moveit* ros-hydro-pr2* ros-hydro-gazebo* ros-hydro-cmake-modules python-pip ros-hydro-image* ros-hydro-openni*
 sudo easy_install wstool
 
 WS=$HOME/amazon_challenge_ws
