@@ -49,8 +49,7 @@ class DroppingAction(BTMotion):
 
    def execute_cb(self, goal):
 
-       self._exit=False
-       rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
+       self.init_cb()
 
        # publish info to the console for the user
        rospy.loginfo('[dropping_server]: started action')
@@ -85,7 +84,8 @@ class DroppingAction(BTMotion):
        rospy.loginfo('[dropping_server]: moving base to drop: move_right position')
 
 
-       self.go_base_pos_async(base_pos_goal)
+       if not self.go_base_pos_async(base_pos_goal):
+           return
 
 
        ######################################
@@ -99,7 +99,8 @@ class DroppingAction(BTMotion):
        rospy.loginfo('[dropping_server]: moving base to drop: '+ base_pos_dict_key + ' position')
 
 
-       self.go_base_pos_async(base_pos_goal)
+       if not self.go_base_pos_async(base_pos_goal):
+           return
 
 
        ######################################
@@ -109,7 +110,6 @@ class DroppingAction(BTMotion):
        joint_pos_goal =  left_arm_joint_pos_dict['drop']
 
        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
-           self.set_status('FAILURE')
            return
 
        ######################################
@@ -119,7 +119,6 @@ class DroppingAction(BTMotion):
        rospy.loginfo('[dropping_server]: moving torso to drop position')
 
        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-           self.set_status('FAILURE')
            return
 
 
@@ -129,7 +128,8 @@ class DroppingAction(BTMotion):
        base_pos_goal[1] = move_base_y
 
        rospy.loginfo('[dropping_server]: moving base left towards the bin')
-       self.go_base_pos_async(base_pos_goal)
+       if not self.go_base_pos_async(base_pos_goal):
+           return
 
 
        ######################################
@@ -146,7 +146,8 @@ class DroppingAction(BTMotion):
        # release gripper
 
        rospy.loginfo('[dropping_server]: opening gripper')
-       self.open_l_gripper()
+       if not self.open_l_gripper():
+           return
 
        ######################################
        # move left arm back up

@@ -52,7 +52,6 @@ class BTMotion:
         self._result   = amazon_challenge_bt_actions.msg.BTResult()
         self._action_name = name
         self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
-        self._as.start()
         self.pub_posed = rospy.Publisher('arm_posed', String, queue_size=10)
         self.pub_rate = rospy.Rate(30)
         while not rospy.is_shutdown():
@@ -107,10 +106,12 @@ class BTMotion:
         else:
             self._length_tool = 0.216 + self._tool_size[0]
 
+        self._as.start()
+
+
 
     def timer_callback(self, event):
         rospy.logerr('[' + rospy.get_name() + ']: TIMED OUT!')
-        self._exit = True
 
         # pull the base back 60 cm
 
@@ -131,12 +132,25 @@ class BTMotion:
         self._arms.set_joint_value_target(joint_pos_goal)
         self._arms.go()
 
+        self._exit = True
 
 
+
+    def execute_exit(self):
+        if self._exit:
+            self._success = False
+            self.set_status('FAILURE')
+            self._timer.shutdown()
+            return True
+
+        return False
 
     def execute_cb(self, goal):
-        rospy.loginfo('test execute cb')
+        print 'bt motion execute callback'
 
+    def init_cb(self):
+        self._exit=False
+        self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
 
     def get_task(self, msg):
         text = msg.data
@@ -213,7 +227,10 @@ class BTMotion:
 
         r = rospy.Rate(1.0)
         # check for preemption while the arm hasn't reach goal configuration
-        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown() and not self._exit:
+        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
 
             q_now = np.array(group.get_current_joint_values())
 
@@ -226,8 +243,9 @@ class BTMotion:
                 group.stop()
                 rospy.loginfo('action halted')
                 self._as.set_preempted()
-                self._success = False
-                return False
+                self._exit = True
+                if self.execute_exit():
+                    return False
 
             if (rospy.Time.now()-t_print).to_sec()>3.0:
                 t_print = rospy.Time.now()
@@ -235,10 +253,6 @@ class BTMotion:
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
-
-        if self._exit:
-            self._success = False
-            return False
 
         return True
 
@@ -264,55 +278,57 @@ class BTMotion:
         r = rospy.Rate(100.0)
 
         # check for preemption while the base hasn't reach goal configuration
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown() and not self._exit:
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 rospy.loginfo('action halted while moving base')
                 self._as.set_preempted()
-                self._success = False
-                return False
+                self._exit = True
+                if self.execute_exit():
+                    return False
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
-        if self._exit:
-            self._success = False
-            return False
+        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown():
 
-        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown() and not self._exit:
+            if self.execute_exit():
+                return False
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 rospy.loginfo('action halted while moving base')
                 self._as.set_preempted()
-                self._success = False
-                return False
+                self._exit = True
+                if self.execute_exit():
+                    return False
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
-        if self._exit:
-            self._success = False
-            return False
 
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown() and not self._exit:
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
 
             # check that preempt has not been requested by the client
             if self._as.is_preempt_requested():
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 rospy.loginfo('action halted while moving base')
-                self._success = False
-                return False
+                self._as.set_preempted()
+                self._exit = True
+                if self.execute_exit():
+                    return False
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
-
-        if self._exit:
-            self._success = False
-            return False
 
         return True
 
@@ -360,7 +376,10 @@ class BTMotion:
         r = rospy.Rate(10.0)
         t_init = rospy.Time.now()
 
-        while (rospy.Time.now()-t_init).to_sec()<3.0 and not rospy.is_shutdown() and not self._exit:
+        while (rospy.Time.now()-t_init).to_sec()<3.0 and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
 
             self._l_gripper_pub.publish(gripper_command_msg)
               # check that preempt has not been requested by the client
@@ -368,14 +387,11 @@ class BTMotion:
                 #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
                 rospy.loginfo('action halted while opening gripper')
                 self._as.set_preempted()
-                self._success = False
-                return False
+                self._exit = True
+                if self.execute_exit():
+                    return False
 
             r.sleep()
-
-        if self._exit:
-            self._success = False
-            return False
 
         return True
 

@@ -46,8 +46,7 @@ import random
 class PreGraspAction(BTMotion):
 
     def execute_cb(self, goal):
-        self._exit = False
-        rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
+        self.init_cb()
         # publish info to the console for the user
         rospy.loginfo('[pregrasp_server]: started action')
         self._success = True
@@ -76,7 +75,6 @@ class PreGraspAction(BTMotion):
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
         if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
-            self.set_status('FAILURE')
             return
 
 
@@ -88,7 +86,6 @@ class PreGraspAction(BTMotion):
         joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
 
         if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.set_status('FAILURE')
             return
 
         #####################################
@@ -100,7 +97,8 @@ class PreGraspAction(BTMotion):
 
         r = rospy.Rate(100.0)
 
-        self.go_base_pos_async(base_pos_goal)
+        if not self.go_base_pos_async(base_pos_goal):
+            return
 
 
 
@@ -117,7 +115,6 @@ class PreGraspAction(BTMotion):
         joint_pos_goal =  left_arm_joint_pos_dict['pregrasp'][row]
 
         if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
-            self.set_status('FAILURE')
             return
 
 

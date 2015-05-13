@@ -1,7 +1,7 @@
 <launch>
 
   <arg name="sim" default="false"/>
-  <arg name="timeout" default="90.0"/>
+  <arg name="timeout" default="60.0"/>
 
   <!-- spawn the 'robot pose initializer'  -->
   <node name="base_torso_head_init_server" pkg="amazon_challenge_motion" type="base_torso_head_init_server" output="screen" respawn="true">
