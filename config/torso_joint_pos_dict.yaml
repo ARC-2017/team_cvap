@@ -2,11 +2,13 @@ torso_joint_pos_dict:
   start: [0.3]
 
   detector:
-    row_2: [0.325]
-    row_3: [0.32]
-    row_4: [0.27]
+    row_1: [0.32]
+    row_2: [0.32]
+    row_3: [0.27]
+    row_4: [0.02]
 
   pregrasp:
+    row_1: [0.32]
     row_2: [0.32]
     row_3: [0.27]
     row_4: [0.02]
