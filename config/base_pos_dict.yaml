@@ -6,15 +6,5 @@ base_pos_dict:
   column_2: [-0.82, -0.2705, 0.0, 0.0, 0.0, 0.0]
   column_3: [-0.82, -0.54, 0.0, 0.0, 0.0, 0.0]
       
-  drop:
-    move_right: [-1.42, -0.54, 0.0, 0.0, 0.0, 0.0]
-
-    # tool frame pos in base footprint frame [-0.330, 0.887, 0.585]
-    retreat_cheezit_big_original: [-1.63, -0.54, 0.0, 0.0, 0.0, 0.0]
-    retreat_oreo_mega_stuf: [-1.27, -0.54, 0.0, 0.0, 0.0, 0.0]
-    retreat: [-1.42, -0.54, 0.0, 0.0, 0.0, 0.0]
-
-    # y coordinate when moving left before dropping
-    move_left_y: -0.0575
- 
+  drop: [-1.42, 0.02, 0.0, 0.0, 0.0, 0.0]
  

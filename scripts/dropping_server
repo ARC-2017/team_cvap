@@ -44,6 +44,12 @@ from amazon_challenge_motion.bt_motion import BTMotion
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 from geometry_msgs.msg import Pose
 import random
+from moveit_commander import PlanningSceneInterface
+from geometry_msgs.msg import PoseStamped
+import PyKDL as kdl
+from tf_conversions import posemath
+import copy
+
 
 class DroppingAction(BTMotion):
 
@@ -75,13 +81,13 @@ class DroppingAction(BTMotion):
                continue
 
 
-           # start executing the action
+       # start executing the action
 
-           ######################################
-           # move base to drop_1 position (to the right)
+       ######################################
+       # move base to drop position
 
-       base_pos_goal = base_pos_dict['drop']['move_right']
-       rospy.loginfo('[dropping_server]: moving base to drop: move_right position')
+       base_pos_goal = base_pos_dict['drop']
+       rospy.loginfo('[dropping_server]: moving base to drop position')
 
 
        if not self.go_base_pos_async(base_pos_goal):
@@ -89,17 +95,36 @@ class DroppingAction(BTMotion):
 
 
        ######################################
-       # move base to drop retreat position (backwards)
-
-       base_pos_dict_key = 'retreat'
-       if self._item=='cheezit_big_original' or self._item=='oreo_mega_stuf':
-           base_pos_dict_key = base_pos_dict_key+'_'+self._item
-
-       base_pos_goal = base_pos_dict['drop'][base_pos_dict_key]
-       rospy.loginfo('[dropping_server]: moving base to drop: '+ base_pos_dict_key + ' position')
+       # add collision model of grasped object
+       planning_scene = PlanningSceneInterface()
 
 
-       if not self.go_base_pos_async(base_pos_goal):
+       size = []
+       if self._item == 'cheezit_big_original':
+           size = [0.24, 0.06, 0.06]
+
+       elif self._item == 'oreo_mega_stuf':
+           size = [0.15, 0.04, 0.04]
+
+
+       elif self._item == 'crayola_64_ct':
+           size = [0.25, 0.05, 0.05]
+
+
+       else:
+           size = [0.15, 0.04, 0.04]
+
+
+       F_object = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(size[0]*0.5 + self._tool_size[0] + 0.016, 0.0, 0.0))
+       object_pose = PoseStamped()
+       object_pose.pose = copy.deepcopy(posemath.toMsg(F_object))
+       object_pose.header.frame_id = 'l_gripper_tool_frame'
+       object_pose.header.stamp = rospy.Time.now()
+
+       planning_scene.attach_box('grasped_object_link', 'grasped_object', object_pose, size)
+       rospy.sleep(1.0)
+
+       if self.execute_exit():
            return
 
 
@@ -107,29 +132,26 @@ class DroppingAction(BTMotion):
        # move left arm to drop position
 
        rospy.loginfo('[dropping_server]: moving left_arm to drop pos')
+
+       if self._item == 'cheezit_big_original':
+           drop_pose = kdl.Frame(kdl.Rotation(0.0, np.pi*0.5, -np.pi*0.5))
+
+
        joint_pos_goal =  left_arm_joint_pos_dict['drop']
 
        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
            return
 
-       ######################################
-       # move torso to drop position
-
-       joint_pos_goal = torso_joint_pos_dict['drop']
-       rospy.loginfo('[dropping_server]: moving torso to drop position')
-
-       if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-           return
-
 
        ######################################
-       # move base to the left towards the bin
-       move_base_y = base_pos_dict['drop']['move_left_y']
-       base_pos_goal[1] = move_base_y
+       # remove collision object
 
-       rospy.loginfo('[dropping_server]: moving base left towards the bin')
-       if not self.go_base_pos_async(base_pos_goal):
+       planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+       rospy.sleep(1.0)
+
+       if self.execute_exit():
            return
+
 
 
        ######################################

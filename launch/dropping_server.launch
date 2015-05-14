@@ -3,6 +3,8 @@
   <arg name="sim" default="false"/>
   <arg name="timeout" default="90.0"/>
 
+  <!-- dropping height (of tool tip w.r.t odom_combined -->
+  <param name="/dropping_height" value="0.275" />
 
   <node name="drop_object" pkg="amazon_challenge_motion" type="dropping_server" output="screen" respawn="true">
     <param name="timeout" value="$(arg timeout)"/>

@@ -2,9 +2,6 @@
 
   <arg name="contest" default="true" />
 
-  <!-- dropping height (of tool tip w.r.t odom_combined -->
-  <param name="/dropping_height" value="0.255" />
-
   <!-- move_group -->
   <include file="$(find pr2_moveit_config)/launch/move_group.launch" if="$(arg contest)"/>
   <include file="$(find pr2_ft_moveit_config)/launch/move_group.launch" unless="$(arg contest)"/>
