@@ -355,7 +355,7 @@ class DroppingAction(BTMotion):
                return (PoseStamped(), False)
 
            try:
-               pose_base_wrist = self._tf_listener.transformPose('base_link', pose_bin_wrist)
+               pose_base_wrist = self._tf_listener.transformPose('odom_combined', pose_bin_wrist)
                break
 
            except:
