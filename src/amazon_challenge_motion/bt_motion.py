@@ -118,7 +118,8 @@ class BTMotion:
     def timer_callback(self, event):
         self._timer_started = True
         rospy.logerr('[' + rospy.get_name() + ']: TIMED OUT!')
-        self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+        self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+        self._planning_scene.remove_world_object('grasped_object')
 
 
         # pull the base back 60 cm
@@ -157,7 +158,8 @@ class BTMotion:
         print 'bt motion execute callback'
 
     def init_cb(self):
-        self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+        self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+        self._planning_scene.remove_world_object('grasped_object')
         self._timer_started = False
         self._exit=False
         self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
@@ -264,6 +266,9 @@ class BTMotion:
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
+        if rospy.is_shutdown():
+            return False
+
         return True
 
 
@@ -305,6 +310,9 @@ class BTMotion:
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
+        if rospy.is_shutdown():
+            return False
+
         while not self._bm.goPosition(pos, False) and not rospy.is_shutdown():
 
             if self.execute_exit():
@@ -322,6 +330,8 @@ class BTMotion:
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
 
+        if rospy.is_shutdown():
+            return False
 
         while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
 
@@ -339,6 +349,9 @@ class BTMotion:
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
+
+        if rospy.is_shutdown():
+            return False
 
         return True
 
@@ -425,9 +438,8 @@ class BTMotion:
 
 
         # TODO make this asynchronous
-        if fraction>0.8:
-            return self._left_arm.execute(plan)
 
-        else:
-            rospy.logerr('[' + rospy.get_name() + ']: could not move arm in z direction')
-            return False
+        self._left_arm.execute(plan)
+
+        return True
+

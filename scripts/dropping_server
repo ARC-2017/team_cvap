@@ -79,9 +79,14 @@ class DroppingAction(BTMotion):
        ######################################
        # move base to drop position
 
-       base_pos_goal = base_pos_dict['drop']
-       rospy.loginfo('[dropping_server]: moving base to drop position')
+       if (base_pos_dict['drop']).has_key(self._item):
+           base_pos_goal = base_pos_dict['drop'][self._item]
+       else:
+           base_pos_goal = base_pos_dict['drop']['default']
+       rospy.loginfo('[dropping_server]: moving base to drop position for item ' + self._item)
 
+       if self._torso.get_current_joint_values()[0] < 0.1:
+           base_pos_goal[1] = base_pos_goal[1] - base_pos_dict['drop']['low_torso_y']
 
        if not self.go_base_pos_async(base_pos_goal):
            return
@@ -120,9 +125,12 @@ class DroppingAction(BTMotion):
        # self._left_arm.set_goal_orientation_tolerance((np.pi/180)*4.0
        #
        self._left_arm.set_goal_position_tolerance(0.01)
-       self._left_arm.set_goal_orientation_tolerance((np.pi/180)*4.0)
+       self._left_arm.set_goal_orientation_tolerance((np.pi/180)*5.0)
 
-       while not self._left_arm.go(pose_base_wrist):
+       pose_base_wrist.header.stamp = rospy.Time.now()
+
+       self._left_arm.set_pose_target(pose_base_wrist)
+       while not self._left_arm.go():
 
            if self._timer_started:
                while not rospy.is_shutdown():
@@ -138,12 +146,14 @@ class DroppingAction(BTMotion):
 
 
            (pose_base_wrist, success) = self.dropping_pose(True)
+
            if not success:
                rospy.logerr('[dropping_server]: could not find dropping pose!')
                self._exit = True
                if self.execute_exit():
                    return
-
+           pose_base_wrist.header.stamp = rospy.Time.now()
+           self._left_arm.set_pose_target(pose_base_wrist)
 
        # self._left_arm.set_goal_position_tolerance(p_tol)
        # self._left_arm.set_goal_orientation_tolerance(o_tol)
@@ -152,8 +162,8 @@ class DroppingAction(BTMotion):
        ######################################
        # remove collision object
 
-       self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
-       rospy.sleep(1.0)
+       # self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+       # rospy.sleep(1.0)
 
        if self.execute_exit():
            return
@@ -167,7 +177,7 @@ class DroppingAction(BTMotion):
        z_init = self._left_arm.get_current_pose().pose.position.z
 
        z_desired = self._dropping_height # maximum 30 cm dropping height
-       while not self.move_l_arm_z(z_desired + random.uniform(-0.02, 0.02)):
+       while not self.move_l_arm_z(z_desired + random.uniform(-0.02, 0.0)):
 
            rospy.logerr('[dropping_server]: failed moving left arm down, retrying from different pose')
 
@@ -176,7 +186,8 @@ class DroppingAction(BTMotion):
 
            self.add_grasped_object_collision_model()
 
-           while not self._left_arm.go(pose_base_wrist):
+           self._left_arm.set_pose_target(pose_base_wrist)
+           while not self._left_arm.go():
 
                if self._timer_started:
                    while not rospy.is_shutdown():
@@ -198,13 +209,17 @@ class DroppingAction(BTMotion):
                    if self.execute_exit():
                        return
 
-           self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+               self._left_arm.set_pose_target(pose_base_wrist)
+
+
+           self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+           self._planning_scene.remove_world_object('grasped_object')
            rospy.sleep(1.0)
 
 
        ######################################
        # release gripper
-
+       print 'dropping height: ', self._left_arm.get_current_pose().pose.position.z-self._length_tool
        rospy.loginfo('[dropping_server]: opening gripper')
        if not self.open_l_gripper():
            return
@@ -219,7 +234,15 @@ class DroppingAction(BTMotion):
            rospy.logerr('[dropping_server]: could not move left arm up.. retrying')
 
 
+       ######################################
+       # remove collision object
 
+       self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+       self._planning_scene.remove_world_object('grasped_object')
+       rospy.sleep(1.0)
+
+       if self.execute_exit():
+           return
 
        #IF THE ACTION HAS SUCCEEDED
 
@@ -234,21 +257,21 @@ class DroppingAction(BTMotion):
            self._size = [0.24, 0.06, 0.06]
 
        elif self._item == 'oreo_mega_stuf':
-           self._size = [0.15, 0.04, 0.04]
+           self._size = [0.24, 0.04, 0.04]
 
 
        elif self._item == 'crayola_64_ct':
-           self._size = [0.25, 0.05, 0.05]
+           self._size = [0.15, 0.05, 0.05]
 
 
        else:
            self._size = [0.15, 0.04, 0.04]
 
 
-       F_object = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(self._size[0]*0.5 + self._tool_size[0] + 0.016, 0.0, 0.0))
+       F_object = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(self._size[0]*0.5 + self._length_tool + 0.02 , 0.0, 0.0))
        object_pose = PoseStamped()
        object_pose.pose = copy.deepcopy(posemath.toMsg(F_object))
-       object_pose.header.frame_id = 'l_gripper_tool_frame'
+       object_pose.header.frame_id = 'l_wrist_roll_link'
        object_pose.header.stamp = rospy.Time.now()
 
        if self._timer_started:
@@ -257,7 +280,12 @@ class DroppingAction(BTMotion):
                    return
                rospy.sleep(1.0)
 
-       self._planning_scene.attach_box('grasped_object_link', 'grasped_object', object_pose, self._size)
+           if rospy.is_shutdown():
+               self._exit = True
+               if self.execute_exit():
+                   return
+
+       self._planning_scene.attach_box('l_wrist_roll_link', 'grasped_object', object_pose, self._size)
        rospy.sleep(1.0)
 
    def dropping_pose(self, randomize=False):
@@ -270,12 +298,20 @@ class DroppingAction(BTMotion):
 
        F_bin_wrist = kdl.Frame(kdl.Rotation.RPY(pose[3], pose[4], pose[5]), kdl.Vector(pose[0], pose[1], pose[2]))
 
-       F_bin_wrist.p[2] = F_bin_wrist.p[2] + self._dropping_height + 0.05 + self._size[0] + self._tool_size[0]
+       F_bin_wrist.p[2] = F_bin_wrist.p[2] + self._dropping_height + 0.025 + self._size[0] + self._length_tool
 
        # if randomize is True, then add a small random offset in position
        if randomize:
-           F_bin_wrist.p[0] = F_bin_wrist.p[0] + 0.05*random.uniform(-1, 1)
-           F_bin_wrist.p[2] = F_bin_wrist.p[2] + 0.03*random.uniform(-1, 1)
+           if self._item == 'cheezit_big_original':
+               F_bin_wrist.p[0] = F_bin_wrist.p[0] + random.uniform(0.0, 0.06)
+
+           elif self._item == 'oreo_mega_stuf':
+               F_bin_wrist.p[0] = F_bin_wrist.p[0] + random.uniform(-0.06, 0.0)
+
+           else:
+               F_bin_wrist.p[0] = F_bin_wrist.p[0] + random.uniform(-0.06, 0.06)
+
+           F_bin_wrist.p[2] = F_bin_wrist.p[2] + random.uniform(-0.02, 0.0)
 
        pose_bin_wrist = PoseStamped()
        pose_bin_wrist.pose = posemath.toMsg(F_bin_wrist)
@@ -291,11 +327,16 @@ class DroppingAction(BTMotion):
                return (PoseStamped(), False)
 
            try:
-               pose_base_wrist = self._tf_listener.transformPose('base_link', pose_bin_wrist)
+               pose_base_wrist = self._tf_listener.transformPose('odom_combined', pose_bin_wrist)
+               break
 
            except:
                r.sleep()
 
+       if rospy.is_shutdown():
+           self._exit = True
+           if self.execute_exit():
+               return
 
        return (pose_base_wrist, True)
 
