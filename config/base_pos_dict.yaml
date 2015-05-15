@@ -7,8 +7,8 @@ base_pos_dict:
   column_3: [-0.82, -0.54, 0.0, 0.0, 0.0, 0.0]
       
   drop: 
-    cheezit_big_original: [-1.7, -0.05, 0.0, 0.0, 0.0, 0.0]
-    oreo_mega_stuf: [-1.42, -0.05, 0.0, 0.0, 0.0, 0.0]
-    default: [-1.52, -0.05, 0.0, 0.0, 0.0, 0.0]
-    low_torso_y: 0.15
+    cheezit_big_original: [-1.7, 0.0, 0.0, 0.0, 0.0, 0.0]
+    oreo_mega_stuf: [-1.42, 0.0, 0.0, 0.0, 0.0, 0.0]
+    default: [-1.52, 0.0, 0.0, 0.0, 0.0, 0.0]
+    low_torso_y: -0.2
  
