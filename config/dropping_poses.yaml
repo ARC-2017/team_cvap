@@ -1,0 +1,5 @@
+dropping_poses:
+  # poses relative to order bin frame [x y z R P Y]
+  cheezit_big_original: [-0.16, 0.0, 0.0, 0.0, 1.5708, -1.5708]
+  oreo_mega_stuf: [0.2, 0.0, 0.0, 0.0, 1.5708, -1.5708]
+  default: [0.0, 0.0, 0.0, 1.5708, -1.5708]

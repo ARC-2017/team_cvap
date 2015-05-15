@@ -5,6 +5,7 @@
 
   <!-- dropping height (of tool tip w.r.t odom_combined -->
   <param name="/dropping_height" value="0.275" />
+  <rosparam command="load" file="$(find amazon_challenge_motion)/config/dropping_poses.yaml" />
 
   <node name="drop_object" pkg="amazon_challenge_motion" type="dropping_server" output="screen" respawn="true">
     <param name="timeout" value="$(arg timeout)"/>

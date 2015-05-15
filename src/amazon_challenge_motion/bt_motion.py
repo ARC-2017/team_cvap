@@ -43,6 +43,8 @@ from calibrateBase import baseMove
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 import copy
 import random
+from moveit_commander import PlanningSceneInterface
+import tf
 
 class BTMotion:
 
@@ -89,6 +91,9 @@ class BTMotion:
         self._bm.setLinearGain(base_move_params['linear_gain'])
         self._bm.setAngularGain(base_move_params['angular_gain'])
 
+        self._planning_scene = PlanningSceneInterface()
+        self._tf_listener = tf.TransformListener()
+
         rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
         self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
@@ -111,7 +116,10 @@ class BTMotion:
 
 
     def timer_callback(self, event):
+        self._timer_started = True
         rospy.logerr('[' + rospy.get_name() + ']: TIMED OUT!')
+        self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+
 
         # pull the base back 60 cm
 
@@ -149,6 +157,8 @@ class BTMotion:
         print 'bt motion execute callback'
 
     def init_cb(self):
+        self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+        self._timer_started = False
         self._exit=False
         self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
 
@@ -415,4 +425,8 @@ class BTMotion:
 
 
         # TODO make this asynchronous
-        self._left_arm.execute(plan)
+        if fraction>0.8:
+            return self._left_arm.execute(plan)
+
+        else:
+            return False
