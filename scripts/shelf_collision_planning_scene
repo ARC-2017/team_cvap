@@ -57,7 +57,7 @@ if __name__=='__main__':
     rospy.wait_for_service('/move_group/ompl/set_parameters')
 
     planning_scene = PlanningSceneInterface()
-    rospy.sleep(15.0)
+    rospy.sleep(5.0)
     while not rospy.is_shutdown():
         try:
             base_frame_id = rospy.get_param('base_frame_id', '/base_laser_link')

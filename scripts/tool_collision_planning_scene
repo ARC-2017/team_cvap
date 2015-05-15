@@ -61,7 +61,7 @@ if __name__=='__main__':
 
 
     planning_scene = PlanningSceneInterface()
-    rospy.sleep(10.0)
+    rospy.sleep(5.0)
     while not rospy.is_shutdown():
         try:
             tool_size = rospy.get_param('/tool_size', [0.16, 0.02, 0.04])

@@ -53,7 +53,7 @@ if __name__=='__main__':
     rospy.wait_for_service('/move_group/ompl/set_parameters')
 
     planning_scene = PlanningSceneInterface()
-    rospy.sleep(15.0)
+    rospy.sleep(5.0)
 
     while not rospy.is_shutdown():
         try:
@@ -90,7 +90,7 @@ if __name__=='__main__':
     pose_shelf_order_bin.pose = posemath.toMsg(F_shelf_order_bin)
     pose_shelf_order_bin.header.frame_id = shelf_frame_id
 
-    order_bin_collision_object_msg = moveit_msgs.msg.CollisionObject()
+    collision_object_msg = moveit_msgs.msg.CollisionObject()
 
     F_shelf_previous = kdl.Frame()
 
@@ -100,6 +100,42 @@ if __name__=='__main__':
     tf_listener = TransformListener()
     tf_broadcaster = TransformBroadcaster()
 
+    # define each of the layers of the bin
+
+    # front layer
+    front_layer_pose = copy.deepcopy(pose_shelf_order_bin)
+    front_layer_pose.pose.position.x = front_layer_pose.pose.position.x + order_bin_size[0]*0.5
+    front_layer_size = copy.deepcopy(order_bin_size)
+    front_layer_size[0] = 0.03
+
+    # back layer
+    back_layer_pose = copy.deepcopy(pose_shelf_order_bin)
+    back_layer_pose.pose.position.x = back_layer_pose.pose.position.x - order_bin_size[0]*0.5
+    back_layer_size = copy.deepcopy(order_bin_size)
+    back_layer_size[0] = 0.03
+
+    # left layer
+    left_layer_pose = copy.deepcopy(pose_shelf_order_bin)
+    left_layer_pose.pose.position.y = left_layer_pose.pose.position.y + order_bin_size[1]*0.5
+    left_layer_size = copy.deepcopy(order_bin_size)
+    left_layer_size[1] = 0.03
+    left_layer_size[0] = left_layer_size[0] - 0.031
+
+    # right layer
+    right_layer_pose = copy.deepcopy(pose_shelf_order_bin)
+    right_layer_pose.pose.position.y = right_layer_pose.pose.position.y - order_bin_size[1]*0.5
+    right_layer_size = copy.deepcopy(order_bin_size)
+    right_layer_size[1] = 0.03
+    right_layer_size[0] = right_layer_size[0] - 0.031
+
+    # bottom layer
+    bottom_layer_pose = copy.deepcopy(pose_shelf_order_bin)
+
+    bottom_layer_pose.pose.position.z = bottom_layer_pose.pose.position.z - order_bin_size[2]*0.5
+    bottom_layer_size = copy.deepcopy(order_bin_size)
+    bottom_layer_size[2] = 0.03
+    bottom_layer_size[0] = bottom_layer_size[0] - 0.031
+    bottom_layer_size[1] = bottom_layer_size[1] - 0.031
 
     object_added = False
 
@@ -125,8 +161,20 @@ if __name__=='__main__':
 
         if not object_added:
 
-            pose_shelf_order_bin.header.stamp = rospy.Time.now()
-            planning_scene.add_box('order_bin', pose_shelf_order_bin, order_bin_size)
+            front_layer_pose.header.stamp = rospy.Time.now()
+            back_layer_pose.header.stamp = rospy.Time.now()
+            left_layer_pose.header.stamp = rospy.Time.now()
+            right_layer_pose.header.stamp = rospy.Time.now()
+            bottom_layer_pose.header.stamp = rospy.Time.now()
+
+            names = ['front', 'back', 'left', 'right', 'bottom']
+            poses = [front_layer_pose, back_layer_pose, left_layer_pose, right_layer_pose, bottom_layer_pose]
+            sizes = [front_layer_size, back_layer_size, left_layer_size, right_layer_size, bottom_layer_size]
+
+            for i in xrange(5):
+                planning_scene.add_box('order_bin_' + names[i], poses[i], sizes[i])
+                rospy.sleep(0.2)
+
             object_added = True
             F_shelf_previous = copy.deepcopy(F_shelf)
 
@@ -144,14 +192,15 @@ if __name__=='__main__':
             translation = (F_shelf.p-F_shelf_previous.p).Norm()
 
             if (translation>translation_tolerance) or (angle_rotation>rotation_tolerance):
-                
-                order_bin_collision_object_msg.operation = order_bin_collision_object_msg.MOVE
-                order_bin_collision_object_msg.id = 'order_bin'
-                order_bin_collision_object_msg.mesh_poses = [pose_shelf_order_bin.pose]
-                order_bin_collision_object_msg.header.stamp = rospy.Time.now()
-                order_bin_collision_object_msg.header.frame_id = shelf_frame_id
 
-                collision_object_pub.publish(order_bin_collision_object_msg)
+                for i in xrange(5):
+                    collision_object_msg.operation = collision_object_msg.MOVE
+                    collision_object_msg.id = 'order_bin_' + names[i]
+                    collision_object_msg.mesh_poses = [poses[i].pose]
+                    collision_object_msg.header.stamp = rospy.Time.now()
+                    collision_object_msg.header.frame_id = shelf_frame_id
+                    collision_object_pub.publish(collision_object_msg)
+                    rospy.sleep(0.2)
 
                 F_shelf_previous = copy.deepcopy(F_shelf)
 
