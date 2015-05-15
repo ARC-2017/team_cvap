@@ -117,7 +117,10 @@ class DroppingAction(BTMotion):
        #
        #
        # self._left_arm.set_goal_position_tolerance(0.01)
-       # self._left_arm.set_goal_orientation_tolerance((np.pi/180)*4.0)
+       # self._left_arm.set_goal_orientation_tolerance((np.pi/180)*4.0
+       #
+       self._left_arm.set_goal_position_tolerance(0.01)
+       self._left_arm.set_goal_orientation_tolerance((np.pi/180)*4.0)
 
        while not self._left_arm.go(pose_base_wrist):
 
@@ -164,9 +167,39 @@ class DroppingAction(BTMotion):
        z_init = self._left_arm.get_current_pose().pose.position.z
 
        z_desired = self._dropping_height # maximum 30 cm dropping height
-       if not self.move_l_arm_z(z_desired):
+       while not self.move_l_arm_z(z_desired + random.uniform(-0.02, 0.02)):
+
            rospy.logerr('[dropping_server]: failed moving left arm down, retrying from different pose')
 
+           if self.execute_exit():
+               return
+
+           self.add_grasped_object_collision_model()
+
+           while not self._left_arm.go(pose_base_wrist):
+
+               if self._timer_started:
+                   while not rospy.is_shutdown():
+                       if self.execute_exit():
+                           return
+
+                       rospy.sleep(1.0)
+
+                   if rospy.is_shutdown():
+                       self._exit = True
+                       if self.execute_exit():
+                           return
+
+
+               (pose_base_wrist, success) = self.dropping_pose(True)
+               if not success:
+                   rospy.logerr('[dropping_server]: could not find dropping pose!')
+                   self._exit = True
+                   if self.execute_exit():
+                       return
+
+           self._planning_scene.remove_attached_object('grasped_object_link', 'grasped_object')
+           rospy.sleep(1.0)
 
 
        ######################################
@@ -182,7 +215,9 @@ class DroppingAction(BTMotion):
        rospy.loginfo('[dropping_server]: moving left arm up')
        # calculate where to go up
        z_desired = z_init
-       self.move_l_arm_z(z_desired)
+       while not self.move_l_arm_z(z_desired + random.uniform(-0.03, 0.03)):
+           rospy.logerr('[dropping_server]: could not move left arm up.. retrying')
+
 
 
 
@@ -226,8 +261,6 @@ class DroppingAction(BTMotion):
        rospy.sleep(1.0)
 
    def dropping_pose(self, randomize=False):
-
-
 
        if self._dropping_poses_dict.has_key(self._item):
            pose = self._dropping_poses_dict[self._item]

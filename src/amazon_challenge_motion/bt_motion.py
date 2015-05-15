@@ -429,4 +429,5 @@ class BTMotion:
             return self._left_arm.execute(plan)
 
         else:
+            rospy.logerr('[' + rospy.get_name() + ']: could not move arm in z direction')
             return False
