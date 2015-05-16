@@ -56,24 +56,14 @@ class BTMotion:
         self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
         self.pub_posed = rospy.Publisher('arm_posed', String, queue_size=10)
         self.pub_rate = rospy.Rate(30)
-        while not rospy.is_shutdown():
-            try:
-                self._left_arm = moveit_commander.MoveGroupCommander('left_arm')
-                self._right_arm = moveit_commander.MoveGroupCommander('right_arm')
-                self._arms = moveit_commander.MoveGroupCommander('arms')
-                self._torso = moveit_commander.MoveGroupCommander('torso')
-                self._head = moveit_commander.MoveGroupCommander('head')
-                self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
-                break
-            except:
-                rospy.sleep(random.uniform(0,2))
-                continue
+
+        self._planning_scene = PlanningSceneInterface()
 
         # get ROS parameters
         rospy.loginfo('Getting parameters...')
         while not rospy.is_shutdown():
             try:
-                base_move_params = rospy.get_param('/base_move')
+                self._base_move_params = rospy.get_param('/base_move')
                 self._timeout = rospy.get_param(name + '/timeout')
                 self._sim = rospy.get_param(name + '/sim')
                 self._base_pos_dict = rospy.get_param('/base_pos_dict')
@@ -85,16 +75,9 @@ class BTMotion:
                 continue
 
         self._exit = False
-        self._bm = baseMove.baseMove(verbose=False)
-        self._bm.setPosTolerance(base_move_params['pos_tolerance'])
-        self._bm.setAngTolerance(base_move_params['ang_tolerance'])
-        self._bm.setLinearGain(base_move_params['linear_gain'])
-        self._bm.setAngularGain(base_move_params['angular_gain'])
 
-        self._planning_scene = PlanningSceneInterface()
-        self._tf_listener = tf.TransformListener()
 
-        rospy.Subscriber("/amazon_next_task", String, self.get_task)
+        self._next_task_sub = rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
         self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
         while not rospy.is_shutdown():
@@ -157,12 +140,51 @@ class BTMotion:
     def execute_cb(self, goal):
         print 'bt motion execute callback'
 
-    def init_cb(self):
+    def init_as(self):
+        while not rospy.is_shutdown():
+            try:
+                self._robot = moveit_commander.RobotCommander()
+                self._left_arm = self._robot.get_group('left_arm')
+                self._right_arm = self._robot.get_group('right_arm')
+                self._arms = self._robot.get_group('arms')
+                self._torso = self._robot.get_group('torso')
+                self._head = self._robot.get_group('head')
+                self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
+                break
+            except:
+                rospy.sleep(random.uniform(0,2))
+                continue
+
         self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
         self._planning_scene.remove_world_object('grasped_object')
         self._timer_started = False
         self._exit=False
         self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
+
+
+        self._bm = baseMove.baseMove(verbose=False)
+        self._bm.setPosTolerance(self._base_move_params['pos_tolerance'])
+        self._bm.setAngTolerance(self._base_move_params['ang_tolerance'])
+        self._bm.setLinearGain(self._base_move_params['linear_gain'])
+        self._bm.setAngularGain(self._base_move_params['angular_gain'])
+
+        self._tf_listener = tf.TransformListener()
+
+        rospy.sleep(1.0)
+
+    def finish_as(self):
+        try:
+            del(self._left_arm)
+            del(self._right_arm)
+            del(self._arms)
+            del(self._torso)
+            del(self._head)
+            del(self._arms_dict)
+            del(self._bm)
+            del(self._tf_listener)
+
+        except:
+            pass
 
     def get_task(self, msg):
         text = msg.data
@@ -290,7 +312,7 @@ class BTMotion:
 
         angle = base_pos_goal[5]
         pos = base_pos_goal[0:2]
-        r = rospy.Rate(100.0)
+        r = rospy.Rate(20.0)
 
         # check for preemption while the base hasn't reach goal configuration
         while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
