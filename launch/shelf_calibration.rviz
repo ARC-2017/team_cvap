@@ -14,7 +14,6 @@ Panels:
         - /TF1
         - /TF1/Frames1
         - /Image1
-        - /Image1/Status1
       Splitter Ratio: 0.566502
     Tree Height: 317
   - Class: rviz/Help
@@ -1509,7 +1508,7 @@ Visualization Manager:
       Color: 255; 255; 255
       Color Transformer: Intensity
       Decay Time: 0
-      Enabled: true
+      Enabled: false
       Invert Rainbow: false
       Max Color: 255; 255; 255
       Max Intensity: 0
@@ -1525,7 +1524,7 @@ Visualization Manager:
       Topic: /base_scan
       Use Fixed Frame: true
       Use rainbow: true
-      Value: true
+      Value: false
     - Class: rviz/TF
       Enabled: true
       Frame Timeout: 15
@@ -1551,15 +1550,15 @@ Visualization Manager:
           Value: true
         br_caster_rotation_link:
           Value: true
-        cheezit_big_original:
-          Value: true
-        cheezit_big_original_detector:
-          Value: true
         double_stereo_link:
+          Value: true
+        dr_browns_bottle_brush:
           Value: true
         elmers_washable_no_run_school_glue:
           Value: true
-        empty_detector:
+        elmers_washable_no_run_school_glue_detector:
+          Value: true
+        expo_dry_erase_board_eraser:
           Value: true
         fl_caster_l_wheel_link:
           Value: true
@@ -1572,6 +1571,8 @@ Visualization Manager:
         fr_caster_r_wheel_link:
           Value: true
         fr_caster_rotation_link:
+          Value: true
+        genuine_joe_plastic_stir_sticks:
           Value: true
         head_mount_kinect_depth_frame:
           Value: true
@@ -1679,6 +1680,10 @@ Visualization Manager:
           Value: true
         order_bin:
           Value: true
+        paper_mate_12_count_mirado_black_warrior:
+          Value: true
+        paper_mate_12_count_mirado_black_warrior_detector:
+          Value: true
         projector_wg6802418_child_frame:
           Value: true
         projector_wg6802418_frame:
@@ -1735,7 +1740,13 @@ Visualization Manager:
           Value: true
         right_leg:
           Value: true
+        rolodex_jumbo_pencil_cup:
+          Value: true
+        safety_works_safety_glasses:
+          Value: true
         sensor_mount_link:
+          Value: true
+        sharpie_accent_tank_style_highlighters:
           Value: true
         shelf_bin_A:
           Value: true
@@ -1760,8 +1771,6 @@ Visualization Manager:
         shelf_bin_K:
           Value: true
         shelf_bin_L:
-          Value: true
-        shelf_empty:
           Value: true
         shelf_frame:
           Value: true
@@ -1811,24 +1820,24 @@ Visualization Manager:
                   shelf_bin_C:
                     {}
                   shelf_bin_D:
-                    {}
+                    stanley_66_052_detector:
+                      {}
                   shelf_bin_E:
                     {}
                   shelf_bin_F:
-                    {}
+                    paper_mate_12_count_mirado_black_warrior_detector:
+                      {}
                   shelf_bin_G:
                     {}
                   shelf_bin_H:
-                    {}
+                    elmers_washable_no_run_school_glue_detector:
+                      {}
                   shelf_bin_I:
                     {}
                   shelf_bin_J:
                     {}
                   shelf_bin_K:
-                    cheezit_big_original_detector:
-                      {}
-                    stanley_66_052_detector:
-                      {}
+                    {}
                   shelf_bin_L:
                     {}
               bl_caster_rotation_link:
@@ -1966,15 +1975,27 @@ Visualization Manager:
                   {}
               torso_lift_motor_screw_link:
                 {}
-            cheezit_big_original:
-              {}
-            elmers_washable_no_run_school_glue:
-              {}
-            stanley_66_052:
-              {}
+          dr_browns_bottle_brush:
+            {}
+          elmers_washable_no_run_school_glue:
+            {}
+          expo_dry_erase_board_eraser:
+            {}
+          genuine_joe_plastic_stir_sticks:
+            {}
           odomL:
             {}
           odomR:
+            {}
+          paper_mate_12_count_mirado_black_warrior:
+            {}
+          rolodex_jumbo_pencil_cup:
+            {}
+          safety_works_safety_glasses:
+            {}
+          sharpie_accent_tank_style_highlighters:
+            {}
+          stanley_66_052:
             {}
       Update Interval: 0
       Value: true
@@ -2511,7 +2532,7 @@ Visualization Manager:
   Views:
     Current:
       Class: rviz/XYOrbit
-      Distance: 3.88859
+      Distance: 4.47129
       Enable Stereo Rendering:
         Stereo Eye Separation: 0.06
         Stereo Focal Distance: 1
@@ -2523,10 +2544,10 @@ Visualization Manager:
         Z: 1.08689e-06
       Name: Current View
       Near Clip Distance: 0.01
-      Pitch: 1.0498
+      Pitch: 0.369801
       Target Frame: base_link
       Value: XYOrbit (rviz)
-      Yaw: 2.54949
+      Yaw: 2.40449
     Saved: ~
 Window Geometry:
   Displays:
@@ -2544,5 +2565,5 @@ Window Geometry:
   Views:
     collapsed: false
   Width: 1920
-  X: 1912
-  Y: -4
+  X: -7
+  Y: 24
