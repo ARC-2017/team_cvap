@@ -301,7 +301,7 @@ class BTMotion:
 
             if (rospy.Time.now()-t_print).to_sec()>3.0:
                 t_print = rospy.Time.now()
-                rospy.loginfo('executing action')
+                rospy.loginfo('[' + rospy.get_name() + ']: executing action')
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()
@@ -386,6 +386,132 @@ class BTMotion:
                 self._exit = True
                 if self.execute_exit():
                     return False
+
+            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
+            r.sleep()
+
+        if rospy.is_shutdown():
+            return False
+
+        return True
+
+    def go_base_moveit_group_pos_async(self, base_pos_goal, group, joint_pos_goal, normalize_angles=False):
+        angle = base_pos_goal[5]
+        pos = base_pos_goal[0:2]
+        r = rospy.Rate(20.0)
+
+        q_goal = np.array(joint_pos_goal)
+        if normalize_angles:
+            q_goal = self.normalize_angles(joint_pos_goal)
+
+        group.set_joint_value_target(joint_pos_goal)
+        group.go(wait=False)
+
+        q_now = np.array(group.get_current_joint_values())
+
+        if normalize_angles:
+            q_now = self.normalize_angles(q_now)
+
+
+        q_tol = group.get_goal_joint_tolerance()
+        if group.get_name()=='left_arm' or group.get_name()=='right_arm' or group.get_name()=='arms' or group.get_name()=='head':
+            q_tol = 0.04
+
+        elif group.get_name()=='torso':
+            q_tol = 0.003
+
+        t_print = rospy.Time.now()
+
+        # check for preemption while the base hasn't reach goal configuration
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
+
+            # check that preempt has not been requested by the client
+            if self._as.is_preempt_requested():
+                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+                rospy.loginfo('action halted while moving base')
+                self._as.set_preempted()
+                self._exit = True
+                if self.execute_exit():
+                    return False
+
+            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
+            r.sleep()
+
+        if rospy.is_shutdown():
+            return False
+
+        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown():
+            if self.execute_exit():
+                return False
+
+            q_now = np.array(group.get_current_joint_values())
+
+            if normalize_angles:
+                q_now = self.normalize_angles(q_now)
+
+            # check that preempt has not been requested by the client
+            if self._as.is_preempt_requested():
+                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+                rospy.loginfo('action halted while moving base and ' + group.get_name())
+                self._as.set_preempted()
+                self._exit = True
+                if self.execute_exit():
+                    return False
+
+            if (rospy.Time.now()-t_print).to_sec()>3.0:
+                t_print = rospy.Time.now()
+                rospy.loginfo('[' + rospy.get_name() + ']: executing action')
+
+            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
+            r.sleep()
+
+        if rospy.is_shutdown():
+            return False
+
+        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
+
+            # check that preempt has not been requested by the client
+            if self._as.is_preempt_requested():
+                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+                rospy.loginfo('action halted while moving base')
+                self._as.set_preempted()
+                self._exit = True
+                if self.execute_exit():
+                    return False
+
+            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
+            r.sleep()
+
+        # check for preemption while the arm hasn't reach goal configuration
+        while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
+
+            if self.execute_exit():
+                return False
+
+            q_now = np.array(group.get_current_joint_values())
+
+            if normalize_angles:
+                q_now = self.normalize_angles(q_now)
+
+            # check that preempt has not been requested by the client
+            if self._as.is_preempt_requested():
+                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+                group.stop()
+                rospy.loginfo('action halted')
+                self._as.set_preempted()
+                self._exit = True
+                if self.execute_exit():
+                    return False
+
+            if (rospy.Time.now()-t_print).to_sec()>3.0:
+                t_print = rospy.Time.now()
+                rospy.loginfo('[' + rospy.get_name() + ']: executing action')
 
             #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
             r.sleep()

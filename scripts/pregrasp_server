@@ -82,26 +82,28 @@ class PreGraspAction(BTMotion):
         ######################################
         # move torso to appropriate row
 
-        row = self.get_row()
-        rospy.loginfo('[pregrasp_server]: moving torso to ' + row)
-        joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
-
-        if not self.go_joint_goal_async(self._torso, joint_pos_goal):
-            self.finish_as()
-            return
+        # this is taken care of by base_head_torso_init_server
+        # row = self.get_row()
+        # rospy.loginfo('[pregrasp_server]: moving torso to ' + row)
+        # joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
+        #
+        # if not self.go_joint_goal_async(self._torso, joint_pos_goal):
+        #     self.finish_as()
+        #     return
 
         #####################################
         # move base to appropriate column
 
-        column = self.get_column()
-        base_pos_goal = base_pos_dict[column]
-        rospy.loginfo('[pregrasp_server]: moving base to ' + column)
-
-        r = rospy.Rate(100.0)
-
-        if not self.go_base_pos_async(base_pos_goal):
-            self.finish_as()
-            return
+        # this is taken care of by base_head_torso_init_server
+        # column = self.get_column()
+        # base_pos_goal = base_pos_dict[column]
+        # rospy.loginfo('[pregrasp_server]: moving base to ' + column)
+        #
+        # r = rospy.Rate(100.0)
+        #
+        # if not self.go_base_pos_async(base_pos_goal):
+        #     self.finish_as()
+        #     return
 
 
 
