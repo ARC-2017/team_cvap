@@ -45,6 +45,7 @@ import copy
 import random
 from moveit_commander import PlanningSceneInterface
 import tf
+from simtrack_nodes.srv import SwitchObjects
 
 class BTMotion:
 
@@ -58,6 +59,7 @@ class BTMotion:
         self.pub_rate = rospy.Rate(30)
 
         self._planning_scene = PlanningSceneInterface()
+
 
         # get ROS parameters
         rospy.loginfo('Getting parameters...')
@@ -140,6 +142,21 @@ class BTMotion:
     def execute_cb(self, goal):
         print 'bt motion execute callback'
 
+
+    def shutdown_simtrack(self):
+        # get simtrack switch objects service
+        while not rospy.is_shutdown():
+            try:
+                rospy.wait_for_service('/simtrack/switch_objects', 10.0)
+                break
+            except:
+                rospy.loginfo('[' + rospy.get_name() + ']: waiting for simtrack switch object service')
+                continue
+
+        simtrack_switch_objects_srv = rospy.ServiceProxy('/simtrack/switch_objects', SwitchObjects)
+
+        simtrack_switch_objects_srv.call()
+
     def init_as(self):
         while not rospy.is_shutdown():
             try:
@@ -169,8 +186,9 @@ class BTMotion:
         self._bm.setAngularGain(self._base_move_params['angular_gain'])
 
         self._tf_listener = tf.TransformListener()
+        self.shutdown_simtrack()
 
-        rospy.sleep(1.0)
+        rospy.sleep(2.0)
 
     def finish_as(self):
         try:
