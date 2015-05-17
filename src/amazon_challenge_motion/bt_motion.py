@@ -198,6 +198,7 @@ class BTMotion:
             del(self._torso)
             del(self._head)
             del(self._arms_dict)
+            del(self._robot)
             del(self._bm)
             del(self._tf_listener)
 

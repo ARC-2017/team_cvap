@@ -115,6 +115,7 @@ class PreGraspAction(BTMotion):
 
         ######################################
         # move left arm to start pose for given bin
+        row = self.get_row()
 
         rospy.loginfo('[pregrasp_server]: moving left_arm ' + 'to ' + row)
         joint_pos_goal =  left_arm_joint_pos_dict['pregrasp'][row]
