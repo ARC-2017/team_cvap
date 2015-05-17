@@ -46,6 +46,8 @@ import random
 class BaseTorsoHeadInitAction(BTMotion):
 
     def execute_cb(self, goal):
+
+
         self.init_as()
         # publish info to the console for the user
         rospy.loginfo('[base_torso_head_init_server]: started action')
@@ -78,7 +80,6 @@ class BaseTorsoHeadInitAction(BTMotion):
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
         if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
-            self.finish_as()
             return
 
 
@@ -94,11 +95,10 @@ class BaseTorsoHeadInitAction(BTMotion):
         rospy.loginfo('[base_torso_head_init_server]: moving base to ' + column)
 
         if not self.go_base_moveit_group_pos_async(base_pos_goal, self._torso, joint_pos_goal, normalize_angles=False):
-            self.finish_as()
             return
 
+        rospy.sleep(3.0)
         if not self.go_base_pos_async(base_pos_goal):
-            self.finish_as()
             return
 
         ######################################
@@ -109,13 +109,11 @@ class BaseTorsoHeadInitAction(BTMotion):
         rospy.loginfo('[base_torso_head_init_server]: moving head to ' + row)
 
         if not self.go_joint_goal_async(self._head, joint_pos_goal):
-            self.finish_as()
             return
 
 
         self.set_status('SUCCESS')
         self._timer.shutdown()
-        self.finish_as()
         return
 
 
