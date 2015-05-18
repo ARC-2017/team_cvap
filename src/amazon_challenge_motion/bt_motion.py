@@ -190,7 +190,7 @@ class BTMotion:
         self._exit=False
         self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
 
-        # self.shutdown_simtrack()
+        self.shutdown_simtrack()
 
         rospy.sleep(2.0)
 
