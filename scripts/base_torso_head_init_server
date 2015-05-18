@@ -47,7 +47,6 @@ class BaseTorsoHeadInitAction(BTMotion):
 
     def execute_cb(self, goal):
 
-
         self.init_as()
         # publish info to the console for the user
         rospy.loginfo('[base_torso_head_init_server]: started action')
