@@ -75,7 +75,6 @@ class PreGraspAction(BTMotion):
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
         if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
-            self.finish_as()
             return
 
 
@@ -121,7 +120,6 @@ class PreGraspAction(BTMotion):
         joint_pos_goal =  left_arm_joint_pos_dict['pregrasp'][row]
 
         if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
-            self.finish_as()
             return
 
 
@@ -129,7 +127,6 @@ class PreGraspAction(BTMotion):
 
         self.set_status('SUCCESS')
         self._timer.shutdown()
-        self.finish_as()
         return
 
 

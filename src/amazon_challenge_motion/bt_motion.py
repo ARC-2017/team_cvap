@@ -78,6 +78,29 @@ class BTMotion:
 
         self._exit = False
 
+        while not rospy.is_shutdown():
+            try:
+                self._robot = moveit_commander.RobotCommander()
+                self._left_arm = self._robot.get_group('left_arm')
+                self._right_arm = self._robot.get_group('right_arm')
+                self._arms = self._robot.get_group('arms')
+                self._torso = self._robot.get_group('torso')
+                self._head = self._robot.get_group('head')
+                self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
+                break
+            except:
+                rospy.sleep(random.uniform(0,2))
+                continue
+
+
+
+        self._bm = baseMove.baseMove(verbose=False)
+        self._bm.setPosTolerance(self._base_move_params['pos_tolerance'])
+        self._bm.setAngTolerance(self._base_move_params['ang_tolerance'])
+        self._bm.setLinearGain(self._base_move_params['linear_gain'])
+        self._bm.setAngularGain(self._base_move_params['angular_gain'])
+
+        self._tf_listener = tf.TransformListener()
 
         self._next_task_sub = rospy.Subscriber("/amazon_next_task", String, self.get_task)
 
@@ -97,6 +120,7 @@ class BTMotion:
             self._length_tool = 0.216 + self._tool_size[0]
 
         self._as.start()
+        rospy.loginfo('['+rospy.get_name()+']: ready!')
 
 
 
@@ -153,24 +177,12 @@ class BTMotion:
                 rospy.loginfo('[' + rospy.get_name() + ']: waiting for simtrack switch object service')
                 continue
 
+
         simtrack_switch_objects_srv = rospy.ServiceProxy('/simtrack/switch_objects', SwitchObjects)
 
         simtrack_switch_objects_srv.call()
 
     def init_as(self):
-        while not rospy.is_shutdown():
-            try:
-                self._robot = moveit_commander.RobotCommander()
-                self._left_arm = self._robot.get_group('left_arm')
-                self._right_arm = self._robot.get_group('right_arm')
-                self._arms = self._robot.get_group('arms')
-                self._torso = self._robot.get_group('torso')
-                self._head = self._robot.get_group('head')
-                self._arms_dict = {'left_arm': self._left_arm, 'right_arm': self._right_arm}
-                break
-            except:
-                rospy.sleep(random.uniform(0,2))
-                continue
 
         self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
         self._planning_scene.remove_world_object('grasped_object')
@@ -178,32 +190,10 @@ class BTMotion:
         self._exit=False
         self._timer = rospy.Timer(rospy.Duration(self._timeout), self.timer_callback, oneshot=True)
 
-
-        self._bm = baseMove.baseMove(verbose=False)
-        self._bm.setPosTolerance(self._base_move_params['pos_tolerance'])
-        self._bm.setAngTolerance(self._base_move_params['ang_tolerance'])
-        self._bm.setLinearGain(self._base_move_params['linear_gain'])
-        self._bm.setAngularGain(self._base_move_params['angular_gain'])
-
-        self._tf_listener = tf.TransformListener()
         self.shutdown_simtrack()
 
         rospy.sleep(2.0)
 
-    def finish_as(self):
-        try:
-            del(self._left_arm)
-            del(self._right_arm)
-            del(self._arms)
-            del(self._torso)
-            del(self._head)
-            del(self._arms_dict)
-            del(self._robot)
-            del(self._bm)
-            del(self._tf_listener)
-
-        except:
-            pass
 
     def get_task(self, msg):
         text = msg.data
@@ -261,7 +251,8 @@ class BTMotion:
             q_goal = self.normalize_angles(joint_pos_goal)
 
         group.set_joint_value_target(joint_pos_goal)
-        group.go(wait=False)
+        if not group.go(wait=False):
+            return False
 
         q_now = np.array(group.get_current_joint_values())
 
