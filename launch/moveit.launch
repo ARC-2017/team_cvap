@@ -34,6 +34,9 @@
 
   <node name="tool_collision_planning_scene" pkg="amazon_challenge_motion" type="tool_collision_planning_scene" output="screen"/>
 
+  <!-- logitech camera collision model -->
+  <node name="logitech_camera_planning_scene" pkg="amazon_challenge_motion" type="logitech_camera_planning_scene" output="screen" />
+
 
   <!-- order bin collision model -->
   <node name="order_bin_collision_planning_scene" pkg="amazon_challenge_motion" type="order_bin_collision_planning_scene" output="screen" respawn="true"/>
