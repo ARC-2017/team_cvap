@@ -11,3 +11,4 @@
 - git: {local-name: pr2_moveit_utils, uri: 'git@bitbucket.org:cvapgoestoseattle/pr2_moveit_utils.git'}
 - git: {local-name: moveit_commander, uri: 'https://github.com/fevb/moveit_commander.git', version: hydro-devel-normalize-angles}
 - git: {local-name: amazon_challenge_grasping, uri: 'git@bitbucket.org:cvapgoestoseattle/amazon_challenge_grasping.git', version: master}
+- git: {local-name: camera_robot_calibration, uri: 'https://github.com/gborghesan/camera_robot_calibration.git', version: hydro}
