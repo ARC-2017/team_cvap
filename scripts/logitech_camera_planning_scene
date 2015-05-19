@@ -64,13 +64,13 @@ if __name__=='__main__':
     rospy.sleep(5.0)
     while not rospy.is_shutdown():
         try:
-            camera_size = rospy.get_param('/camera_size', [0.25, 0.12, 0.075])
+            camera_size = rospy.get_param('/camera_size', [0.2, 0.12, 0.075])
             break
         except:
             rospy.sleep(random.uniform(0,1))
             continue
 
-    camera_pose = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.145+0.37*0.5, 0.0, -camera_size[2]*0.5))
+    camera_pose = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.12+0.37*0.5, 0.0, -camera_size[2]*0.5))
 
 
     camera_pose_stamped = PoseStamped()
