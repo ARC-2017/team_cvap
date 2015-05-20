@@ -39,13 +39,15 @@ import numpy as np
 import amazon_challenge_bt_actions.msg
 import actionlib
 from std_msgs.msg import String
-from calibrateBase import baseMove
 from pr2_controllers_msgs.msg import Pr2GripperCommand
 import copy
 import random
 from moveit_commander import PlanningSceneInterface
 import tf
 from simtrack_nodes.srv import SwitchObjects
+from amazon_challenge_grasping.srv import BaseMove, BaseMoveRequest, BaseMoveResponse
+from std_srvs.srv import Empty, EmptyRequest
+from geometry_msgs.msg import PoseStamped
 
 class BTMotion:
 
@@ -93,16 +95,11 @@ class BTMotion:
                 continue
 
 
-
-        self._bm = baseMove.baseMove(verbose=False)
-        self._bm.setPosTolerance(self._base_move_params['pos_tolerance'])
-        self._bm.setAngTolerance(self._base_move_params['ang_tolerance'])
-        self._bm.setLinearGain(self._base_move_params['linear_gain'])
-        self._bm.setAngularGain(self._base_move_params['angular_gain'])
-
         self._tf_listener = tf.TransformListener()
 
         self._next_task_sub = rospy.Subscriber("/amazon_next_task", String, self.get_task)
+        self._shelf_pose_sub = rospy.Subscriber("/pubShelfSep", PoseStamped, self.get_shelf_pose)
+        self._got_shelf_pose = False
 
         self._l_gripper_pub = rospy.Publisher('/l_gripper_controller/command', Pr2GripperCommand)
         while not rospy.is_shutdown():
@@ -123,6 +120,22 @@ class BTMotion:
         rospy.loginfo('['+rospy.get_name()+']: ready!')
 
 
+    def get_shelf_pose(self, msg):
+        self._shelf_pose = msg
+        self._got_shelf_pose = True
+
+    def get_bm_srv(self):
+        while not rospy.is_shutdown():
+            try:
+                rospy.wait_for_service('/base_move_server/move', 5.0)
+                rospy.wait_for_service('/base_move_server/preempt', 5.0)
+                break
+            except:
+                rospy.loginfo('[' + rospy.get_name() + ']: waiting for base move server')
+                continue
+
+        self._bm_move_srv = rospy.ServiceProxy('/base_move_server/move', BaseMove)
+        self._bm_preempt_srv = rospy.ServiceProxy('/base_move_server/preempt', Empty)
 
     def timer_callback(self, event):
         self._timer_started = True
@@ -136,11 +149,18 @@ class BTMotion:
         self._left_arm.stop()
         self._right_arm.stop()
 
-        base_pos_goal = [-1.42, self._bm.trans[1], self._bm.trans[2], 0.0, 0.0, 0.0]
+        r = rospy.Rate(1.0)
+        while not self._got_shelf_pose:
+            rospy.loginfo('[' + rospy.get_name() + ']: waiting for shelf pose')
+            r.sleep()
 
-        self._bm.goAngle(base_pos_goal[5])
-        self._bm.goPosition(base_pos_goal[0:2])
-        self._bm.goAngle(base_pos_goal[5])
+        base_pos_goal = [-1.42, -self._shelf_pose.pose.position.y, 0.0, 0.0, 0.0, 0.0]
+
+        self.get_bm_srv()
+        self._bm_preempt_srv.call(EmptyRequest())
+        while not self.go_base_pos_async(base_pos_goal):
+            rospy.sleep(1.0)
+
 
         left_arm_joint_pos_goal = self._left_arm_joint_pos_dict['start']
         right_arm_joint_pos_goal = self._right_arm_joint_pos_dict['start']
@@ -324,68 +344,28 @@ class BTMotion:
         pos = base_pos_goal[0:2]
         r = rospy.Rate(20.0)
 
-        # check for preemption while the base hasn't reach goal configuration
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+        req = BaseMoveRequest()
+        req.x = pos[0]
+        req.y = pos[1]
+        req.theta = angle
 
+        self.get_bm_srv()
+        res = self._bm_move_srv.call(req)
+
+        if self.execute_exit():
+                return False
+
+        # check that preempt has not been requested by the client
+        if self._as.is_preempt_requested():
+            #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+            rospy.loginfo('action halted while moving base')
+            self._as.set_preempted()
+            self._exit = True
             if self.execute_exit():
                 return False
 
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
+        return res.result
 
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
-
-        if rospy.is_shutdown():
-            return False
-
-        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown():
-
-            if self.execute_exit():
-                return False
-
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
-
-        if rospy.is_shutdown():
-            return False
-
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
-
-            if self.execute_exit():
-                return False
-
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
-
-        if rospy.is_shutdown():
-            return False
-
-        return True
 
     def go_base_moveit_group_pos_async(self, base_pos_goal, group, joint_pos_goal, normalize_angles=False):
         angle = base_pos_goal[5]
@@ -414,71 +394,26 @@ class BTMotion:
 
         t_print = rospy.Time.now()
 
-        # check for preemption while the base hasn't reach goal configuration
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
+        req = BaseMoveRequest()
+        req.x = pos[0]
+        req.y = pos[1]
+        req.theta = angle
 
+        self.get_bm_srv()
+        res = self._bm_move_srv.call(req)
+
+        if self.execute_exit():
+                return False
+
+        # check that preempt has not been requested by the client
+        if self._as.is_preempt_requested():
+            #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+            rospy.loginfo('action halted while moving base')
+            self._as.set_preempted()
+            self._exit = True
             if self.execute_exit():
                 return False
 
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
-
-        if rospy.is_shutdown():
-            return False
-
-        while not self._bm.goPosition(pos, False) and not rospy.is_shutdown():
-            if self.execute_exit():
-                return False
-
-            q_now = np.array(group.get_current_joint_values())
-
-            if normalize_angles:
-                q_now = self.normalize_angles(q_now)
-
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base and ' + group.get_name())
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
-
-            if (rospy.Time.now()-t_print).to_sec()>3.0:
-                t_print = rospy.Time.now()
-                rospy.loginfo('[' + rospy.get_name() + ']: executing action')
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
-
-        if rospy.is_shutdown():
-            return False
-
-        while not self._bm.goAngle(angle, False) and not rospy.is_shutdown():
-
-            if self.execute_exit():
-                return False
-
-            # check that preempt has not been requested by the client
-            if self._as.is_preempt_requested():
-                #HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
-                rospy.loginfo('action halted while moving base')
-                self._as.set_preempted()
-                self._exit = True
-                if self.execute_exit():
-                    return False
-
-            #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
-            r.sleep()
 
         # check for preemption while the arm hasn't reach goal configuration
         while np.max(np.abs(q_goal-q_now)) > q_tol and not rospy.is_shutdown():
@@ -511,7 +446,7 @@ class BTMotion:
         if rospy.is_shutdown():
             return False
 
-        return True
+        return res.result
 
     def request_detection(self):
         client = actionlib.SimpleActionClient('amazon_detector', amazon_challenge_bt_actions.msg.DetectorAction)
