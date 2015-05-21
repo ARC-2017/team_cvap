@@ -42,6 +42,7 @@ from std_msgs.msg import String
 from calibrateBase import baseMove
 from amazon_challenge_motion.bt_motion import BTMotion
 import random
+import copy
 
 class PreGraspAction(BTMotion):
 
@@ -70,8 +71,8 @@ class PreGraspAction(BTMotion):
         # move arms to start pose
 
         rospy.loginfo('[pregrasp_server]: moving arms to start pos')
-        left_arm_joint_pos_goal = left_arm_joint_pos_dict['start']
-        right_arm_joint_pos_goal = right_arm_joint_pos_dict['start']
+        left_arm_joint_pos_goal = copy.deepcopy(left_arm_joint_pos_dict['start'])
+        right_arm_joint_pos_goal = copy.deepcopy(right_arm_joint_pos_dict['start'])
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
         if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
@@ -117,7 +118,7 @@ class PreGraspAction(BTMotion):
         row = self.get_row()
 
         rospy.loginfo('[pregrasp_server]: moving left_arm ' + 'to ' + row)
-        joint_pos_goal =  left_arm_joint_pos_dict['pregrasp'][row]
+        joint_pos_goal =  copy.deepcopy(left_arm_joint_pos_dict['pregrasp'][row])
 
         if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
             return

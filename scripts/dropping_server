@@ -45,6 +45,7 @@ from amazon_challenge_grasping.srv import *
 from amazon_challenge_bt_actions.srv import *
 import amazon_challenge_bt_actions.msg
 import actionlib  # needed to call receive_update whenever needed
+from copy import deepcopy
 
 class DroppingAction(BTMotion):
 
@@ -91,18 +92,23 @@ class DroppingAction(BTMotion):
     # move base to drop position
 
     if (base_pos_dict['drop']).has_key(self._item):
-       base_pos_goal = base_pos_dict['drop'][self._item]
+       base_pos_goal = copy.deepcopy(base_pos_dict['drop'][self._item])
     else:
-       base_pos_goal = base_pos_dict['drop']['default']
+       base_pos_goal = copy.deepcopy(base_pos_dict['drop']['default'])
     rospy.loginfo('[dropping_server]: moving base to drop position for item ' + self._item)
 
-    if self._torso.get_current_joint_values()[0] < 0.1:
-       base_pos_goal[1] = base_pos_dict['drop']['low_torso_y']
+    # if self._torso.get_current_joint_values()[0] < 0.1:
+    #    base_pos_goal[1] = copy.deepcopy(base_pos_dict['drop']['low_torso_y'])
+    row = self.get_row()
+    if row =='row_4':
+        base_pos_goal[1] = copy.deepcopy(base_pos_dict['drop']['low_torso_y'])
 
     if not self.go_base_pos_async(base_pos_goal):
-       self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
-       self._planning_scene.remove_world_object('grasped_object')
-       return
+        self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
+        self._planning_scene.remove_world_object('grasped_object')
+        return
+
+    rospy.sleep(3.0)
 
     if not self.go_base_pos_async(base_pos_goal):
        self._planning_scene.remove_attached_object('l_wrist_roll_link', 'grasped_object')
@@ -316,6 +322,7 @@ class DroppingAction(BTMotion):
 
     # Creates a goal to send to the action server.
     goal = amazon_challenge_bt_actions.msg.ObjectsListGoal(parameter=idx)
+    client.send_goal(goal)
     rospy.loginfo('Successfully removed a blind object')
 
   def add_grasped_object_collision_model(self):

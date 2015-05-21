@@ -162,8 +162,8 @@ class BTMotion:
             rospy.sleep(1.0)
 
 
-        left_arm_joint_pos_goal = self._left_arm_joint_pos_dict['start']
-        right_arm_joint_pos_goal = self._right_arm_joint_pos_dict['start']
+        left_arm_joint_pos_goal = copy.deepcopy(self._left_arm_joint_pos_dict['start'])
+        right_arm_joint_pos_goal = copy.deepcopy(self._right_arm_joint_pos_dict['start'])
 
         joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
 
