@@ -82,7 +82,7 @@ if __name__=='__main__':
 
     l_tool_pose_stamped = PoseStamped()
     l_tool_pose_stamped.pose = copy.deepcopy(tool_pose)
-    l_tool_pose_stamped.pose.position.y = tool_pose.position.y*-1
+    l_tool_pose_stamped.pose.position.y = tool_pose.position.y*-1-0.01
     l_tool_pose_stamped.header.frame_id = 'l_gripper_l_finger_tip_link'
     l_tool_pose_stamped.header.stamp = rospy.Time.now()
     l_touch_links = ['l_gripper_l_finger_tip_link', 'l_gripper_r_finger_tip_link', 'l_gripper_l_finger_link', 'l_gripper_r_finger_link', 'r_tool']
@@ -92,6 +92,7 @@ if __name__=='__main__':
 
     r_tool_pose_stamped = PoseStamped()
     r_tool_pose_stamped.pose = copy.deepcopy(tool_pose)
+    r_tool_pose_stamped.pose.position.y = tool_pose.position.y*-1+0.01
     r_tool_pose_stamped.header.frame_id = 'l_gripper_r_finger_tip_link'
     r_tool_pose_stamped.header.stamp = rospy.Time.now()
     r_touch_links = ['l_gripper_l_finger_tip_link', 'l_gripper_r_finger_tip_link', 'l_gripper_l_finger_link', 'l_gripper_r_finger_link',  'l_tool']
