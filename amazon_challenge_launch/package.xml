@@ -1,0 +1,12 @@
+<package>
+  <name>amazon_challenge_launch</name>
+  <version>0.0.0</version>
+  <description>
+    Launch files for Amazon Challenge competition.
+  </description>
+  <maintainer email="fevb@kth.se">Francisco Viña</maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>
