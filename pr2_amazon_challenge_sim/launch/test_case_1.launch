@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+  <include file="$(find pr2_amazon_challenge_sim)/launch/pr2_empty_shelf.launch" />
+  <rosparam command="load" file="$(find pr2_amazon_challenge_sim)/config/test_case_1.yaml"/>
+  
+  <node name="shelf_objects_spawner" pkg="pr2_amazon_challenge_sim" type="shelf_objects_spawner" output="screen"/>
+      
+</launch>

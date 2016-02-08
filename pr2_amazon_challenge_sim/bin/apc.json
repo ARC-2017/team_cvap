@@ -1,0 +1,91 @@
+{
+    "bin_contents": {
+        "bin_A": [
+            "kong_sitting_frog_dog_toy",
+            "first_years_take_and_toss_straw_cup",
+            "feline_greenies_dental_treats"
+        ],
+        "bin_B": [
+            "champion_copper_plus_spark_plug",
+            "laugh_out_loud_joke_book"
+        ],
+        "bin_C": [
+            "mark_twain_huckleberry_finn",
+            "munchkin_white_hot_duck_bath_toy",
+            "crayola_64_ct"
+        ],
+        "bin_D": [
+            "stanley_66_052"
+        ],
+        "bin_E": [
+            "rolodex_jumbo_pencil_cup",
+            "kong_duck_dog_toy",
+            "mommys_helper_outlet_plugs"
+        ],
+        "bin_F": [
+            "paper_mate_12_count_mirado_black_warrior"
+        ],
+        "bin_G": [
+            "genuine_joe_plastic_stir_sticks",
+            "kong_air_dog_squeakair_tennis_ball",
+            "cheezit_big_original"
+        ],
+        "bin_H": [
+            "elmers_washable_no_run_school_glue",
+            "mead_index_cards"
+        ],
+        "bin_I": [
+            "expo_dry_erase_board_eraser",
+            "kyjen_squeakin_eggs_plush_puppies"
+        ],
+        "bin_J": [
+            "sharpie_accent_tank_style_highlighters"
+        ],
+        "bin_K": [
+            "dr_browns_bottle_brush",
+            "oreo_mega_stuf"
+        ],
+        "bin_L": [
+            "safety_works_safety_glasses",
+            "highland_6539_self_stick_notes"
+        ]
+    },
+    "work_order": [
+        {
+            "bin": "bin_D",
+            "item": "stanley_66_052"
+        },
+        {
+            "bin": "bin_E",
+            "item": "rolodex_jumbo_pencil_cup"
+        },
+        {
+            "bin": "bin_F",
+            "item": "paper_mate_12_count_mirado_black_warrior"
+        },
+        {
+            "bin": "bin_G",
+            "item": "genuine_joe_plastic_stir_sticks"
+        },
+        {
+            "bin": "bin_H",
+            "item": "elmers_washable_no_run_school_glue"
+        },
+        {
+            "bin": "bin_I",
+            "item": "expo_dry_erase_board_eraser"
+        },
+        {
+            "bin": "bin_J",
+            "item": "sharpie_accent_tank_style_highlighters"
+        },
+        {
+            "bin": "bin_K",
+            "item": "dr_browns_bottle_brush"
+        },
+        {
+            "bin": "bin_L",
+            "item": "safety_works_safety_glasses"
+        }
+    ]
+}

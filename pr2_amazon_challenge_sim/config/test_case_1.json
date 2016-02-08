@@ -1,0 +1,55 @@
+{
+  "bin_contents":
+  {
+    "bin_A":
+    [
+    ],
+    "bin_B":
+    [
+    ],
+    "bin_C":
+    [
+    ],
+    "bin_D":
+    [
+    ],
+    "bin_E":
+    [
+    ],
+    "bin_F":
+    [
+    ],
+    "bin_G":
+    [
+      "cheezit_big_original"
+    ],
+    "bin_H":
+    [
+    ],
+    "bin_I":
+    [
+      "crayola_64_ct"
+    ],
+    "bin_J":
+    [
+    ],
+    "bin_K":
+    [
+    ],
+    "bin_L":
+    [
+    ]
+  },
+
+  "work_order":
+  [ 
+    {	
+      "bin": "bin_I",
+      "item": "crayola_64_ct"
+    },
+    {
+      "bin": "bin_G",
+      "item": "cheezit_big_original"
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rosparam load ../config/test_case_1.yaml
+rosrun pr2_amazon_challenge_sim shelf_objects_spawner
+gzclient
