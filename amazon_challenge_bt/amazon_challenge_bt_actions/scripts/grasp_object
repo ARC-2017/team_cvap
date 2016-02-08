@@ -1,0 +1,98 @@
+
+
+import rospy
+
+import actionlib
+
+import amazon_challenge_bt_actions.msg
+
+from std_msgs.msg import String
+
+
+
+class BTAction(object):
+  # create messages that are used to publish feedback/result
+  _feedback = amazon_challenge_bt_actions.msg.BTFeedback()
+  _result   = amazon_challenge_bt_actions.msg.BTResult()
+
+  def __init__(self, name):
+    self._action_name = name
+    self._as = actionlib.SimpleActionServer(self._action_name, amazon_challenge_bt_actions.msg.BTAction, execute_cb=self.execute_cb, auto_start = False)
+    self._as.start()
+    self.pub_grasped = rospy.Publisher('object_grasped', String, queue_size = 10)
+    self.pub_rate = rospy.Rate(30)
+    self.left_arm = moveit_commander.MoveGroupCommander('left_arm')
+    self.listener = tf.TransformListener()
+    moveit_commander.roscpp_initialize(sys.argv)
+    
+  def execute_cb(self, goal):
+    # publish info to the console for the user
+    rospy.loginfo('Starting Grasping')
+    
+    finished = False
+    # start executing the action
+    for i in range(4):
+      # check that preempt has not been requested by the client
+      if self._as.is_preempt_requested():
+  			#HERE THE CODE TO EXECUTE WHEN THE  BEHAVIOR TREE DOES HALT THE ACTION
+  			rospy.loginfo('Action Halted')
+  			self._as.set_preempted()
+  			success = False
+        break
+
+      rospy.loginfo('Executing Grasping')      
+      #HERE THE CODE TO EXECUTE AS LONG AS THE BEHAVIOR TREE DOES NOT HALT THE ACTION
+      try:
+        T_b_groovy_tf = listener.lookupTransform('/base_link', '/amazon_cheeze', rospy.Time(0))
+          rospy.loginfo('got new pose')
+      except:
+          continue
+      curr_pose = left_arm.get_current_pose()
+      
+      target_pose = kdl.Frame(kdl.Rotation.RPY(0,0,0), tf2msg(T_b_groovy_tf,curr_pose))
+
+      try:
+        print 'going to tracked position'
+        pr2_moveit_utils.go_tool_frame(self.left_arm, target_pose, base_frame_id ='base_link', ft=False, wait=True)
+        print 'position reached'
+        finished = True
+        break
+      except:
+        print "goal position not reachable"
+        print ""
+        print ''
+        continue
+      
+      #IF THE ACTION HAS SUCCEEDED
+
+      if finished:
+        self.pub_grasped.publish("SUCCESS")
+        self.pub_rate.sleep()
+	      self.set_status('SUCCESS')
+      else:
+        self.pub_rate.sleep()
+        self.set_status('FAILURE')
+
+
+    	
+
+  def set_status(self,status):
+      if status == 'SUCCESS':
+        self._feedback.status = 1
+        self._result.status = self._feedback.status
+        rospy.loginfo('Action %s: Succeeded' % self._action_name)
+        self._as.set_succeeded(self._result)
+      elif status == 'FAILURE':
+        self._feedback.status = 2
+        self._result.status = self._feedback.status
+        rospy.loginfo('Action %s: Failed' % self._action_name)
+        self._as.set_succeeded(self._result)
+      else:
+        rospy.logerr('Action %s: has a wrong return status' % self._action_name)
+
+
+
+if __name__ == '__main__':
+  rospy.init_node('grasp_object')
+  BTAction(rospy.get_name())
+  rospy.spin()
