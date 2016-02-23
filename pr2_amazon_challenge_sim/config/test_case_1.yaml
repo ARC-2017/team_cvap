@@ -1,0 +1,13 @@
+json_file:
+  package: pr2_amazon_challenge_sim
+  relative_path: config/test_case_1.json
+
+# pose relative to bin [x y z r p y]
+gazebo_models:
+  cheezit_big_original:
+    bin: bin_G
+    pose: [0.16, 0.0, 0.078, 1.5708, -1.5408, 0.3]
+    
+  crayola_64_ct:
+    bin: bin_I
+    pose: [0.13, 0.0, 0.07, 1.5708, 0.0, -0.3]

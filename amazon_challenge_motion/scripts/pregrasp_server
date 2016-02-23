@@ -1,0 +1,138 @@
+#!/usr/bin/python
+
+#   pregrasp_server
+#
+#   Created on: April 13, 2015
+#   Authors:   Francisco Vina
+#             fevb <at> kth.se
+#
+
+#  Copyright (c) 2015, Francisco Vina, CVAP, KTH
+#    All rights reserved.
+
+#    Redistribution and use in source and binary forms, with or without
+#    modification, are permitted provided that the following conditions are met:
+#       * Redistributions of source code must retain the above copyright
+#         notice, this list of conditions and the following disclaimer.
+#       * Redistributions in binary form must reproduce the above copyright
+#         notice, this list of conditions and the following disclaimer in the
+#         documentation and/or other materials provided with the distribution.
+#       * Neither the name of KTH nor the
+#         names of its contributors may be used to endorse or promote products
+#         derived from this software without specific prior written permission.
+
+#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#    DISCLAIMED. IN NO EVENT SHALL KTH BE LIABLE FOR ANY
+#    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+import rospy
+import moveit_commander
+import pr2_moveit_utils.pr2_moveit_utils as pr2_moveit_utils
+import numpy as np
+import amazon_challenge_bt_actions.msg
+import actionlib
+from std_msgs.msg import String
+from calibrateBase import baseMove
+from amazon_challenge_motion.bt_motion import BTMotion
+import random
+import copy
+
+class PreGraspAction(BTMotion):
+
+    def execute_cb(self, goal):
+        self.init_as()
+        # publish info to the console for the user
+        rospy.loginfo('[pregrasp_server]: started action')
+        self._success = True
+
+        # read dictionary
+        while not rospy.is_shutdown():
+            try:
+                left_arm_joint_pos_dict = rospy.get_param('/left_arm_joint_pos_dict')
+                right_arm_joint_pos_dict = rospy.get_param('/right_arm_joint_pos_dict')
+                arms_joint_pos_dict = {'left_arm': left_arm_joint_pos_dict, 'right_arm': right_arm_joint_pos_dict}
+                torso_joint_pos_dict = rospy.get_param('/torso_joint_pos_dict')
+                base_pos_dict = rospy.get_param('/base_pos_dict')
+                break
+            except:
+                rospy.sleep(random.uniform(0,2))
+                continue
+        # start executing the action
+
+
+        ######################################
+        # move arms to start pose
+
+        rospy.loginfo('[pregrasp_server]: moving arms to start pos')
+        left_arm_joint_pos_goal = copy.deepcopy(left_arm_joint_pos_dict['start'])
+        right_arm_joint_pos_goal = copy.deepcopy(right_arm_joint_pos_dict['start'])
+        joint_pos_goal = left_arm_joint_pos_goal + right_arm_joint_pos_goal
+
+        if not self.go_joint_goal_async(self._arms, joint_pos_goal, True):
+            return
+
+
+        ######################################
+        # move torso to appropriate row
+
+        # this is taken care of by base_head_torso_init_server
+        # row = self.get_row()
+        # rospy.loginfo('[pregrasp_server]: moving torso to ' + row)
+        # joint_pos_goal = torso_joint_pos_dict['pregrasp'][row]
+        #
+        # if not self.go_joint_goal_async(self._torso, joint_pos_goal):
+        #     self.finish_as()
+        #     return
+
+        #####################################
+        # move base to appropriate column
+
+        # this is taken care of by base_head_torso_init_server
+        # column = self.get_column()
+        # base_pos_goal = base_pos_dict[column]
+        # rospy.loginfo('[pregrasp_server]: moving base to ' + column)
+        #
+        # r = rospy.Rate(100.0)
+        #
+        # if not self.go_base_pos_async(base_pos_goal):
+        #     self.finish_as()
+        #     return
+
+
+
+        # request a new detection
+        # TODO: check this with Michele
+        # this is a node in the BT now, never call from here
+        #self.request_detection()
+
+
+        ######################################
+        # move left arm to start pose for given bin
+        row = self.get_row()
+
+        rospy.loginfo('[pregrasp_server]: moving left_arm ' + 'to ' + row)
+        joint_pos_goal =  copy.deepcopy(left_arm_joint_pos_dict['pregrasp'][row])
+
+        if not self.go_joint_goal_async(self._left_arm, joint_pos_goal, True):
+            return
+
+
+        #IF THE ACTION HAS SUCCEEDED
+
+        self.set_status('SUCCESS')
+        self._timer.shutdown()
+        return
+
+
+if __name__ == "__main__":
+
+    rospy.init_node('pregrasp_server')
+    PreGraspAction(rospy.get_name())
+    rospy.spin()

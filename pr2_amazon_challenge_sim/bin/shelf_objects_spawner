@@ -1,0 +1,135 @@
+#!/usr/bin/env python
+
+#   shelf_objects_spawner
+#
+#   Created on: May 5, 2015
+#   Authors:   Francisco Vina
+#             fevb <at> kth.se
+#
+
+#  Copyright (c) 2015, Francisco Vina, CVAP, KTH
+#    All rights reserved.
+
+#    Redistribution and use in source and binary forms, with or without
+#    modification, are permitted provided that the following conditions are met:
+#       * Redistributions of source code must retain the above copyright
+#         notice, this list of conditions and the following disclaimer.
+#       * Redistributions in binary form must reproduce the above copyright
+#         notice, this list of conditions and the following disclaimer in the
+#         documentation and/or other materials provided with the distribution.
+#       * Neither the name of KTH nor the
+#         names of its contributors may be used to endorse or promote products
+#         derived from this software without specific prior written permission.
+
+#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#    DISCLAIMED. IN NO EVENT SHALL KTH BE LIABLE FOR ANY
+#    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+import os
+import rospy
+import PyKDL as kdl
+import numpy as np
+import rospkg
+from tf import TransformBroadcaster
+from tf_conversions import posemath
+
+if __name__=="__main__":
+
+    rospy.init_node('shelf_objects_spawner')
+
+    models = rospy.get_param('/gazebo_models')
+
+
+    for model_name in models.keys():
+
+        model = models[model_name]
+        pose = model['pose']
+        bin = model['bin']
+
+        p_bin_model = kdl.Vector(pose[0], pose[1], pose[2])
+        R_bin_model = kdl.Rotation().RPY(pose[3], pose[4], pose[5])
+
+        F_bin_model = kdl.Frame(R_bin_model, p_bin_model)
+
+        F_world_front_shelf = kdl.Frame(kdl.Rotation.RPY(0.0, 0.0, 0.0), kdl.Vector(1.518, 0.0, 0.0))
+        F_world_shelf_gazebo = kdl.Frame(kdl.Rotation.RPY(0.0, -np.pi*0.5, 0.0), kdl.Vector(2.0, 0.0, 0.0))
+
+
+        z0 = 0.82
+        z_bin = 0.27
+
+
+        if bin=='bin_A' or bin=='bin_B' or bin=='bin_C':
+            z = z0 + 3*z_bin
+
+        elif bin=='bin_D' or bin=='bin_E' or bin=='bin_F':
+            z = z0 + 2*z_bin
+
+        elif bin=='bin_G' or bin=='bin_H' or bin=='bin_I':
+            z = z0 + z_bin
+
+        elif bin=='bin_J' or bin=='bin_K' or bin=='bin_L':
+            z = z0
+
+
+        y0 = 0.29
+
+        if bin=='bin_A' or bin=='bin_D' or bin=='bin_G' or bin=='bin_J':
+            y = y0
+
+        elif bin=='bin_B' or bin=='bin_E' or bin=='bin_H' or bin=='bin_K':
+            y = 0.0
+
+        elif bin=='bin_C' or bin=='bin_F' or bin=='bin_I' or bin=='bin_L':
+            y = -y0
+
+
+        F_front_shelf_bin = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.0, y, z))
+        F_front_shelf_model = F_front_shelf_bin*F_bin_model
+
+        F_world_model = F_world_front_shelf * F_front_shelf_model
+
+        models[model_name]['world_pose'] = F_world_model
+
+        x = str(F_world_model.p[0])
+        y = str(F_world_model.p[1])
+        z = str(F_world_model.p[2])
+        R = str(F_world_model.M.GetRPY()[0])
+        P = str(F_world_model.M.GetRPY()[1])
+        Y = str(F_world_model.M.GetRPY()[2])
+
+        rp = rospkg.RosPack()
+        pkg_path = rp.get_path('pr2_amazon_challenge_sim')
+
+        os_command = 'rosrun gazebo_ros spawn_model -file '+ pkg_path + '/gazebo_models/' + model_name + '/model.sdf -sdf -x ' + \
+                  x + ' -y ' + y + ' -z ' + z + ' -R ' + R + ' -P ' + P + ' -Y '+ Y + ' -model ' + model_name
+
+        print 'Executing this command: \n'
+        print os_command
+
+        os.system(os_command)
+
+
+    tf_br = TransformBroadcaster()
+    r = rospy.Rate(10)
+
+
+    while not rospy.is_shutdown():
+
+
+        for model_name in models.keys():
+            world_pose = models[model_name]['world_pose']
+            (translation, rotation) = posemath.toTf(world_pose)
+            tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name, 'odom_combined')
+
+        r.sleep()
+

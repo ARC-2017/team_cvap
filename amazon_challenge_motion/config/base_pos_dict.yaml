@@ -1,0 +1,14 @@
+# relative pos of the base_link w.r.t shelf_frame expressed in shelf_frame
+# format: [x y z roll pitch yaw] in meters and radians
+
+base_pos_dict: 
+  column_1: [-0.82, 0.02, 0.0, 0.0, 0.0, 0.0]
+  column_2: [-0.82, -0.2705, 0.0, 0.0, 0.0, 0.0]
+  column_3: [-0.82, -0.54, 0.0, 0.0, 0.0, 0.0]
+      
+  drop: 
+    cheezit_big_original: [-1.7, 0.04, 0.0, 0.0, 0.0, 0.0]
+    oreo_mega_stuf: [-1.42, 0.04, 0.0, 0.0, 0.0, 0.0]
+    default: [-1.52, 0.04, 0.0, 0.0, 0.0, 0.0]
+    low_torso_y: -0.15
+ 

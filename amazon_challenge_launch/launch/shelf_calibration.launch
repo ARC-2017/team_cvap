@@ -1,0 +1,35 @@
+<launch>
+
+  <arg name="contest" default="true" />
+  <arg name="vision" default="true" />
+  <arg name="imax" default="true" />
+  <arg name="remote" default="true" />
+
+  <machine name="pr2-c1" address="192.168.1.21" env-loader="/home/kaiyuh/catkin_ws/devel/env.sh" user="kaiyuh" />
+
+  <!-- load ROS parameter indicating whether PR2 is cvap or clearpath (with/without force-torque sensors) -->
+  <param name="/contest" value="$(arg contest)"/>
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/base_scan.yaml" />
+  <!-- base move parameters -->
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/base_move.yaml" />
+
+  <include file="$(find amazon_challenge_motion)/launch/moveit.launch" >
+    <arg name="contest" value="$(arg contest)" />
+  </include>
+  
+  <group if="$(arg vision)">
+    <include file="$(find vision)/launch/pr2_cam_switch.launch" unless="$(arg imax)"/>
+    <include file="$(find vision)/launch/imax.launch" if="$(arg imax)"/>
+  </group>
+
+  <node machine="pr2-c1" name="shelf_publisher" pkg="amazon_challenge_grasping" type="shelfPublisher.py" output="log" respawn="true" if="$(arg remote)"/>
+  <node name="shelf_publisher" pkg="amazon_challenge_grasping" type="shelfPublisher.py" output="screen" respawn="true" unless="$(arg remote)"/>
+
+  <node machine="pr2-c1" name="base_move_server" pkg="amazon_challenge_grasping" type="base_move_server" output="log" respawn="true" if="$(arg remote)"/>
+  <node name="base_move_server" pkg="amazon_challenge_grasping" type="base_move_server" output="screen" respawn="true" unless="$(arg remote)"/>
+  
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find amazon_challenge_motion)/launch/shelf_calibration.rviz" respawn="true"/>
+  
+  <node name="pr2_amazon_challenge_gui" pkg="rqt_amazon_challenge" type="rqt_amazon_challenge" output="screen" respawn="true"/>
+
+</launch>

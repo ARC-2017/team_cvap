@@ -1,0 +1,171 @@
+#!/usr/bin/python
+
+
+
+
+import json
+import rospy
+from std_msgs.msg import String
+from std_msgs.msg import Int32
+
+import actionlib #needed to call receive_update whenever needed
+import amazon_challenge_bt_actions.msg #contains the action message for receive_update
+import rospkg
+from grasping.generate_object_dict import *
+import os
+import numpy as np
+import PyKDL as kdl
+from tf import TransformBroadcaster
+from tf_conversions import posemath
+from simtrack_nodes.srv import *
+from vision.srv import *
+
+class DummySimtrackSeg():
+
+
+    def __init__(self):
+        # initialize dummy services
+        self.objects_list = []
+        self.data = []
+        self.bins = {}
+        self.task_list = []
+
+        self.camera_srv = rospy.Service('/simtrack/switch_camera', SwitchCamera, self.switch_camera_srv_cb)
+        self.obj_srv = rospy.Service('/simtrack/switch_objects', SwitchObjects, self.switch_object_srv_cb)
+        self.seg_srv = rospy.Service('/aggregate_cloud', StartAggregator, self.start_aggregator_srv_cb)
+
+
+    def switch_camera_srv_cb(self, req):
+        rospy.loginfo('[dummy_simtrack_segmentation]: dummy switch camera service')
+        res = SwitchCameraResponse()
+        res.return_code = 0
+        return(res)
+
+    def switch_object_srv_cb(self, req):
+        rospy.loginfo('[dummy_simtrack_segmentation]: dummy switch object service')
+        res = SwitchObjectsResponse()
+        res.return_code = 0
+        return(res)
+
+    def start_aggregator_srv_cb(self, req):
+        rospy.loginfo('[dummy_simtrack_segmentation]: dummy aggregator service')
+        res = StartAggregatorResponse()
+        res.result = True
+        return(res)
+
+    def add_bin_content(self, bin_id):
+        content = self.data['bin_contents']
+        items = content[bin_id]
+
+        num_items = len(items)
+
+        bin_str = "[" + str(num_items) + ","
+        for i in range(0, num_items):
+            if i < num_items - 1:
+                bin_str = bin_str + items[i] + ","
+            else:
+                bin_str = bin_str + items[i]
+
+        bin_str += "]"
+
+        self.bins[bin_id] = bin_str
+
+    def read_json_list(self, file_path):
+
+        json_data = open(file_path)
+        self.data = json.load(json_data)
+        json_data.close()
+
+        self.add_bin_content('bin_A')
+        self.add_bin_content('bin_B')
+        self.add_bin_content('bin_C')
+        self.add_bin_content('bin_D')
+        self.add_bin_content('bin_E')
+        self.add_bin_content('bin_F')
+        self.add_bin_content('bin_G')
+        self.add_bin_content('bin_H')
+        self.add_bin_content('bin_I')
+        self.add_bin_content('bin_J')
+        self.add_bin_content('bin_K')
+        self.add_bin_content('bin_L')
+
+
+
+    def publish_tf(self):
+        F_world_front_shelf = kdl.Frame(kdl.Rotation.RPY(0.0, 0.0, 0.0), kdl.Vector(1.518, 0.0, 0.0))
+
+        F_bin_model = kdl.Frame(kdl.Rotation.RPY(np.pi*0.5, -np.pi*0.5, 0.0),
+                                kdl.Vector(0.15, 0.0, 0.05))
+
+        models = []
+
+        tasks = self.data['work_order']
+        for task in tasks:
+            bin = task['bin']
+            item = task['item']
+
+
+            z0 = 0.82
+            z_bin = 0.27
+
+
+            if bin=='bin_A' or bin=='bin_B' or bin=='bin_C':
+                z = z0 + 3*z_bin
+
+            elif bin=='bin_D' or bin=='bin_E' or bin=='bin_F':
+                z = z0 + 2*z_bin
+
+            elif bin=='bin_G' or bin=='bin_H' or bin=='bin_I':
+                z = z0 + z_bin
+
+            elif bin=='bin_J' or bin=='bin_K' or bin=='bin_L':
+                z = z0
+
+
+            y0 = 0.26
+
+            if bin=='bin_A' or bin=='bin_D' or bin=='bin_G' or bin=='bin_J':
+                y = y0
+
+            elif bin=='bin_B' or bin=='bin_E' or bin=='bin_H' or bin=='bin_K':
+                y = 0.0
+
+            elif bin=='bin_C' or bin=='bin_F' or bin=='bin_I' or bin=='bin_L':
+                y = -y0
+
+            F_front_shelf_bin = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.0, y, z))
+            F_front_shelf_model = F_front_shelf_bin*F_bin_model
+
+            F_world_model = F_world_front_shelf * F_front_shelf_model
+
+            models.append((item, F_world_model))
+
+
+        r = rospy.Rate(10.0)
+        tf_br = TransformBroadcaster()
+
+        while not rospy.is_shutdown():
+
+            for model in models:
+                model_name = model[0]
+                world_pose = model[1]
+                (translation, rotation) = posemath.toTf(world_pose)
+                tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name, 'odom_combined')
+                r.sleep()
+
+
+
+
+if __name__=='__main__':
+
+    rospy.init_node('dummy_simtrack_segmentation')
+    dummy_simtrack_seg = DummySimtrackSeg()
+    rp = rospkg.RosPack()
+    json_pkg = rospy.get_param('/json_file/package', 'amazon_challenge_bt_actions')
+    json_relative_path = rospy.get_param('/json_file/relative_path', 'src/example.json')
+    json_pkg_path = rp.get_path(json_pkg)
+    json_path = json_pkg_path + '/' + json_relative_path
+    dummy_simtrack_seg.read_json_list(json_path)
+    dummy_simtrack_seg.publish_tf()
+
+    rospy.spin()
