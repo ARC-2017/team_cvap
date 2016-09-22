@@ -1,0 +1,38 @@
+<launch>
+    <include file="$(find apc_launch)/launch/machines.launch"/>
+    <!-- ros_args.launch -->
+    <arg name="camera_name" doc="Sensor name (e.g. kinect_chest)"/>
+    <arg name="base_frame" default="/base"/>
+    <arg name="robot_arm" default="right"/>
+    <arg name="marker_frame" default="/ros_groovy"/>
+
+    <!-- launch the kinect -->
+    <include file="$(find perception_launch)/launch/perception_$(arg camera_name).launch"/>
+
+
+    <!-- launch simtrack -->
+    <rosparam command="load" file="$(find simtrack_nodes)/config/apc_2016_camera_topics.yaml"/>
+    <rosparam command="load" file="$(find simtrack_nodes)/config/parameters.yaml"/>
+    <param name="simtrack/use_compressed_streams" value="false" />
+    <rosparam command="load" file="$(find simtrack_nodes)/config/demo_objects.yaml"/>
+    <param name="simtrack/model_path" value="$(find simtrack_nodes)/../data/object_models"/>
+
+    <node name="simtrack" pkg="simtrack_nodes" type="simtrack_apc_node" output="screen"/>
+
+
+    <!-- launch the calibration node -->
+    <param name="base_frame_name" value="$(arg base_frame)" />
+    <param name="camera_frame_name" value="$(arg camera_name)_link" />
+    <param name="robot_ee_frame_name" value="/$(arg robot_arm)_gripper_base" />
+    <param name="marker_frame_name" value="$(arg marker_frame)" />
+    <param name="sensor_name" value="$(arg camera_name)" />
+    <param name="file_path" value="$(find calibration_data)/extrinsics" />
+    <node name="camera_robot_calibration" pkg="calibration_routine" type="camera_robot_calibration_apc.py" output="screen"/>
+
+    <!-- start the baxter calibration sequence -->
+    <!--<param name="arm_name" value="$(arg robot_arm)" />
+    <param name="sensor_name" value="$(arg camera_name)" />
+    <node name="baxter_sequence_calibration" pkg="calibration_routine" type="baxter_sequence_calibration.py" output="screen"/>-->
+
+    
+</launch>

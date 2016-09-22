@@ -1,0 +1,64 @@
+- git: {local-name: apc_bt, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_bt.git',
+    version: master}
+- git: {local-name: data, uri: 'git@gits-15.sys.kth.se:KTH-APC/data.git',
+    version: master}
+- git: {local-name: apc_perception, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_perception.git',
+    version: master}
+- git: {local-name: apc_extern, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_extern.git',
+    version: master}
+- git: {local-name: apc_grasping, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_grasping.git',
+    version: master}
+- git: {local-name: apc_launch, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_launch.git',
+    version: master}
+- git: {local-name: apc_install, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_install.git',
+    version: master}
+- git: {local-name: apc_utils, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_utils.git',
+    version: master}
+- git: {local-name: apc_calibration, uri: 'git@gits-15.sys.kth.se:KTH-APC/apc_calibration.git',
+    version: master}
+- git: {local-name: moveit_robots, uri: 'https://github.com/kth-ros-pkg/moveit_robots.git',
+    version: stomp_support}
+- git: {local-name: camera_robot_calibration, uri: 'https://github.com/kth-ros-pkg/camera_robot_calibration.git',
+    version: hydro}
+- git:
+    local-name: moveit_commander
+    uri: https://github.com/kth-ros-pkg/moveit_commander.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_core
+    uri: https://github.com/kth-ros-pkg/moveit_core.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_docs
+    uri: https://github.com/kth-ros-pkg/moveit_docs.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_msgs
+    uri: https://github.com/kth-ros-pkg/moveit_msgs.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_planners
+    uri: https://github.com/kth-ros-pkg/moveit_planners.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_plugins
+    uri: https://github.com/kth-ros-pkg/moveit_plugins.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_resources
+    uri: https://github.com/kth-ros-pkg/moveit_resources.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_ros
+    uri: https://github.com/kth-ros-pkg/moveit_ros.git
+    version: kth-apc-2016
+- git:
+    local-name: moveit_setup_assistant
+    uri: https://github.com/kth-ros-pkg/moveit_setup_assistant.git
+    version: kth-apc-2016
+- git: {local-name: baxter_interface, uri: 'https://github.com/kth-ros-pkg/baxter_interface.git',
+    version: kth-apc-2016}
+- git:
+    local-name: baxter_pykdl
+    uri: https://github.com/RethinkRobotics/baxter_pykdl.git
+    version: master

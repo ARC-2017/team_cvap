@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <arg name="object_name" default="crayola_64_ct" />
+  <arg name="tsr_type"  default="suction"/>
+  <arg name="task" default="pick" />
+
+
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find apc_manipulation)/config/tsr.rviz"/>
+
+  <node name="rviz_tsr" pkg="apc_manipulation" type="rvizTSR.py" respawn="false" output="screen" args="$(arg object_name) $(arg tsr_type) $(arg task)" />
+
+</launch>

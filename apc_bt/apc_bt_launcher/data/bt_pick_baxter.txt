@@ -1,0 +1,65 @@
+[*
+	A get_next_target_action
+	A move_to_home_action
+	{*
+		A look_bin_kinect_action
+		[*
+			{*
+				A is_level_1
+				A is_level_2
+			}
+			{*
+				[*
+					A set_ids_2_action
+					{*
+						A ids_no_move_home
+						A move_to_home_action
+					}
+					A move_ids_action
+					A look_bin_ids_action
+				]
+				[*
+					A is_level_2
+					{*
+						[*
+							A set_ids_6_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_bin_ids_action
+						]
+						[*
+							A set_ids_8_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_bin_ids_action
+						]
+						[*
+							A set_ids_4_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_bin_ids_action
+						]
+					}
+				]
+			}
+			{*
+				A pick_no_move_home
+				A move_to_home_action
+			}
+		]
+	}
+	A move_action
+	A pick_bin_action
+	A move_to_tote_action
+	A place_tote_action
+	A success_action
+]

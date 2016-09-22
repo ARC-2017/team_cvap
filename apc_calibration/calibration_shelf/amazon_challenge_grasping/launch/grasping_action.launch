@@ -1,0 +1,21 @@
+<launch>
+  <arg name="sim" default="false"/>
+  <arg name="timeout" default="60.0"/>
+
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/grasping_param_dict.yaml" />
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/grasp_check_dict.yaml" />
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/grasp_max_effort_dict.yaml" />
+
+
+  <node name="grasp_object" pkg="amazon_challenge_grasping" type="grasping_action.py" output="screen" respawn="true">
+    <param name="timeout" value="$(arg timeout)"/>
+  </node>
+
+  <group if="$(arg sim)">
+    <node name="action_client" pkg="amazon_challenge_bt_actions" type="ActionClient" output="screen">
+      <param name="action_server_name" value="grasp_object" />
+    </node>
+    <node name="task_manager" pkg="amazon_challenge_bt_actions" type="task_manager" output="screen"/>
+  </group>
+
+</launch>

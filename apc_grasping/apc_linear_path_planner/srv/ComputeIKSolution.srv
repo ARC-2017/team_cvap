@@ -1,0 +1,8 @@
+#Request is a pose in frame /base
+string move_group
+geometry_msgs/Pose pose
+sensor_msgs/JointState seed
+---
+#Response is a joint state for the given move_group
+sensor_msgs/JointState iksolution
+bool success

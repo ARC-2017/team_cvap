@@ -1,0 +1,36 @@
+<?xml version="1.0" ?>
+<robot name="baxter" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <xacro:arg name="gazebo" default="false"/>
+  <xacro:arg name="pedestal" default="true"/>
+  <xacro:arg name="l_gripper" default="suction"/>
+  <xacro:arg name="r_gripper" default="suction"/>
+
+  <!-- Baxter Base URDF -->
+  <xacro:include filename="$(find baxter_description)/urdf/baxter_base/baxter_base.urdf.xacro">
+    <xacro:arg name="gazebo" value="false"/>
+  </xacro:include>
+
+  <!-- include our own gazebo components for baxter base -->
+  <!-- where we take out some of the plugins like cameras etc -->
+  <xacro:include filename="$(find apc_sim)/urdf/baxter_base.gazebo.xacro" />
+
+  <!-- Baxter Pedestal -->
+  <xacro:if value="$(arg pedestal)">
+    <xacro:include filename="$(find baxter_description)/urdf/pedestal/pedestal.xacro">
+      <xacro:arg name="gazebo" value="${gazebo}"/>
+    </xacro:include>
+  </xacro:if>
+
+  <!-- Left End Effector -->
+  <xacro:include filename="$(find apc_sim)/urdf/left_end_effector.urdf.xacro" >
+    <xacro:arg name="gripper_type" value="${l_gripper}"/>
+  </xacro:include>
+
+  <!-- Right End Effector -->
+  <xacro:include filename="$(find apc_sim)/urdf/right_end_effector.urdf.xacro" >
+    <xacro:arg name="gripper_type" value="${r_gripper}"/>
+  </xacro:include>
+
+
+</robot>

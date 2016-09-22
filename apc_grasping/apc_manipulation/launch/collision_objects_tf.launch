@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <arg name="pick" default="true"/>
+
+  <!-- tote_pick -->
+  <arg name="tote_pick_calibration_file" value="$(find calibration_data)/extrinsics/tote_pick.txt"/>
+  <arg name="tote_pick_source_frame" value="base"/>
+  <arg name="tote_pick_target_frame" value="tote"/>
+
+  <!-- tote_stow -->
+  <arg name="tote_stow_calibration_file" value="$(find calibration_data)/extrinsics/tote_stow.txt"/>
+  <arg name="tote_stow_source_frame" value="base"/>
+  <arg name="tote_stow_target_frame" value="tote"/>
+
+  <!-- tote_table -->
+  <arg name="tote_table_calibration_file" value="$(find calibration_data)/extrinsics/tote_table.txt"/>
+  <arg name="tote_table_source_frame" value="base"/>
+  <arg name="tote_table_target_frame" value="tote_table"/>
+
+  <!-- camera_mount -->
+  <arg name="camera_mount_calibration_file" value="$(find calibration_data)/extrinsics/camera_mount.txt"/>
+  <arg name="camera_mount_source_frame" value="base"/>
+  <arg name="camera_mount_target_frame" value="camera_mount"/>
+
+  <!-- kinect_chest_collision_model -->
+  <arg name="kinect_chest_collision_model_calibration_file" value="$(find calibration_data)/extrinsics/kinect_chest_collision_model.txt"/>
+  <arg name="kinect_chest_collision_model_source_frame" value="base"/>
+  <arg name="kinect_chest_collision_model_target_frame" value="kinect_chest_collision_model"/>
+
+  <!-- tote_pick -->
+  <group if="$(arg pick)" >
+    <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+      <arg name="source_frame" value="$(arg tote_pick_source_frame)"/>
+      <arg name="target_frame" value="$(arg tote_pick_target_frame)"/>
+      <arg name="calibration_file" value="$(arg tote_pick_calibration_file)" />
+    </include>
+  </group>
+
+  <!-- tote without bottom -->
+  <node name="tote_no_bottom_static_tf_publisher" pkg="tf" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 tote tote_no_bottom 10" />
+
+  <!-- tote bottom -->
+  <node name="tote_bottom_static_tf_publisher" pkg="tf" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 tote tote_bottom 10" />
+
+  <!-- tote_stow -->
+  <group unless="$(arg pick)" >
+    <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+      <arg name="source_frame" value="$(arg tote_stow_source_frame)"/>
+      <arg name="target_frame" value="$(arg tote_stow_target_frame)"/>
+      <arg name="calibration_file" value="$(arg tote_stow_calibration_file)" />
+    </include>
+  </group>
+
+  <!-- tote_table -->
+  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+    <arg name="source_frame" value="$(arg tote_table_source_frame)"/>
+    <arg name="target_frame" value="$(arg tote_table_target_frame)"/>
+    <arg name="calibration_file" value="$(arg tote_table_calibration_file)" />
+  </include>
+
+  <!-- camera_mount -->
+  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+    <arg name="source_frame" value="$(arg camera_mount_source_frame)"/>
+    <arg name="target_frame" value="$(arg camera_mount_target_frame)"/>
+    <arg name="calibration_file" value="$(arg camera_mount_calibration_file)" />
+  </include>
+
+  <!-- kinect_chest_collision_model -->
+  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+    <arg name="source_frame" value="$(arg kinect_chest_collision_model_source_frame)"/>
+    <arg name="target_frame" value="$(arg kinect_chest_collision_model_target_frame)"/>
+    <arg name="calibration_file" value="$(arg kinect_chest_collision_model_calibration_file)" />
+  </include>
+
+
+</launch>

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- select pick/stow -->
+  <arg name="pick" default="true" doc="Set to true for doing the pick task, false for stowing task"/>
+
+  <!-- for switching between different demo scenarios -->
+  <!-- i.e. demo 1, demo 2, etc. -->
+  <!-- it will load the <demo>.json file in bt_launcher/data -->
+  <!-- and the corresponding object poses in apc_sim/config/<demo>.yaml in case you simulate with gazebo -->
+  <arg name="demo" default="apc_pick_task" doc="Indicates which demo/scenario to run. Loads the corresponding JSON file from bt_launcher/data"/>
+
+  <!-- Argument for indicating whether we want a simulated baxter or not -->
+  <arg name="sim" default="false" doc="Indicates whether we want a simulated Baxter or not."/>
+
+  <arg name="gazebo" default="false" doc="Indicates whether we want a Gazebo simulation or just Rviz"/>
+
+  <!-- For disabling/enabling gazebo GUI (saves some CPU) -->
+  <arg name="gazebo_gui" default="true" doc="Enables/disables gazebo gui."/>
+
+  <!-- For simulating grasping -->
+  <arg name="sim_grasping" default="false" doc="Simulates grasping."/>
+
+  <!-- For simulating perception -->
+  <arg name="sim_perception" default="false" doc="Simulates perception (publishes static TFs)."/>
+
+  <!-- For taking out behavior trees -->
+  <arg name="sim_bt" default="false" doc="Takes out BTs, Joshua wanted this..." />
+
+  <!-- For testing the BT logic in isolation-->
+  <arg name="test_bt" default="false" doc="Tests behavior tree logic in isolation"/>
+
+  <!-- The ids cameras should be launched in separate machines -->
+  <arg name="ids_left_machine" default="sauron" doc="Sets the machine for the left ids camera"/>
+  <arg name="ids_right_machine" default="sauron" doc="Sets the machine for the right ids camera"/>
+
+  <!-- Set on which machine will the kinects run -->
+  <arg name="kinect_chest_machine" default="morgoth"/>
+  <arg name="kinect_head_machine" default="morgoth"/>
+
+  <param name="/apc/demo" type="str" value="$(arg demo)" />
+
+  <!-- Specify which JSON file to use -->
+  <param name="/apc/task_manager/json_filename" type="str" value="$(arg demo)"/>
+
+  <!-- specify the task -->
+  <param name="/apc/task" type="str" value="pick" if="$(arg pick)"/>
+  <param name="/apc/task" type="str" value="stow" unless="$(arg pick)"/>
+
+  <!-- Specify BT file -->
+  <!-- Pick BT task -->
+  <group if="$(arg pick)" >
+    <param name="/apc/bt/file" type="string" value="bt_pick_baxter"/>
+  </group>
+
+  <!-- Stow BT task -->
+  <group unless="$(arg pick)" >
+    <param name="/apc/bt/file" type="string" value="bt_stow_baxter"/>
+  </group>
+
+  <!-- Define the machines -->
+  <include file="$(find apc_launch)/launch/machines.launch"/>
+
+  <!-- Behavior tree stuff -->
+  <group unless="$(arg sim_bt)" >
+    <include file="$(find apc_bt_launcher)/launch/apc_bt.launch" >
+      <arg name="test_bt" value="$(arg test_bt)"/>
+      <arg name="set_params" value="false"/>
+      <arg name="pick_mode" value="$(arg pick)"/>
+    </include>
+  </group>
+
+  <!-- grasping -->
+  <include file="$(find apc_manipulation)/launch/grasping.launch" >
+    <arg name="sim" value="$(arg sim_grasping)" />
+    <arg name="pick" value="$(arg pick)" />
+  </include>
+
+  <!-- Joint trajectory action server -->
+  <!-- Only bring it up if we are not simulating -->
+  <group unless="$(arg sim)">
+    <node name="JointTrajectoryActionServer" pkg="baxter_interface" type="joint_trajectory_action_server.py" args="-m position_w_id"/>
+  </group>
+
+
+  <!-- Perception -->
+  <include file="$(find perception_launch)/launch/perception.launch" >
+    <arg name="sim" value="$(arg sim_perception)" />
+    <arg name="pick" value="$(arg pick)" />
+    <arg name="ids_left_machine" value="$(arg ids_left_machine)" />
+    <arg name="ids_right_machine" value="$(arg ids_right_machine)" />
+  </include>
+
+  <!-- Shelf calibrator -->
+  <include file="$(find amazon_challenge_grasping)/launch/shelf_publisher_static.launch"/>
+
+  <!-- if simulating, bring up gazebo stuff -->
+  <group if="$(arg sim)" >
+    <include file="$(find apc_sim)/launch/apc_sim.launch" >
+      <arg name="pick" value="$(arg pick)"/>
+      <arg name="gazebo" value="$(arg gazebo)"/>
+      <arg name="gazebo_gui" value="$(arg gazebo_gui)" />
+      <arg name="demo" value="$(arg demo)" />
+    </include>
+  </group>
+
+  <!-- Robot face -->
+  <include file="$(find robot_face)/launch/display_face.launch">
+  </include>
+
+  <!-- GUI -->
+  <node name="rqt_apc" pkg="rqt_apc" type="rqt_apc" />
+
+  <!-- enable the robot -->
+  <node name="enable_robot" pkg="baxter_tools" type="enable_robot.py" args="-e" />
+
+</launch>

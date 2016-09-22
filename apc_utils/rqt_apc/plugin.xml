@@ -1,0 +1,11 @@
+<library path="src">
+  <class name="APC" type="rqt_apc.apc_plugin.APCPlugin" base_class_type="rqt_gui_py::Plugin">
+    <description>
+      A Python GUI plugin for using Baxter in APC'16.
+    </description>
+    <qtgui>
+      <label>APC GUI</label>
+      <statustip>A Python GUI plugin for the Baxter in the Amazon Picking Challenge 2016.</statustip>
+    </qtgui>
+  </class>
+</library>

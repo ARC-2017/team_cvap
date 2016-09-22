@@ -1,0 +1,24 @@
+<package>
+
+  <name>apc_sim</name>
+  <version>0.0.1</version>
+  <description>
+    Scripts and launch files for simulating APC'16 in Gazebo.
+  </description>
+  <author email="fevb@kth.se">Francisco Vina</author>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+  <url type="bugtracker">https://gits-15.sys.kth.se/KTH-APC/apc_utils/issues</url>
+  <url type="repository">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>gazebo_ros</run_depend>
+
+  
+</package>

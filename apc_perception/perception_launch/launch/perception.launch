@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <!-- Define the machines -->
+  <include file="$(find apc_launch)/launch/machines.launch"/>
+
+  <!-- Pick or stow task -->
+  <arg name="pick" default="true" doc="Set to true for the pick task, false for the stow task" />
+  <arg name="local" default="false" doc="Set to true to run the sensors locally" />
+
+  <!-- Set on which machine will the IDS cameras run -->
+  <arg name="ids_left_machine" default="sauron" doc="Machine where the left ids camera will run" />
+  <arg name="ids_right_machine" default="sauron" doc="Machine where the right ids camera will run" />
+
+  <!-- Set on which machine will the kinects run -->
+  <arg name="kinect_chest_machine" default="morgoth"/>
+  <arg name="kinect_head_machine" default="morgoth"/>
+
+  <!-- argument for simulating perception -->
+  <arg name="sim" default="false"/>
+  <arg name="run_ids" default="true" doc="Set true to run the IDS cameras"/>
+  <arg name="test_tote" default="false"/>
+
+  <!-- Tf frames -->
+  <include file="$(find perception_launch)/launch/perception_tf_frames.launch">
+    <arg name="pick" value="$(arg pick)" />
+    <arg name="test_tote" value="$(arg test_tote)" />
+
+  </include>
+
+  <group unless="$(arg pick)">
+    <param name="/apc/perception/object_displacement_threshold" type="double" value="+0.03"/>
+    <param name="/apc/perception/object_displacement_compensation" type="double" value="-0.04"/>
+  </group>
+
+  <!-- ICP shelf calibration to publish shelf_icp frame
+  <node pkg="apc_shelf_calibration" type="shelf_icpfuser" name="shelf_icpfuser" output="screen">
+  </node>
+  -->
+
+
+
+  <!-- running real perception -->
+  <group unless="$(arg sim)" >
+
+    <!-- simtrack -->
+    <include file="$(find simtrack_nodes)/launch/simtrack_demo1.launch">
+    </include>
+
+    <!-- rashtect -->
+    <include file="$(find perception_pc_segmentation)/launch/feature_segmentation.launch" >
+    </include>
+
+
+    <!-- If picking bring up the robot kinect -->
+    <!-- Robot kinect -->
+    <group if="$(arg pick)" >
+      <include file="$(find perception_launch)/launch/perception_kinect_robot.launch">
+        <arg name="kinect_chest_machine" value="$(arg kinect_chest_machine)"/>
+        <arg name="kinect_head_machine" value="$(arg kinect_head_machine)"/>
+      </include>
+    </group>
+
+    <!-- If stowing bring up the external kinect -->
+    <group unless="$(arg pick)" >
+      <include file="$(find perception_launch)/launch/perception_kinect_external.launch" />
+      <include file="$(find perception_launch)/launch/perception_kinect_chest.launch" />
+    </group>
+
+    <!-- ids cameras -->
+    <group if="$(arg run_ids)" >
+		<include file="$(find perception_launch)/launch/perception_ids_robot.launch">
+			<arg name="ids_left_machine" value="$(arg ids_left_machine)"/>
+			<arg name="ids_right_machine" value="$(arg ids_right_machine)"/>
+		</include>
+	</group>
+
+
+    <!-- perception server  -->
+     <arg name="publish_output_pc" default="true" />
+	 <include file="$(find apc_objects_detection_action)/launch/apc_objects_detection_server.launch">
+      		<arg name="publish_output_pc" value="$(arg publish_output_pc)" />
+	 </include>
+
+
+  </group>
+
+
+  <!-- Simulation -->
+  <group if="$(arg sim)">
+    <node name="lookforobject" pkg="apc_bt_test_server" type="apc_bt_test_look_for_object" />
+  </group>
+
+
+</launch>

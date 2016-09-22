@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Perception Server Launcher -->
+  
+  <!-- decide which server to run  -->
+  <arg name="servers_texture" default="true" doc="Set to true to run the rgbd server" />
+  <arg name="servers_rgbd" default="true" doc="Set to true to run the rgbd server" />
+  <arg name="servers_simtect" default="true" doc="Set to true to run the simtect server" />
+  
+  <!-- set debug mode, camera quality and baxter face control -->
+  <arg name="debug" default="false" doc="Set to true to run the debug mode" />
+  <arg name="quality" default="sd" doc="set sd/qhd/hd (only for kinect2 cameras)" />  <!--only with kinect2 sd/qhd/hd -->
+  <arg name="camera_topic_debug" default="/kinect2/$(arg quality)/points" doc="specify the camera topic. Works only in debug mode"/> <!-- kinect_head/kinect_chest/kinect_extern/openni2/kinect2 topics -->
+  <arg name="baxter_face_ctrl" default="true" doc="set true to control baxter face" />
+   <arg name="publish_output_pc" default="true" doc="set true show the rgbd segmentatioon result" />
+   
+   <!-- set params for the servers -->
+  <param name="debug" value="$(arg debug)" />
+  <param name="quality" value="$(arg quality)" />
+  <param name="baxter_face_ctrl" value="$(arg baxter_face_ctrl)" />
+  <param name="camera_topic_debug" value="$(arg camera_topic_debug)" /> <!-- kinect_head/kinect_chest/kinect_extern/openni2/kinect2 topics -->
+  
+  
+
+  <!-- Running the Perception Server -->
+  <node pkg="apc_objects_detection_action" type="apc_objects_detection_server" name="lookforobject" args="-t" output="screen"/>
+  
+  <!-- Running the Texture Server -->   
+  <group if="$(arg servers_texture)" >
+      <include file="$(find apc_objects_detection_texture)/launch/texture_server.launch" >
+      		<arg name="debug" value="$(arg debug)"/>
+      		<arg name="quality" value="(arg quality)" />
+			<arg name="camera_topic_debug" value="$(arg camera_topic_debug)"/>
+      </include>
+  </group>
+  <!-- Running the rgbd Server -->   
+  <group if="$(arg servers_rgbd)" >
+      <include file="$(find apc_objects_detection_rgbd)/launch/rgbd_server.launch" >
+			<arg name="debug" value="$(arg debug)"/>
+      		<arg name="quality" value="$(arg quality)" />
+      		<arg name="publish_output_pc" value="$(arg publish_output_pc)" />
+			<arg name="camera_topic_debug" value="$(arg camera_topic_debug)"/>
+      </include>
+  </group>
+  <!-- Running the simtect Server -->   
+  <group if="$(arg servers_simtect)" >
+      <include file="$(find apc_objects_detection_simtect)/launch/simtect_server.launch" >
+      		<arg name="debug" value="$(arg debug)"/>
+      		<arg name="quality" value="(arg quality)" />
+			<arg name="camera_topic_debug" value="$(arg camera_topic_debug)"/>
+      </include>
+  </group>
+  
+</launch>

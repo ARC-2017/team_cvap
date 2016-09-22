@@ -1,0 +1,36 @@
+planning_time_out: 10
+pos_tolerance: 0.02
+rot_tolerance: 0.2
+lowering_distance: 0.05
+safe_stowing_distance: 0.1
+stowing_distance: 0.3
+stowing_retreat_distance: 0.04
+stowing_information:
+    bin_types:
+      bin_A: large
+      bin_B: large
+      bin_C: large
+      bin_D: small
+      bin_E: small
+      bin_F: small
+      bin_G: small
+      bin_H: small
+      bin_I: small
+      bin_J: large
+      bin_K: large
+      bin_L: large
+
+    default_object:
+        large:
+            x: -0.14
+            y: 0.0
+            z: 0.17
+            rot: 0.8
+            rot_electric: 0.0
+
+        small:
+            x: -0.14
+            y: 0.0
+            z: 0.12
+            rot: 0.8
+            rot_electric: 0.0

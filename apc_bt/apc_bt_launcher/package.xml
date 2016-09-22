@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<package>
+  <name>apc_bt_launcher</name>
+  <version>0.0.1</version>
+  <description>
+    Package that launches the high level project
+  </description>
+
+  <maintainer email="diogoa@kth.se">
+    Diogo Almeida
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

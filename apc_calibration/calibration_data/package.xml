@@ -1,0 +1,14 @@
+<package>
+  <name>calibration_data</name>
+  <version>0.0.1</version>
+  <description>
+	A package containing the calibration data (intrinsic and extrinsic) for the sensors used for the APC 2016 challenge. 
+  </description>
+  <maintainer email="kth-apc@kth.se">KTH APC</maintainer>
+  <license>BSD</license>
+
+  <author email="kth-apc@kth.se">KTH APC</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+</package>

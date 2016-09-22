@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="apc_suction_extension">
+  <!-- side:= left or right -->
+  <!-- extension_length:= length of extension for suction cup --> 
+  <!-- extension_radius:= radius of extension for suction cup -->
+
+  <xacro:macro name="apc_suction_extension" params="side base_length extension_length extension_radius">
+    
+    <!-- Pneumatic Gripper extension -->
+    <link name="${side}_gripper_extension">
+      <visual>
+        <origin rpy="0 0 0" xyz="0.0 0.0 ${base_length + extension_length/2}"/>
+        <geometry>
+          <cylinder length="${extension_length}" radius="${extension_radius}"/>
+        </geometry>
+        <material name="gray">
+          <color rgba=".5 .1 .1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0.0 0.0 ${base_length + extension_length/2}"/>
+        <geometry>
+          <cylinder length="${extension_length+0.02}" radius="${extension_radius+0.01}"/>
+        </geometry>
+        <material name="gray">
+          <color rgba=".5 .1 .1 1"/>
+        </material>
+      </collision>      
+      <inertial>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>

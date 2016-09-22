@@ -1,0 +1,19 @@
+# all collision objects are under data/apc_2016_mesh_models/object_models
+collision_objects:
+  - name: shelf
+    mesh_path: shelf/shelf.stl
+
+  - name: tote_bottom
+    mesh_path: tote/tote_bottom.stl
+
+  - name: tote_no_bottom
+    mesh_path: tote/tote_no_bottom.stl
+
+  - name: tote_table
+    mesh_path: tote_table/tote_table.stl
+
+  - name: camera_mount
+    mesh_path: camera_mount/camera_mount.stl
+
+  - name: kinect_chest_collision_model 
+    mesh_path: kinect_chest/kinect_chest.stl

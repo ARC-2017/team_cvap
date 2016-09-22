@@ -1,0 +1,9 @@
+#goal definition
+bool pop
+bool success
+---
+#result definition
+bool result
+---
+#feedback
+bool status

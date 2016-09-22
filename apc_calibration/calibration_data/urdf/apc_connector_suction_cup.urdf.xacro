@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="apc_connector_suction_cup">
+
+  <xacro:macro name="apc_connector_suction_cup" params="side base_length extension_length connector_angle reflect_connector_angle sin_connector_angle connector_cup_length connector_cup_radius">
+
+    <!-- Pneumatic Gripper joint for connector with 45 or 90 degree angle -->
+    <joint name="${side}_gripper_connector_joint" type="fixed">
+      <origin rpy="${reflect_connector_angle*connector_angle} 0 0" xyz="0 0 ${extension_length + base_length + connector_cup_radius*sin_connector_angle}"/>
+      <parent link="${side}_gripper_extension"/>
+      <child link="${side}_gripper_connector_cup"/>
+    </joint>
+
+    <!-- Pneumatic Gripper connector + cup link -->
+    <link name="${side}_gripper_connector_cup">
+      <visual>
+        <origin rpy="0 0 0" xyz="0.0 0.0 ${connector_cup_length/2}"/>
+        <geometry>
+          <cylinder length="${connector_cup_length}" radius="${connector_cup_radius}"/>
+        </geometry>
+        <material name="gray">
+          <color rgba=".5 .1 .1 1"/>
+        </material>
+      </visual>
+      <collision>
+        <origin rpy="0 0 0" xyz="0.0 0.0 ${connector_cup_length/2}"/>
+        <geometry>
+          <cylinder length="${connector_cup_length+0.01}" radius="${connector_cup_radius}"/>
+        </geometry>
+        <material name="gray">
+          <color rgba=".5 .1 .1 1"/>
+        </material>
+      </collision>     
+      <inertial>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>

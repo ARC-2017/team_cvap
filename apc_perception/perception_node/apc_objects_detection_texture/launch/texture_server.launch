@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- Texture (simtrack) Server Launcher -->
+  
+
+   <arg name="debug" default="true" />
+   <arg name="quality" default="sd" />  <!--only with kinect2 sd/qhd/hd -->
+   <arg name="camera_topic_debug" default="/kinect2/$(arg quality)/points" /> <!-- kinect_head/kinect_chest/kinect_extern/openni2/kinect2 topics -->
+   <arg name="baxter_face_ctrl" default="true" />
+
+   <param name="debug" value="$(arg debug)" />
+   <param name="baxter_face_ctrl" value="$(arg baxter_face_ctrl)" />
+   <param name="camera_topic_debug" value="$(arg camera_topic_debug)" /> <!-- kinect_head/kinect_chest/kinect_extern/openni2/kinect2 topics -->
+
+  
+
+  <!-- Running the Texture Server -->
+  <node pkg="apc_objects_detection_texture" type="texture_server" name="lookforobject_texture" args="-t" output="screen" respawn="true"/>
+  
+</launch>

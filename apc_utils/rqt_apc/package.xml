@@ -1,0 +1,26 @@
+<package>
+  <name>rqt_apc</name>
+  <version>0.0.0</version>
+  <description>GUI for amazon challenge.</description>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+  <url type="bugtracker">https://gits-15.sys.kth.se/KTH-APC/apc_utils/issues</url>
+  <url type="repository">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+
+
+  <author>Francisco Vina</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>rqt_gui</run_depend>
+  <run_depend>rqt_gui_py</run_depend>
+  <run_depend>rqt_py_common</run_depend>
+
+  <export>
+    <rqt_gui plugin="${prefix}/plugin.xml"/>
+  </export>
+</package>

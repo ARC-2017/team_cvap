@@ -1,0 +1,12 @@
+#Request is a pose in frame /base
+string move_group
+# which frame to move (probably eef)
+string link_name
+geometry_msgs/Pose pose
+sensor_msgs/JointState start_config
+float64 step_size
+---
+#Response is a joint state for the given move_group
+moveit_msgs/RobotTrajectory traj
+bool success # true if the goal pose can be reached
+float64 cartesian_path_length

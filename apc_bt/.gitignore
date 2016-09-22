@@ -1,0 +1,13 @@
+# Folders
+devel/
+build/
+install/
+
+# Files
+.catkin_workspace
+*tags*
+*~
+*pyc
+
+# output file, generated from the task manager
+src/task_manager/data/output.json

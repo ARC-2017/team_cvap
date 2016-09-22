@@ -1,0 +1,17 @@
+<launch>
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/ompl_planning.yaml" />
+    <node pkg="tf" type="static_transform_publisher" name="shelf_pose_publisher" args="1.20 0.0 -0.93 0.5 -0.5 -0.5 0.5 base shelf 100" />
+
+    <!-- <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/> -->
+    <arg name="shelf_path" default="$(find data)/apc_2016_mesh_models/shelf_model/shelf.obj"/>
+    <rosparam param="/apc/shelf_mesh_path" subst_value="True">$(arg shelf_path)</rosparam>
+
+    <node name="manipulation_node" pkg="apc_manipulation" type="manipulation_node.py" respawn="false" output="screen">
+
+</node>
+
+</launch>

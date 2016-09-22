@@ -1,0 +1,44 @@
+<launch>
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+        <arg name="load_robot_description" value="true"/>
+    </include>
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/ompl_planning.yaml" />
+    <node pkg="tf" type="static_transform_publisher" name="shelf_pose_publisher" args="1.26 0.0 -0.93 0.5 -0.5 -0.5 0.5 base shelf 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_A_pose_publisher" args="-0.2825 1.67 0.475 0.0 1.0 0.0 0.0 shelf bin_A 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_B_pose_publisher" args="0.0075 1.67 0.475 0.0 1.0 0.0 0.0 shelf bin_B 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_C_pose_publisher" args="0.2975 1.67 0.475 0.0 1.0 0.0 0.0 shelf bin_C 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_D_pose_publisher" args="-0.2825 1.43 0.475 0.0 1.0 0.0 0.0 shelf bin_D 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_E_pose_publisher" args="0.0075 1.43 0.475 0.0 1.0 0.0 0.0 shelf bin_E 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_F_pose_publisher" args="0.2975 1.43 0.475 0.0 1.0 0.0 0.0 shelf bin_F 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_G_pose_publisher" args="-0.2825 1.2 0.475 0.0 1.0 0.0 0.0 shelf bin_G 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_H_pose_publisher" args="0.0075 1.2 0.475 0.0 1.0 0.0 0.0 shelf bin_H 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_I_pose_publisher" args="0.2975 1.2 0.475 0.0 1.0 0.0 0.0 shelf bin_I 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_J_pose_publisher" args="-0.2825 0.9525 0.475 0.0 1.0 0.0 0.0 shelf bin_J 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_K_pose_publisher" args="0.0075 0.9525 0.475 0.0 1.0 0.0 0.0 shelf bin_K 100" />
+    <node pkg="tf" type="static_transform_publisher" name="bin_L_pose_publisher" args="0.2975 0.9525 0.475 0.0 1.0 0.0 0.0 shelf bin_L 100" />
+    <node pkg="tf" type="static_transform_publisher" name="tote_pose_publisher" args="0.42 0.68 -0.55 0.761590474751 0.642548441809 0.0843174080631 -0.00142246057366 base tote 100" />
+
+    <node pkg="tf" type="static_transform_publisher" name="crayola_pose_publisher" args="0.916 0.248 -0.051 -0.481 0.521 0.506 -0.490 base crayola_64_ct_final 100" />
+    <node pkg="tf" type="static_transform_publisher" name="laugh_out_loud_joke_book_pose_publisher" args="0.88308 -0.29894 -0.015673 0.49935 0.51503 -0.51085 -0.47374 base laugh_out_loud_joke_book_final 100" />
+    <node pkg="tf" type="static_transform_publisher" name="elmers_washable_no_run_school_glue_publisher" args="0.87419 -0.31688 0.23185 0.4686 -0.48547 -0.54285 0.50006 base elmers_washable_no_run_school_glue_final 100" />
+
+    <!-- <arg name="shelf_path" default="$(find data)/apc_2016_mesh_models/shelf_model/shelf.obj"/> -->
+    <arg name="shelf_path" default="$(find shelf_pose_optimization)/data/pod_lowres.stl"/>
+    <rosparam param="/apc/shelf_mesh_path" subst_value="True">$(arg shelf_path)</rosparam>
+
+    <arg name="named_configs" default="$(find apc_manipulation)/data/binConfigurations.yaml" />
+    <rosparam param="/apc/manipulation/named_configs" subst_value="True">$(arg named_configs)</rosparam>
+
+    <arg name="crayola_64_ct_mesh_path" default="$(find apc_2016_mesh_models)/object_models/crayola_64_ct/crayola_64_ct.obj"/>
+    <rosparam param="/apc/crayola_64_ct_mesh_path" subst_value="True">$(arg crayola_64_ct_mesh_path)</rosparam>
+
+    <arg name="crayola_64_ct" default="$(find apc_manipulation)/data/crayola_64_ct.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/crayola_64_ct" subst_value="True">$(arg crayola_64_ct)</rosparam>
+
+
+    <node name="manipulation_node" pkg="apc_manipulation" type="manipulation_node.py" respawn="false" output="screen">
+
+    </node>
+
+</launch>

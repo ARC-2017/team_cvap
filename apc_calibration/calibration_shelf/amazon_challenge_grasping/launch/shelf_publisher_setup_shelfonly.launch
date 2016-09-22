@@ -1,0 +1,9 @@
+<launch>
+  <node name="simulate_laser" pkg="pluto_xi" type="simulate_laser">
+    <param name="min_height" value="-0.5"/>
+    <param name="max_height" value="-0.3"/>
+  </node>
+  
+<node name="shelf_publisher" pkg="amazon_challenge_grasping" type="shelfPublisher.py" respawn="true" output="screen" />
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/base_scan.yaml" />
+</launch>

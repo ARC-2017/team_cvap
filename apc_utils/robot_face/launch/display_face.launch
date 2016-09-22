@@ -1,0 +1,7 @@
+<launch>
+	<!-- Launch file for display_face for the Baxter head display  -->
+	<node pkg="robot_face" type="display_face.py" name="display_face_robot_node" output="screen">
+		<param name="path___" value="False" />
+		<param name="path____" value="False" />
+	</node>
+</launch>

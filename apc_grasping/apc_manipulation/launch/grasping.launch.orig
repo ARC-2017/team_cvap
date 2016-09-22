@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <arg name="pick" default="true"/>
+
+  <!-- argument for simulating grasping -->
+  <arg name="sim" default="false"/>
+  <arg name="pipeline" default="ompl"/>
+  <arg name="ipython" default="false"/>
+
+  <!-- do not load robot description as it is loaded -->
+  <!-- by robot or gazebo -->
+
+  <!-- if picking we use both suction grippers with 90 degree angle -->
+  <group if="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="false"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>
+  </group>
+
+  <!-- if stowing we use suction on right arm (45 degree angle) and -->
+  <!-- parallel gripper on the left hand -->
+  <group unless="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="true"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>	 
+  </group>
+
+  <!-- publish TFs for collision models -->
+  <include file="$(find apc_manipulation)/launch/collision_objects_tf.launch" />
+
+  <!-- Tool calibration URDF publisher -->
+  <include file="$(find apc_manipulation)/launch/tool_calib_publisher.launch" />
+
+  <!-- Load information on kinematics solver -->
+  <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/ompl_planning.yaml" />
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/stomp_planning.yaml" />
+
+
+<!--    <arg name="crayola_24_ct_mesh_path" default="$(find apc_2016_mesh_models)/object_models/crayola_24_ct/crayola_24_ct.obj"/>
+    <rosparam param="/apc/crayola_24_ct_mesh_path" subst_value="True">$(arg crayola_24_ct_mesh_path)</rosparam>
+
+    <arg name="crayola_24_ct_tsr" default="$(find apc_manipulation)/data/tsrs/suction/crayola_24_ct.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/crayola_24_ct" subst_value="True">$(arg crayola_24_ct_tsr)</rosparam>
+
+    <arg name="elmers_washable_no_run_school_glue_tsr" default="$(find apc_manipulation)/data/tsrs/suction/elmers_washable_no_run_school_glue.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/elmers_washable_no_run_school_glue" subst_value="True">$(arg elmers_washable_no_run_school_glue_tsr)</rosparam>
+
+    <arg name="expo_dry_erase_board_eraser_tsr" default="$(find apc_manipulation)/data/tsrs/suction/expo_dry_erase_board_eraser.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/expo_dry_erase_board_eraser" subst_value="True">$(arg expo_dry_erase_board_eraser_tsr)</rosparam>
+
+    <arg name="laugh_out_loud_joke_book_tsr" default="$(find apc_manipulation)/data/tsrs/suction/laugh_out_loud_joke_book.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/laugh_out_loud_joke_book" subst_value="True">$(arg laugh_out_loud_joke_book_tsr)</rosparam>
+    
+    <arg name="kleenex_tissue_box_tsr" default="$(find apc_manipulation)/data/tsrs/suction/kleenex_tissue_box.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/kleenex_tissue_box" subst_value="True">$(arg kleenex_tissue_box_tsr)</rosparam>
+
+    <arg name="jane_eyre_dvd_tsr" default="$(find apc_manipulation)/data/tsrs/suction/jane_eyre_dvd.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/jane_eyre_dvd" subst_value="True">$(arg jane_eyre_dvd_tsr)</rosparam>
+
+    <arg name="safety_first_outlet_plugs_tsr" default="$(find apc_manipulation)/data/tsrs/suction/safety_first_outlet_plugs.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/safety_first_outlet_plugs" subst_value="True">$(arg safety_first_outlet_plugs_tsr)</rosparam>
+
+    <arg name="peva_shower_curtain_liner_tsr" default="$(find apc_manipulation)/data/tsrs/suction/peva_shower_curtain_liner.tsrs"/>
+    <rosparam param="/apc/manipulation/objectdata/TSRs/peva_shower_curtain_liner" subst_value="True">$(arg peva_shower_curtain_liner_tsr)</rosparam>
+-->
+
+<!--    <arg name="named_configs" default="$(find apc_manipulation)/data/binConfigurations.yaml" /> -->
+
+    <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/pickBinConfigurations.yaml" if="$(arg pick)"/>
+    <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/stowBinConfigurations.yaml" unless="$(arg pick)"/>
+    <!-- Set roadmap paths -->
+    <param name="/apc/manipulation/roadmap_left" type="str" value="$(find apc_manipulation)/data/apc_roadmap_picking_large_left_arm.pickle" if="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_left" type="str" value="$(find apc_manipulation)/data/apc_roadmap_stowing_left_arm.yaml" unless="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_right" type="str" value="$(find apc_manipulation)/data/apc_roadmap_picking_large_right_arm.pickle" if="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_right" type="str" value="$(find apc_manipulation)/data/apc_roadmap_stowing_right_arm.yaml" unless="$(arg pick)"/>
+
+    <!-- <rosparam param="/apc/manipulation/named_configs" subst_value="True">$(arg named_configs)</rosparam> -->
+    
+
+    <node pkg="tf" type="static_transform_publisher" name="bin_D_stow_pose_publisher" args="-0.2825 1.4 0.375 0.0 1.0 0.0 0.0 shelf bin_D_stowing 100" />
+
+    <rosparam param="/apc/manipulation/ipython" subst_value="True">$(arg ipython)</rosparam>
+    <node name="manipulation_node" pkg="apc_manipulation" type="apc_manipulation_node.py" respawn="false" output="screen">
+      <rosparam command="load" file="$(find apc_manipulation)/config/collision_objects.yaml" ns="/apc/manipulation"/>
+<<<<<<< HEAD
+      <rosparam command="load" file="$(find apc_manipulation)/config/pick_object.yaml" ns="/apc/manipulation/pick_object/params"/>
+=======
+      <rosparam command="load" file="$(find apc_manipulation)/config/objects_tsr.yaml" ns="/apc/manipulation"/>
+>>>>>>> almc/master
+    </node>
+    
+    <node name="linear_path_planner" pkg="apc_linear_path_planner" type="apc_linear_path_planner_node" respawn="false" output="screen"/>
+
+</launch>

@@ -1,0 +1,3 @@
+[submodule "behavior_trees"]
+	path = behavior_trees
+	url = https://github.com/diogoalmeida/behavior_trees

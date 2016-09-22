@@ -1,0 +1,277 @@
+#!/usr/bin/env python
+
+#   apc_gazebo_objects_spawner
+#
+#   Created on: May 5, 2015
+#   Authors:   Francisco Vina
+#             fevb <at> kth.se
+#
+
+#  Copyright (c) 2015, Francisco Vina, CVAP, KTH
+#    All rights reserved.
+
+#    Redistribution and use in source and binary forms, with or without
+#    modification, are permitted provided that the following conditions are met:
+#       * Redistributions of source code must retain the above copyright
+#         notice, this list of conditions and the following disclaimer.
+#       * Redistributions in binary form must reproduce the above copyright
+#         notice, this list of conditions and the following disclaimer in the
+#         documentation and/or other materials provided with the distribution.
+#       * Neither the name of KTH nor the
+#         names of its contributors may be used to endorse or promote products
+#         derived from this software without specific prior written permission.
+
+#    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+#    ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+#    WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+#    DISCLAIMED. IN NO EVENT SHALL KTH BE LIABLE FOR ANY
+#    DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+#    (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+#    LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+#    ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+#    (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+#    SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+
+
+import os
+import rospy
+import PyKDL as kdl
+import rospkg
+from tf import TransformBroadcaster
+from tf_conversions import posemath
+import sys
+import numpy as np
+
+
+def pose_param_2_kdl(models, model_name):
+    '''
+    Transforms model's pose from parameter server [x, y ,z, r, p, y] to KDL frame
+    :param models: dictionary of gazebo models from the /apc_gazebo_models parameter
+    :param model_name: name of gazebo model ``str``
+    :return: KDL frame with object's pose
+    '''
+    pose = models[model_name]['pose']
+
+    return kdl.Frame(kdl.Rotation().RPY(pose[3], pose[4], pose[5]), kdl.Vector(pose[0], pose[1], pose[2]))
+
+def pose_bin_front_shelf(bin):
+    '''
+    Calculates pose of a bin w.r.t. the front of the shelf
+    :param bin: string with identifier of bin e.g. 'bin_A'
+    :return: pose (kdl frame) of the bin w.r.t the front of the shelf
+    '''
+     # first get the transform from the front of the shelf to the bin
+    z0 = 0.81
+    height_bottom_row = 0.26
+    height_middle_rows = 0.23
+
+
+    if bin=='bin_A' or bin=='bin_B' or bin=='bin_C':
+        z = z0 + height_bottom_row + 2*height_middle_rows
+        #y = 1.67
+
+    elif bin=='bin_D' or bin=='bin_E' or bin=='bin_F':
+        z = z0 + height_bottom_row + height_middle_rows
+        #y = 1.43
+
+    elif bin=='bin_G' or bin=='bin_H' or bin=='bin_I':
+        z = z0 + height_bottom_row
+        #y = 1.2
+
+    elif bin=='bin_J' or bin=='bin_K' or bin=='bin_L':
+        z = z0
+        #y = 0.9525
+
+
+    y0 = 0.29
+
+    if bin=='bin_A' or bin=='bin_D' or bin=='bin_G' or bin=='bin_J':
+        y = y0
+
+    elif bin=='bin_B' or bin=='bin_E' or bin=='bin_H' or bin=='bin_K':
+        y = 0.0
+
+    elif bin=='bin_C' or bin=='bin_F' or bin=='bin_I' or bin=='bin_L':
+        y = -y0
+
+
+    F_front_shelf_bin = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0, y, z))
+
+    return F_front_shelf_bin
+
+
+def transform_world_frame(bin, F_bin_model, F_world_front_shelf):
+    '''
+    Transforms a model's pose expressed in bin coordinates to the gazebo world frame
+    :param bin: string with bin name e.g. 'bin_A'
+    :param F_bin_model: transform between bin and object model expressed in bin coordinates
+    :param F_world_front_shelf: transform between world and front of the shelf expressed in world reference frame
+    :return: kdl Frame with model's pose expressed in gazebo world frame
+    '''
+
+    F_front_shelf_bin = pose_bin_front_shelf(bin)
+    F_front_shelf_model = F_front_shelf_bin*F_bin_model
+    F_world_model = F_world_front_shelf * F_front_shelf_model
+
+    return F_world_model
+
+def spawn_object(model_name, F_world_model):
+    '''
+    Spawns object using spawn_model script from the gazebo_ros package
+    :param model_name:
+    :param F_world_object: kdl frame with pose of the object w.r.t gazebo world frame
+    :return:
+    '''
+
+    if not gazebo_spawn_object:
+        return
+
+    rp = rospkg.RosPack()
+    pkg_path = rp.get_path('apc_gazebo_models')
+
+    x = str(F_world_model.p[0])
+    y = str(F_world_model.p[1])
+    z = str(F_world_model.p[2])
+    R = str(F_world_model.M.GetRPY()[0])
+    P = str(F_world_model.M.GetRPY()[1])
+    Y = str(F_world_model.M.GetRPY()[2])
+
+    model = model_name
+    if model_name=='shelf':
+        model = 'kiva_pod'
+
+    os_command = 'rosrun gazebo_ros spawn_model -file '+ pkg_path + '/models/' + model + '/model.sdf -sdf -x ' + \
+              x + ' -y ' + y + ' -z ' + z + ' -R ' + R + ' -P ' + P + ' -Y '+ Y + ' -model ' + model_name
+
+    os.system(os_command)
+
+gazebo_spawn_object = False
+
+if __name__=="__main__":
+
+    rospy.init_node('apc_gazebo_objects_spawner')
+
+    models = rospy.get_param('/apc/sim/gazebo_models')
+    gazebo_spawn_object = rospy.get_param('/apc/sim/gazebo')
+
+    log_header = '[' + (rospy.get_name())[1:] + ']: '
+
+    # get the task
+    task = None
+    try:
+        task = rospy.get_param('/apc/task')
+    except:
+        rospy.logerr(log_header + 'task param not found at /apc/task')
+        sys.exit()
+
+
+    # shelf and tote poses need to be specified
+    if not models.has_key('shelf') or not models.has_key('tote'):
+        rospy.logerr(log_header + 'shelf or tote configuration not specified in apc_sim/config/' + rospy.get_param('/demo') + '.yaml')
+        sys.exit()
+
+
+
+    ###### spawn the shelf and tote
+
+    # relative pose between gazebo world frame and Baxter base frame
+    F_world_base = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(0.0, 0.0, 0.93))
+
+    F_base_shelf = pose_param_2_kdl(models, 'shelf')
+    F_world_shelf = F_world_base * F_base_shelf
+    models['shelf']['world_pose'] = F_world_shelf
+    models['shelf']['base_pose'] = F_base_shelf
+    rospy.loginfo(log_header + 'spawning the shelf')
+    spawn_object('shelf', F_world_shelf)
+
+    F_base_tote = pose_param_2_kdl(models, 'tote')
+    F_world_tote = F_world_base * F_base_tote
+    models['tote']['world_pose'] = F_world_tote
+    models['tote']['base_pose'] = F_base_tote
+    rospy.loginfo(log_header + 'spawning the tote')
+    spawn_object('tote', F_world_tote)
+
+    # external kinect
+    F_base_external_kinect = pose_param_2_kdl(models, 'external_kinect')
+    F_world_external_kinect = F_world_base * F_base_external_kinect
+    models['external_kinect']['world_pose'] = F_world_external_kinect
+    models['external_kinect']['base_pose'] = F_base_external_kinect
+    rospy.loginfo(log_header + 'spawning the external kinect')
+    spawn_object('tote', F_world_external_kinect)
+
+    # relative pose between shelf and the front of the shelf
+    F_shelf_2_front_shelf = kdl.Frame(kdl.Rotation.Identity(), kdl.Vector(-0.435, 0.0, 0.0))
+    F_world_front_shelf = F_world_shelf * F_shelf_2_front_shelf
+
+
+    ######## populate the shelf with objects
+    for model_name in models.keys():
+        if not model_name == 'shelf' and not model_name == 'tote' and not model_name=='external_kinect':
+            rospy.loginfo(log_header + 'spawning ' +  model_name)
+
+            model = models[model_name]
+            bin = model['bin']
+
+            # get model pose w.r.t. bin and transform to the world frame
+            F_bin_model = pose_param_2_kdl(models, model_name)
+            F_world_model = transform_world_frame(bin, F_bin_model, F_world_front_shelf)
+            F_base_model = F_world_base.Inverse()*F_world_model
+            F_shelf_model = F_base_shelf.Inverse()*F_base_model
+
+            # poses of the models in different frames: world, base, shelf and bin
+            models[model_name]['world_pose'] = F_world_model
+            models[model_name]['shelf_pose'] = F_shelf_model
+            models[model_name]['base_pose'] = F_base_model
+            models[model_name]['bin_pose'] = F_bin_model
+            spawn_object(model_name, F_world_model)
+
+
+    ######## get the poses of the bins w.r.t the shelf
+    bins = ['bin_A', 'bin_B', 'bin_C', 'bin_D', 'bin_E', 'bin_F', 'bin_G', 'bin_H', 'bin_I', 'bin_J', 'bin_K', 'bin_L']
+    for bin in bins:
+        models[bin] = dict()
+        models[bin]['shelf_pose'] = F_shelf_2_front_shelf*pose_bin_front_shelf(bin)
+
+
+    ######### publish the TFs
+    tf_br = TransformBroadcaster()
+
+    # transforms for converting from gazebo model to shelf model
+    F_shelf_gazebo_shelf = kdl.Frame(kdl.Rotation.RPY(np.pi*0.5, 0, -np.pi*0.5), kdl.Vector.Zero())
+    tf_shelf_gazebo_shelf = posemath.toTf(F_shelf_gazebo_shelf)
+
+    r = rospy.Rate(10)
+
+    # publish TFs
+    while not rospy.is_shutdown():
+
+        # TODO: publish updated object poses from gazebo
+
+        for model_name in models.keys():
+
+            # publish shelf and tote TFs in the robot base frame
+            if model_name == 'shelf' or model_name == 'tote' or model_name == 'external_kinect':
+                base_pose = models[model_name]['base_pose']
+                (translation, rotation) = posemath.toTf(base_pose)
+                # do not publish shelf/tote/external kinect
+                # if model_name == 'shelf':
+                #     tf_br.sendTransform(translation, rotation, rospy.Time.now(), 'shelf_gazebo', 'base')
+                # else:
+                #     tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name, 'base')
+
+            # publish the bin frames w.r.t shelf frame
+            elif model_name[:3] == 'bin':
+                shelf_pose = models[model_name]['shelf_pose']
+                (translation, rotation) = posemath.toTf(shelf_pose)
+                # tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name, 'shelf_gazebo')
+
+            # publish the object pose in the bin frame
+            else:
+                bin_pose = models[model_name]['bin_pose']
+                (translation, rotation) = posemath.toTf(bin_pose)
+                tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name, models[model_name]['bin'])
+                tf_br.sendTransform(translation, rotation, rospy.Time.now(), model_name + '_final', models[model_name]['bin'])                
+                
+        # tf_br.sendTransform(tf_shelf_gazebo_shelf[0], tf_shelf_gazebo_shelf[1], rospy.Time.now(), 'shelf', 'shelf_gazebo')
+        r.sleep()

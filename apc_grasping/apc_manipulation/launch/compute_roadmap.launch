@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <arg name="pick" default="true"/>
+  <arg name="sim" default="true"/>
+  <arg name="pipeline" default="ompl"/>
+  <arg name="roadmap_path" default="$(find apc_manipulation)/data/"/>
+  <arg name="roadmap_name_stowing" default="apc_roadmap_stowing"/>
+  <arg name="roadmap_name_picking" default="apc_roadmap_picking"/>
+
+
+  <group if="$(arg sim)">
+    <include file="$(find apc_sim)/launch/apc_sim.launch">
+      <arg name="pick" value="$(arg pick)"/>
+      <arg name="gazebo" value="false"/>
+      <arg name="gazebo_gui" value="false" />
+      <arg name="demo" value="apc_pick_task_simple" />
+    </include>
+  </group>
+
+  <!-- if picking we use both suction grippers with 90 degree angle -->
+  <group if="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="false"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>
+  </group>
+
+  <!-- if stowing we use suction on right arm (45 degree angle) and -->
+  <!-- parallel gripper on the left hand -->
+  <group unless="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="false"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>   
+  </group>
+
+  <!-- publish TFs for collision models -->
+  <include file="$(find apc_manipulation)/launch/collision_objects_tf.launch">
+   <arg name="pick" value="$(arg pick)" />
+  </include>
+
+  <include file="$(find perception_launch)/launch/perception_tf_frames.launch">
+    <arg name="pick" value="$(arg pick)" />
+    <arg name="test_tote" value="false" />
+  </include>
+
+  <!-- Tool calibration URDF publisher -->
+  <include file="$(find apc_manipulation)/launch/tool_calib_publisher.launch" >
+    <arg name="pick" value="$(arg pick)" />
+  </include>
+
+  <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/ompl_planning.yaml" />
+
+  <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/stomp_planning.yaml" />
+
+  <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/pickBinConfigurations.yaml" if="$(arg pick)"/>
+  <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/stowBinConfigurations.yaml" unless="$(arg pick)"/>
+
+  <rosparam param="/apc/manipulation/roadmap_path" subst_value="True">$(arg roadmap_path)</rosparam>
+  <group if="$(arg pick)">
+    <rosparam param="/apc/manipulation/roadmap_name" subst_value="True">$(arg roadmap_name_picking)</rosparam>
+  </group>
+
+  <group unless="$(arg pick)">
+    <rosparam param="/apc/manipulation/roadmap_name" subst_value="True">$(arg roadmap_name_stowing)</rosparam>
+  </group>
+
+  <param name="/apc/manipulation/roadmap_type" value="picking" if="$(arg pick)" />
+  <param name="/apc/manipulation/roadmap_type" value="stowing" unless="$(arg pick)" />
+  
+  <node name="apc_compute_roadmap_node" pkg="apc_manipulation" type="apc_compute_roadmap_node.py" respawn="false" output="screen">
+    <rosparam command="load" file="$(find apc_manipulation)/config/collision_objects_roadmap.yaml" ns="/apc/manipulation"/>
+  </node>
+
+  <node name="apc_linear_path_planner_node" pkg="apc_linear_path_planner" type="apc_linear_path_planner_node"
+    respawn="false" output="screen"/>
+
+  <!-- shelf_front -->
+  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+    <arg name="source_frame" value="base"/>
+    <arg name="target_frame" value="shelf_front"/>
+    <arg name="calibration_file" value="$(find calibration_data)/extrinsics/shelf_front.txt" />
+  </include>
+
+
+</launch>

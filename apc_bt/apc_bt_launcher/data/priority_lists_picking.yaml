@@ -1,0 +1,64 @@
+apc/task_manager/bin_priorities:
+    - bin_A
+    - bin_B
+    - bin_C
+    - bin_D
+    - bin_E
+    - bin_F
+    - bin_G
+    - bin_H
+    - bin_I
+    - bin_J
+    - bin_K
+    - bin_L
+
+apc/task_manager/object_priorities:
+    - expo_dry_erase_board_eraser
+    - crayola_24_ct
+    - i_am_a_bunny_book
+    - laugh_out_loud_joke_book
+    - folgers_classic_roast_coffee
+    - peva_shower_curtain_liner
+    - jane_eyre_dvd
+    - dove_beauty_bar
+    - soft_white_lightbulb
+    - kleenex_tissue_box
+    - elmers_washable_no_run_school_glue
+    - dr_browns_bottle_brush
+    - scotch_duct_tape
+    - staples_index_cards
+    - command_hooks
+    - platinum_pets_dog_bowl
+    - safety_first_outlet_plugs
+    - up_glucose_bottle
+    - woods_extension_cord
+    - ticonderoga_12_pencils
+    - barkely_hide_bones
+    - scotch_bubble_mailer
+    - platinum_pets_dog_bowl
+
+
+apc/task_manager/rgbd_objects:
+    - scotch_bubble_mailer
+    - peva_shower_curtain_liner
+    - kleenex_tissue_box
+    - womens_knit_gloves
+    - cherokee_easy_tee_shirt
+    - cloud_b_plush_bear
+    - kleenex_paper_towels
+    - hanes_tube_socks
+    - staples_index_cards
+
+apc/task_manager/suction_arm: right_arm
+apc/task_manager/gripper_arm: left_arm
+
+apc/task_manager/grippable_objects:
+    - cherokee_easy_tee_shirt
+    - cloud_b_plush_bear
+    - womens_knit_gloves
+    - cool_shot_glue_sticks
+    - kyjen_squeakin_eggs_plush_puppies
+    - creativity_chenille_stems
+    - cool_shot_glue_sticks
+    - oral_b_toothbrush_red
+    - oral_b_toothbrush_green

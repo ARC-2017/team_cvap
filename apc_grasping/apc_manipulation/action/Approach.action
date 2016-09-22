@@ -1,0 +1,10 @@
+# Goal of the approach action
+string arm
+float64 max_distance # maximum accepted movement distance
+---
+# Result
+---
+# Feedback
+float64 force # the measured contact force
+float64 distance # currently traveled distance
+float64 vacuum # measured vacuum

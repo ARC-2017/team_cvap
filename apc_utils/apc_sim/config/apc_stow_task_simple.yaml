@@ -1,0 +1,20 @@
+# poses expressed as an array [x y z r p y]
+# X, Y, Z, Roll, Pitch, Yaw
+
+# pose of shelf in Baxter base frame
+shelf:
+  pose: [1.26, 0.0, -0.93, 0.0, 0.0, 0.0]
+
+# pose of the tote in Baxter base frame
+tote:
+  pose: [0.501366,   0.0261402,   -0.539455, 0.0, 0.0, -1.4861258383153382]
+
+
+# pose of the external kinect in Baxter base frame
+external_kinect:
+  pose: [0.3, -1.5, -0.93, 0.0, 0.0, 1.5708]
+
+# object poses expressed relative to the bins
+kleenex_tissue_box:
+  bin: bin_A
+  pose: [0.08, 0.0, 0.055, 2.9670670748017205, -6.378453723930444e-07, -1.5707999441957607]

@@ -1,0 +1,17 @@
+<launch>
+	<!-- Define the machines -->
+  	<include file="$(find apc_launch)/launch/machines.launch"/>
+  	<arg name="kinect_chest_machine" default="morgoth"/>
+  	<arg name="kinect_head_machine" default="morgoth"/>
+        
+        <arg name="ids_left_machine" default="sauron"/>
+  	<arg name="ids_right_machine" default="sauron"/>
+
+	<include file="$(find perception_launch)/launch/perception_kinect_chest.launch">
+		<arg name="machine" value="$(arg kinect_chest_machine)"/>
+	</include>
+
+	<include file="$(find perception_launch)/launch/perception_kinect_head.launch">
+		<arg name="machine" value="$(arg kinect_head_machine)"/>
+	</include>
+</launch>

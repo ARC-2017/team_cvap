@@ -1,0 +1,13 @@
+# all collision objects are under data/apc_2016_mesh_models/object_models
+collision_objects:
+  - name: shelf
+    mesh_path: shelf/shelf_bounding_box.stl
+
+  - name: tote
+    mesh_path: tote/tote_bounding_box.stl
+
+  - name: tote_table
+    mesh_path: tote_table/tote_table.stl
+
+  - name: camera_mount
+    mesh_path: camera_mount/camera_mount.stl

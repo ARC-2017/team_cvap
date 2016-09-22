@@ -1,0 +1,20 @@
+image_width: 1920
+image_height: 1080
+camera_name: ids_right
+camera_matrix:
+  rows: 3
+  cols: 3
+  data: [1975.289884998302, 0, 930.7470621204059, 0, 1975.981370100426, 551.4723679901646, 0, 0, 1]
+distortion_model: plumb_bob
+distortion_coefficients:
+  rows: 1
+  cols: 5
+  data: [0.155566594526053, -0.4125181976686453, -0.002011408581651128, -0.003590837765389968, 0]
+rectification_matrix:
+  rows: 3
+  cols: 3
+  data: [1, 0, 0, 0, 1, 0, 0, 0, 1]
+projection_matrix:
+  rows: 3
+  cols: 4
+  data: [2001.019165039062, 0, 924.7461543005047, 0, 0, 2008.080444335938, 549.63758824666, 0, 0, 0, 1, 0]

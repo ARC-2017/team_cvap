@@ -1,0 +1,16 @@
+<launch>
+	<include file="$(find apc_launch)/launch/machines.launch"/>
+	<arg name="kinect_chest_name" default="kinect_chest" />
+	<arg name="kinect_chest_serial" default="500374240242" />
+	<arg name="machine" default="morgoth"/>
+
+<!-- chest camera -->
+	<include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch">
+		<arg name="base_name" value="$(arg kinect_chest_name)"/>
+		<arg name="publish_tf" value="true"/>
+		<arg name="calib_path"        default="$(find calibration_data)/intrinsics/"/>
+		<arg name="sensor" value="$(arg kinect_chest_serial)"/>
+		<arg name="machine" value="$(arg machine)"/>
+	</include>
+
+</launch>

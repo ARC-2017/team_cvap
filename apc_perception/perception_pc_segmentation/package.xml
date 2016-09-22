@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<package>
+  <name>perception_pc_segmentation</name>
+  <version>0.0.0</version>
+  <description>Perception Point Cloud segmentation</description>
+  <license>BSD</license>
+  <author email="raambrus@kth.se">Rares Ambrus</author>
+  <maintainer email="raambrus@kth.se">Rares Ambrus</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>cmake_modules</build_depend>
+  <build_depend>image_transport</build_depend>
+  <build_depend>cv_bridge</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>dynamic_reconfigure</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>perception_services</build_depend>
+  <build_depend>pcl_ros</build_depend>
+  <build_depend>rendering</build_depend>
+  <build_depend>pose_estimation</build_depend>
+
+  <run_depend>image_transport</run_depend>
+  <run_depend>cv_bridge</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>perception_services</run_depend>
+  <run_depend>pcl_ros</run_depend>
+  <run_depend>rendering</run_depend>
+  <run_depend>pose_estimation</run_depend>
+</package>

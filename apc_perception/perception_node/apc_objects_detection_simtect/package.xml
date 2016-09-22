@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<package>
+  <name>apc_objects_detection_simtect</name>
+  <version>0.0.1</version>
+  <description>The object_detection_action_simtect package for the BT. This node look at the shelf or the tote using simtect and the iDS cameras or the Kinect2 (indicated on the inputs) and gives back a list of detected objects with properties + occlusions.  </description>
+
+
+  <maintainer email="caccamo@kth.se">Sergio Caccamo</maintainer>
+
+  <url type="website">https://gits-15.sys.kth.se/KTH-APC/apc_perception</url>
+  <url type="bugtracker">https://gits-15.sys.kth.se/KTH-APC/apc_perception/issues</url>
+  <url type="repository">https://gits-15.sys.kth.se/KTH-APC/apc_perception</url>
+
+  <license>BSD</license>
+  <author email="caccamo@kth.se">Sergio Caccamo</author> 
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>libpcl-all-dev</build_depend>
+  <build_depend>tf</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>boost</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>perception_services</build_depend> 
+  <build_depend>apc_objects_detection_action</build_depend>
+  <build_depend>cmake_modules</build_depend>
+  
+  <run_depend>roscpp</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>libpcl-all</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>actionlib_msgs</run_depend>
+  <run_depend>actionlib</run_depend>
+  <run_depend>boost</run_depend>
+  <run_depend>message_runtime</run_depend>
+  <run_depend>perception_services</run_depend>
+  <run_depend>apc_objects_detection_action</run_depend>
+    
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

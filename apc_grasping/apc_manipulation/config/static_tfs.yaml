@@ -1,0 +1,67 @@
+static_tfs:
+
+  # tote and shelf
+  - child_frame_id: base
+    frame_id: base
+
+  - child_frame_id: shelf
+    frame_id: base
+
+  - child_frame_id: tote
+    frame_id: base
+
+  - child_frame_id: shelf_front
+    frame_id: base
+
+  # bins
+  - child_frame_id: bin_A
+    frame_id: base
+
+  - child_frame_id: bin_B
+    frame_id: base
+
+  - child_frame_id: bin_C
+    frame_id: base
+
+  - child_frame_id: bin_D
+    frame_id: base
+
+  - child_frame_id: bin_E
+    frame_id: base
+
+  - child_frame_id: bin_F
+    frame_id: base
+
+  - child_frame_id: bin_G
+    frame_id: base
+
+  - child_frame_id: bin_H
+    frame_id: base
+
+  - child_frame_id: bin_I
+    frame_id: base
+
+  - child_frame_id: bin_J
+    frame_id: base
+
+  - child_frame_id: bin_K
+    frame_id: base
+
+  - child_frame_id: bin_L
+    frame_id: base
+
+  # robot stuff
+  - child_frame_id: left_gripper
+    frame_id: left_gripper_base
+
+  - child_frame_id: right_gripper
+    frame_id: right_gripper_base
+
+  # bin IDS poses for pick task
+  - filename: data/pickBinPosesIDSTF.yaml
+    package: apc_manipulation
+    frame_id: bins
+
+  
+
+

@@ -1,0 +1,20 @@
+<launch>
+
+	<!-- Tf frames -->
+	<include file="$(find perception_launch)/launch/perception_tf_frames.launch">
+	</include>
+
+	<!-- simtrack -->
+	<include file="$(find simtrack_nodes)/launch/simtrack_demo1.launch">
+	</include>
+
+	<!-- external kinect -->
+	<include file="$(find perception_launch)/launch/perception_kinect_external.launch">
+	</include>
+
+	<!-- ids cameras 
+	<include file="$(find perception_launch)/launch/perception_ids_robot.launch">
+	</include>
+	-->
+
+</launch>

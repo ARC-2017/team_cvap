@@ -1,0 +1,8 @@
+# Status request allows the task manager to change parameters according to what is happening on the behavior tree
+string GOT_OBJECT = got_object
+
+string status
+---
+# Response
+
+bool return_val

@@ -1,0 +1,13 @@
+# Goal of the PickObject action
+string targetObject # object name
+string[] obstacles # other known objects in the bin
+string bin_id # bin_A, ..., bin_L or tote
+string arm # left_arm or right_arm
+bool is_tf_reliable # if yes, we believe that the tf frame for the object is at its center
+---
+# Result
+bool success
+geometry_msgs/PoseStamped objPoseInEEF # pose of the target object w.r.t the eef
+---
+# Feedback
+string lastStep # String stating what the last successful processing step was.

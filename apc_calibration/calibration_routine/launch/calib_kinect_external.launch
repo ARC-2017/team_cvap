@@ -1,0 +1,9 @@
+<launch>
+    <param name="base_frame_name" value="/base" />
+    <param name="camera_frame_name" value="/kinect_external_link" />
+    <param name="robot_ee_frame_name" value="/right_gripper" />
+    <param name="marker_frame_name" value="/ros_groovy" />
+    <param name="sensor_name" value="kinect_external" />
+    <param name="file_path" value="$(find calibration_data)/extrinsics" />
+    <node name="camera_robot_calibration" pkg="calibration_routine" type="camera_robot_calibration_apc.py" output="screen"/>
+</launch>

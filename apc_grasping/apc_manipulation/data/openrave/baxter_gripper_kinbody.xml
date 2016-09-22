@@ -1,0 +1,47 @@
+<KinBody name="baxter_gripper">
+  <Body name="left_finger" type="dynamic">
+    <Translation>0 0 0</Translation>
+    <RotationAxis>1 0 0 0</RotationAxis>
+
+    <Mass type="mimicgeom">
+      <density>10</density>
+    </Mass>
+
+    <Geom type="box">
+      <Extents>0.0075 0.0075 0.0525</Extents>
+      <Translation>0 0.0315 -0.0525</Translation>
+      <RotationAxis>1 0 0 0</RotationAxis>
+      <diffusecolor>0.2 0.2 0.2</diffusecolor>
+    </Geom>
+  </Body>
+  <Body name="right_finger" type="dynamic">
+    <Translation>0 0 0</Translation>
+    <RotationAxis>1 0 0 0</RotationAxis>
+
+    <Mass type="mimicgeom">
+      <density>10</density>
+    </Mass>
+
+    <Geom type="box">
+      <Extents>0.0075 0.0075 0.0525</Extents>
+      <Translation>0 -0.0315 -0.0525</Translation>
+      <RotationAxis>1 0 0 0</RotationAxis>
+      <diffusecolor>0.2 0.2 0.2</diffusecolor>
+    </Geom>
+  </Body>
+  <Body name="palm" type="dynamic">
+    <Translation>0 0 -0.125</Translation>
+    <RotationAxis>1 0 0 0</RotationAxis>
+
+    <Mass type="mimicgeom">
+      <density>10</density>
+    </Mass>
+
+    <Geom type="box">
+      <Extents>0.02 0.04 0.02</Extents>
+      <Translation>0 0 0</Translation>
+      <RotationAxis>1 0 0 0</RotationAxis>
+      <diffusecolor>0.3 0.3 0.3</diffusecolor>
+    </Geom>
+  </Body>
+</KinBody>

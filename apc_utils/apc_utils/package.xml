@@ -1,0 +1,21 @@
+<package>
+  <name>apc_utils</name>
+  <version>0.0.1</version>
+  <description>
+    Utility packages for APC 2016.
+  </description>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+  <license>BSD</license>
+
+  <url>https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+
+  <author email="fevb@kth.se">Francisco Vina</author>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <export>
+    <metapackage/>
+  </export>
+</package>

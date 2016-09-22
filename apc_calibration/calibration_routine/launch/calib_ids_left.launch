@@ -1,0 +1,9 @@
+<launch>
+    <param name="base_frame_name" value="/left_gripper_base" />
+    <param name="camera_frame_name" value="/ids_left_rgb_optical_center" />
+    <param name="robot_ee_frame_name" value="/right_gripper_base" />
+    <param name="marker_frame_name" value="/ros_groovy" />
+    <param name="sensor_name" value="ids_left" />
+    <param name="file_path" value="$(find calibration_data)/extrinsics" />
+    <node name="camera_robot_calibration" pkg="calibration_routine" type="camera_robot_calibration_apc.py" output="screen"/>
+</launch>

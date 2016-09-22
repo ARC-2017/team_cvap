@@ -1,0 +1,119 @@
+<launch>
+
+  <!-- Pick or stow task -->
+  <arg name="pick" default="true" doc="Set to true for the pick task, false for the stow task" />
+  <arg name="test_tote" default="true" doc="Set to true for publishing the tote" />
+
+  <!-- kinect chest -->
+  <arg name="kinect_chest_calibration_file" value="$(find calibration_data)/extrinsics/kinect_chest.txt"/>
+  <arg name="kinect_chest_source_frame" value="base"/>
+  <arg name="kinect_chest_target_frame" value="kinect_chest_link"/>
+
+  <!-- kinect head -->
+  <arg name="kinect_head_calibration_file" value="$(find calibration_data)/extrinsics/kinect_head.txt"/>
+  <arg name="kinect_head_source_frame" value="base"/>
+  <arg name="kinect_head_target_frame" value="kinect_head_link"/>
+
+  <!-- kinect external -->
+  <arg name="kinect_external_calibration_file" value="$(find calibration_data)/extrinsics/kinect_external.txt"/>
+  <arg name="kinect_external_source_frame" value="base"/>
+  <arg name="kinect_external_target_frame" value="kinect_external_link"/>
+
+  <!-- ids left -->
+  <arg name="ids_left_calibration_file" value="$(find calibration_data)/extrinsics/ids_left.txt"/>
+  <arg name="ids_left_source_frame" value="left_gripper_base"/>
+  <arg name="ids_left_target_frame" value="ids_left_rgb_optical_center"/>
+
+  <!-- ids right -->
+  <arg name="ids_right_calibration_file" value="$(find calibration_data)/extrinsics/ids_right.txt"/>
+  <arg name="ids_right_source_frame" value="right_gripper_base"/>
+  <arg name="ids_right_target_frame" value="ids_right_rgb_optical_center"/>
+
+    <!-- shelf_front
+  <arg name="shelf_front_calibration_file" value="$(find calibration_data)/extrinsics/shelf_front.txt"/>
+  <arg name="shelf_front_source_frame" value="base"/>
+  <arg name="shelf_front_target_frame" value="shelf_front"/>
+   -->
+
+    <!-- shelf -->
+  <arg name="shelf_calibration_file" value="$(find calibration_data)/extrinsics/shelf.txt"/>
+  <arg name="shelf_source_frame" value="shelf_front"/>
+  <arg name="shelf_target_frame" value="shelf"/>
+
+	<!-- kinect chest -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg kinect_chest_source_frame)"/>
+		<arg name="target_frame" value="$(arg kinect_chest_target_frame)"/>
+		<arg name="calibration_file" value="$(arg kinect_chest_calibration_file)" />
+	</include>
+
+	<!-- kinect head -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg kinect_head_source_frame)"/>
+		<arg name="target_frame" value="$(arg kinect_head_target_frame)"/>
+		<arg name="calibration_file" value="$(arg kinect_head_calibration_file)" />
+	</include>
+
+	<!-- kinect external -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg kinect_external_source_frame)"/>
+		<arg name="target_frame" value="$(arg kinect_external_target_frame)"/>
+		<arg name="calibration_file" value="$(arg kinect_external_calibration_file)" />
+	</include>
+
+	<!-- ids left -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg ids_left_source_frame)"/>
+		<arg name="target_frame" value="$(arg ids_left_target_frame)"/>
+		<arg name="calibration_file" value="$(arg ids_left_calibration_file)" />
+	</include>
+
+	<!-- ids right -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg ids_right_source_frame)"/>
+		<arg name="target_frame" value="$(arg ids_right_target_frame)"/>
+		<arg name="calibration_file" value="$(arg ids_right_calibration_file)" />
+	</include>
+
+        <!-- shelf_front
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg shelf_front_source_frame)"/>
+		<arg name="target_frame" value="$(arg shelf_front_target_frame)"/>
+		<arg name="calibration_file" value="$(arg shelf_front_calibration_file)" />
+	</include>
+	 -->
+
+        <!-- shelf -->
+	<include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+		<arg name="source_frame" value="$(arg shelf_source_frame)"/>
+		<arg name="target_frame" value="$(arg shelf_target_frame)"/>
+		<arg name="calibration_file" value="$(arg shelf_calibration_file)" />
+	</include>
+
+
+
+	<!-- bins -->
+	<node name="shelf_rotated_tf_publisher" pkg="tf" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 1.5708 -1.5708 shelf shelf_rotated 10"/>
+	<node name="bin_A_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.29 1.53 0.0 0.0 0.0 shelf_rotated bin_A 10"/>
+	<node name="bin_B_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.0 1.53 0.0 0.0 0.0 shelf_rotated bin_B 10"/>
+	<node name="bin_C_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 -0.29 1.53 0.0 0.0 0.0 shelf_rotated bin_C 10"/>
+
+	<node name="bin_D_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.29 1.3 0.0 0.0 0.0 shelf_rotated bin_D 10"/>
+	<node name="bin_E_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.0 1.3 0.0 0.0 0.0 shelf_rotated bin_E 10"/>
+	<node name="bin_F_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 -0.29 1.3 0.0 0.0 0.0 shelf_rotated bin_F 10"/>
+
+
+	<node name="bin_G_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.29 1.07 0.0 0.0 0.0 shelf_rotated bin_G 10"/>
+	<node name="bin_H_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.0 1.07 0.0 0.0 0.0 shelf_rotated bin_H 10"/>
+	<node name="bin_I_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 -0.29 1.07 0.0 0.0 0.0 shelf_rotated bin_I 10"/>
+
+	<node name="bin_J_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.29 0.81 0.0 0.0 0.0 shelf_rotated bin_J 10"/>
+	<node name="bin_K_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 0.0 0.81 0.0 0.0 0.0 shelf_rotated bin_K 10"/>
+	<node name="bin_L_tf_publisher" pkg="tf" type="static_transform_publisher" args="-0.435 -0.29 0.81 0.0 0.0 0.0 shelf_rotated bin_L 10"/>
+
+	<!-- TOTE -->
+    <include file="$(find perception_launch)/launch/collision_objects_tf.launch" >
+		<arg name="test_tote" value="$(arg test_tote)"/>
+	</include>
+
+</launch>

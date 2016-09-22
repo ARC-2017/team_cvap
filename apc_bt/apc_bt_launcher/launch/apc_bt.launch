@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+<launch>
+  <!-- for testing the bt -->
+  <arg name="json" default="apc_pick_task" />
+  <arg name="test_bt" default="true" />
+  <arg name="pick_mode" default="true"/>
+  <arg name="set_params" default="true" />
+
+  <!-- Load the priorities file -->
+  <rosparam command="load" file="$(find apc_bt_launcher)/data/priority_lists_picking.yaml" if="$(arg pick_mode)"/>
+  <rosparam command="load" file="$(find apc_bt_launcher)/data/priority_lists_stowing.yaml" unless="$(arg pick_mode)"/>
+  <param name="/apc/task_manager/place_failure" type="bool" value="false"/>
+
+  <!-- Timeouts -->
+  <group unless="$(arg test_bt)">
+      <param name="/apc/bt/place_action/timeout" type="double" value="60"/>
+      <param name="/apc/bt/pick_action/timeout" type="double" value="60"/>
+      <param name="/apc/bt/move_action/timeout" type="double" value="60"/>
+      <param name="/apc/bt/look_action/timeout" type="double" value="30"/>
+      <param name="/apc/bt/look_action/timeout_kinect" type="double" value="8"/>
+  </group>
+
+  <group if="$(arg test_bt)">
+      <param name="/apc/bt/place_action/timeout" type="double" value="600"/>
+      <param name="/apc/bt/pick_action/timeout" type="double" value="600"/>
+      <param name="/apc/bt/move_action/timeout" type="double" value="600"/>
+      <param name="/apc/bt/look_action/timeout" type="double" value="600"/>
+      <param name="/apc/bt/look_action/timeout_kinect" type="double" value="600"/>
+  </group>
+
+  <!-- Preemption Timeouts -->
+  <param name="/apc/bt/place_action/preempt_timeout" type="double" value="1"/>
+  <param name="/apc/bt/pick_action/preempt_timeout" type="double" value="8"/>
+  <param name="/apc/bt/move_action/preempt_timeout" type="double" value="8"/>
+  <param name="/apc/bt/look_action/preempt_timeout" type="double" value="1"/>
+
+  <!-- Overridable parameters -->
+  <group if="$(arg set_params)">
+      <param name="/apc/bt/file" type="string" value="bt_pick_baxter" if="$(arg pick_mode)"/>
+      <param name="/apc/bt/file" type="string" value="bt_stow_baxter" unless="$(arg pick_mode)"/>
+      <param name="/apc/task_manager/json_filename" type="str" value="$(arg json)"/>
+      <param name="/apc/task" type="str" value="pick" if="$(arg pick_mode)"/>
+      <param name="/apc/task" type="str" value="stow" unless="$(arg pick_mode)"/>
+  </group>
+
+  <param name="/apc/task_manager/running" type="bool" value="False"/>
+
+  <node pkg="behavior_trees" type="behavior_trees" name="behavior_tree_baxter" args="--agent=baxter"/>
+
+  <node pkg="apc_bt_execute_action" type="look_bin_kinect_action" name="look_bin_kinect_action"/>
+  <node pkg="apc_bt_execute_action" type="look_bin_ids_action" name="look_bin_ids_action"/>
+  <node pkg="apc_bt_execute_action" type="look_tote_ids_action" name="look_tote_ids_action"/>
+  <node pkg="apc_bt_execute_action" type="look_tote_kinect_action" name="look_tote_kinect_action"/>
+
+  <node pkg="apc_bt_execute_action" type="move_action" name="move_action"/>
+
+  <node pkg="apc_bt_execute_action" type="set_ids_1_action" name="set_ids_1_action"/>
+  <node pkg="apc_bt_execute_action" type="set_ids_2_action" name="set_ids_2_action"/>
+  <node pkg="apc_bt_execute_action" type="set_ids_3_action" name="set_ids_3_action"/>
+  <node pkg="apc_bt_execute_action" type="set_ids_4_action" name="set_ids_4_action"/>
+  <node pkg="apc_bt_execute_action" type="set_ids_6_action" name="set_ids_6_action"/>
+  <node pkg="apc_bt_execute_action" type="set_ids_8_action" name="set_ids_8_action"/>
+  <node pkg="apc_bt_execute_action" type="set_memory_ids" name="set_memory_ids"/>
+  <node pkg="apc_bt_execute_action" type="has_memory_ids" name="has_memory_ids"/>
+  <node pkg="apc_bt_execute_action" type="set_memory_kinect" name="set_memory_kinect"/>
+  <node pkg="apc_bt_execute_action" type="has_memory_kinect" name="has_memory_kinect"/>
+  <node pkg="apc_bt_execute_action" type="set_memory" name="set_memory"/>
+  <node pkg="apc_bt_execute_action" type="has_memory" name="has_memory"/>
+  <node pkg="apc_bt_execute_action" type="move_ids_action" name="move_ids_action"/>
+
+  <node pkg="apc_bt_execute_action" type="move_to_home_action" name="move_to_home_action"/>
+  <node pkg="apc_bt_execute_action" type="move_to_tote_action" name="move_to_tote_action"/>
+
+  <node pkg="apc_bt_execute_action" type="pick_tote_action" name="pick_tote_action"/>
+  <node pkg="apc_bt_execute_action" type="pick_bin_action" name="pick_bin_action"/>
+
+  <node pkg="apc_bt_execute_action" type="place_tote_action" name="place_tote_action"/>
+  <node pkg="apc_bt_execute_action" type="place_bin_action" name="place_bin_action"/>
+
+  <node pkg="apc_bt_execute_action" type="success_action" name="success_action"/>
+  <node pkg="apc_bt_execute_action" type="get_next_target_action" name="get_next_target_action"/>
+
+  <node pkg="apc_bt_execute_action" type="is_object_simtrackable" name="is_object_simtrackable"/>
+  <node pkg="apc_bt_execute_action" type="ids_no_move_home" name="ids_no_move_home"/>
+  <node pkg="apc_bt_execute_action" type="pick_no_move_home" name="pick_no_move_home"/>
+  <node pkg="apc_bt_execute_action" type="do_nothing_action" name="do_nothing_action"/>
+  <node pkg="apc_bt_execute_action" type="place_failure_action" name="place_failure_action"/>
+  <node pkg="apc_bt_execute_action" type="is_place_failure" name="is_place_failure"/>
+  <node pkg="apc_bt_execute_action" type="load_simtrack_models" name="load_simtrack_models"/>
+  <node pkg="apc_bt_execute_action" type="unload_simtrack_models" name="unload_simtrack_models"/>
+
+  <!-- Despair nodes -->
+  <node pkg="apc_bt_execute_action" type="is_level_1" name="is_level_1"/>
+  <node pkg="apc_bt_execute_action" type="is_level_2" name="is_level_2"/>
+  <node pkg="apc_bt_execute_action" type="is_level_3" name="is_level_3"/>
+  <node pkg="apc_bt_execute_action" type="is_level_4" name="is_level_4"/>
+
+  <group if="$(arg test_bt)">
+      <node pkg="apc_bt_test_server" type="apc_bt_test_move" name="apc_bt_test_move" output="screen"/>
+      <node pkg="apc_bt_test_server" type="apc_bt_test_look_for_object" name="apc_bt_test_look_for_object" output="screen"/>
+      <node pkg="apc_bt_test_server" type="apc_bt_test_pick" name="apc_bt_test_pick" output="screen"/>
+      <node pkg="apc_bt_test_server" type="apc_bt_test_place" name="apc_bt_test_place" output="screen"/>
+  </group>
+
+  <node pkg="apc_bt_task_manager" type="task_manager" name="task_manager" output="screen"/>
+</launch>

@@ -1,0 +1,6 @@
+#Request is a trajectory
+string move_group
+moveit_msgs/RobotTrajectory traj
+---
+#Response is the inverted trajectory
+moveit_msgs/RobotTrajectory traj

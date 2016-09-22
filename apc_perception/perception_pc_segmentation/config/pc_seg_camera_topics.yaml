@@ -1,0 +1,24 @@
+#kinect_chest
+pc_segmentation/camera/kinect_chest/rgb: /kinect_chest/hd/image_color_rect
+pc_segmentation/camera/kinect_chest/rgb_info: /kinect_chest/hd/camera_info
+pc_segmentation/camera/kinect_chest/depth: /kinect_chest/hd/image_depth_rect
+pc_segmentation/camera/kinect_chest/robot_frame: kinect_chest_rgb_optical_frame
+
+#kinect_head
+pc_segmentation/camera/kinect_head/rgb: /kinect_head/hd/image_color_rect
+pc_segmentation/camera/kinect_head/rgb_info: /kinect_head/hd/camera_info
+pc_segmentation/camera/kinect_head/depth: /kinect_head/hd/image_depth_rect
+pc_segmentation/camera/kinect_head/robot_frame: kinect_head_rgb_optical_frame
+
+#kinect_external
+pc_segmentation/camera/kinect_external/rgb: /kinect_external/hd/image_color_rect
+pc_segmentation/camera/kinect_external/rgb_info: /kinect_external/hd/camera_info
+pc_segmentation/camera/kinect_external/depth: /kinect_external/hd/image_depth_rect
+pc_segmentation/camera/kinect_external/robot_frame: kinect_external_rgb_optical_frame
+
+
+#kinect_test
+pc_segmentation/camera/kinect_test/rgb: /kinect2/sd/image_color_rect
+pc_segmentation/camera/kinect_test/rgb_info: /kinect2/sd/camera_info
+pc_segmentation/camera/kinect_test/depth: /kinect2/sd/image_depth_rect
+pc_segmentation/camera/kinect_test/robot_frame: kinect2_link

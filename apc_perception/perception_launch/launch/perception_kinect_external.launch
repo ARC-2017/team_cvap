@@ -1,0 +1,12 @@
+<launch>
+	<arg name="kinect_external_name" default="kinect_external" />
+	<arg name="kinect_external_serial" default="004436460547" />
+<!-- external camera -->
+	<include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch">
+		<arg name="base_name" value="$(arg kinect_external_name)"/>
+		<arg name="publish_tf" value="true"/>
+		<arg name="calib_path"        default="$(find calibration_data)/intrinsics/"/>
+		<arg name="sensor" value="$(arg kinect_external_serial)"/>
+	</include>
+
+</launch>

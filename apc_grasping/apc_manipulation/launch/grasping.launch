@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <arg name="pick" default="true"/>
+
+  <!-- argument for simulating grasping -->
+  <arg name="sim" default="false"/>
+  <arg name="pipeline" default="ompl"/>
+  <arg name="ipython" default="false"/>
+
+  <!-- Approach node parameters -->
+  <param name="/apc/manipulation/approach/velocity" type="double" value="0.05"/>
+  <param name="/apc/manipulation/approach/frequency" type="double" value="50"/>
+  <param name="/apc/manipulation/approach/force_limit" type="double" value="5"/>
+  <param name="/apc/manipulation/approach/compensation_time" type="double" value="1"/>
+  <param name="/apc/manipulation/approach_timeout" type="double" value="10"/>
+
+  <!-- do not load robot description as it is loaded -->
+  <!-- by robot or gazebo -->
+
+  <!-- if picking we use both suction grippers with 90 degree angle -->
+  <group if="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="false"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>
+  </group>
+
+  <!-- if stowing we use suction on right arm (45 degree angle) and -->
+  <!-- parallel gripper on the left hand -->
+  <group unless="$(arg pick)">
+    <include file="$(find apc_manipulation)/launch/moveit_baxter.launch">
+      <arg name="right_electric_gripper" value="false"/>
+      <arg name="left_electric_gripper" value="true"/>
+      <arg name="load_robot_description" value="false"/>
+      <arg name="pipeline" value="$(arg pipeline)"/>
+    </include>
+  </group>
+
+  <!-- publish TFs for collision models -->
+  <include file="$(find apc_manipulation)/launch/collision_objects_tf.launch" >
+    <arg name="pick" value="$(arg pick)" />
+  </include>
+
+  <!-- Tool calibration URDF publisher -->
+  <include file="$(find apc_manipulation)/launch/tool_calib_publisher.launch" >
+      <arg name="pick" value="$(arg pick)" />
+  </include>
+
+  <!-- Load information on kinematics solver -->
+  <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/ompl_planning.yaml" />
+
+    <rosparam command="load" ns="/move_group" file="$(find apc_manipulation)/config/stomp_planning.yaml" />
+
+
+<!--    <arg name="named_configs" default="$(find apc_manipulation)/data/binConfigurations.yaml" /> -->
+
+    <!-- <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/pickBinConfigurations.yaml" if="$(arg pick)"/> -->
+    <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/pickBinConfigurations.yaml" if="$(arg pick)"/>
+    <param name="/apc/manipulation/ik_seeds" type="str" value="$(find apc_manipulation)/data/pickBinConfigurationsSeeds.yaml" if="$(arg pick)"/>
+    <param name="/apc/manipulation/named_configs" type="str" value="$(find apc_manipulation)/data/stowBinConfigurations.yaml" unless="$(arg pick)"/>
+    <param name="/apc/manipulation/ik_seeds" type="str" value="$(find apc_manipulation)/data/stowBinConfigurationsSeeds.yaml" unless="$(arg pick)"/>
+    <param name="/apc/manipulation/ids_poses" type="str" value="$(find apc_manipulation)/data/pickBinPosesIDSTF.yaml" if="$(arg pick)" />
+
+    <!-- Set roadmap paths -->
+    <param name="/apc/manipulation/roadmap_left" type="str" value="$(find apc_manipulation)/data/apc_roadmap_picking_left_arm.pickle" if="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_left" type="str" value="$(find apc_manipulation)/data/apc_roadmap_stowing_left_arm.pickle" unless="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_right" type="str" value="$(find apc_manipulation)/data/apc_roadmap_picking_right_arm.pickle" if="$(arg pick)"/>
+    <param name="/apc/manipulation/roadmap_right" type="str" value="$(find apc_manipulation)/data/apc_roadmap_stowing_right_arm.pickle" unless="$(arg pick)"/>
+
+    <!-- <rosparam param="/apc/manipulation/named_configs" subst_value="True">$(arg named_configs)</rosparam> -->
+
+    <group if="$(arg pick)" >
+      <node name="bin_ids_pose_publisher" pkg="apc_manipulation" type="bin_pose_publisher.py" args="$(find apc_manipulation)/data/pickBinPosesIDSTF.yaml" />
+    </group>
+
+
+    <node pkg="tf" type="static_transform_publisher" name="bin_D_stow_pose_publisher" args="-0.2825 1.4 0.375 0.0 1.0 0.0 0.0 shelf bin_D_stowing 100" />
+
+    <param name="/apc/manipulation/left_electric_gripper" type="bool" value="false" if="$(arg pick)"/>
+    <param name="/apc/manipulation/left_electric_gripper" type="bool" value="true" unless="$(arg pick)"/>
+    <node name="manipulation_node" pkg="apc_manipulation" type="apc_manipulation_node.py" respawn="false" output="screen">
+      <rosparam command="load" file="$(find apc_manipulation)/config/collision_objects.yaml" ns="/apc/manipulation"/>
+      <rosparam command="load" file="$(find apc_manipulation)/config/pick_object.yaml" ns="/apc/manipulation/pick_object/params"/>
+      <rosparam command="load" file="$(find apc_manipulation)/config/place_object.yaml" ns="/apc/manipulation/place_object/params"/>
+      <rosparam command="load" file="$(find apc_manipulation)/config/static_tfs.yaml" ns="/apc/manipulation" />
+    </node>
+
+    <node name="linear_path_planner" pkg="apc_linear_path_planner" type="apc_linear_path_planner_node" respawn="false" output="screen"/>
+</launch>

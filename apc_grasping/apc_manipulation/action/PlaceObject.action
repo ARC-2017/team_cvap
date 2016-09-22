@@ -1,0 +1,13 @@
+# Goal of the PlaceObject action
+string bin_id # bin_A, ..., bin_L or tote
+string[] obstacles # other known objects in the bin
+string targetObject # object name
+string arm # left_arm or right_arm
+geometry_msgs/PoseStamped objPoseInEEF # pose of the target object w.r.t the eef
+---
+# Result
+bool success
+bool had_object
+---
+# Feedback
+string lastStep # String stating what the last successful processing step was.

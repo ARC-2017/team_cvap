@@ -1,0 +1,17 @@
+<launch>
+
+<!-- kinect chest -->
+  <arg name="kinect_chest_calibration_file" value="$(find calibration_data)/extrinsics/kinect_chest.txt"/>
+  <arg name="kinect_chest_source_frame" value="base"/>
+  <arg name="kinect_chest_target_frame" value="kinect_chest_link"/>
+
+    <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+       <arg name="source_frame" value="$(arg kinect_chest_source_frame)"/>
+       <arg name="target_frame" value="$(arg kinect_chest_target_frame)"/>
+       <arg name="calibration_file" value="$(arg kinect_chest_calibration_file)" />
+    </include>
+
+   <!-- Robot kinect -->
+	<include file="$(find perception_launch)/launch/perception_kinect_chest.launch">
+	</include>
+</launch>

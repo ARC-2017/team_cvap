@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<package>
+  <name>apc_bt_test_server</name>
+  <version>0.0.1</version>
+  <description>
+    Package with test nodes for logic and integration debugging
+  </description>
+
+  <maintainer email="diogoa@kth.se">
+    Diogo Almeida
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>apc_bt_comms</build_depend>
+  <build_depend>behavior_trees</build_depend>
+  <build_depend>apc_manipulation</build_depend>
+  <build_depend>apc_objects_detection_action</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>apc_bt_comms</run_depend>
+  <run_depend>behavior_trees</run_depend>
+  <run_depend>apc_manipulation</run_depend>
+  <run_depend>apc_objects_detection_action</run_depend>
+</package>

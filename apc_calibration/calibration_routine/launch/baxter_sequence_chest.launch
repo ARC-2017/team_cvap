@@ -1,0 +1,5 @@
+<launch>
+    <param name="arm_name" value="right" />
+    <param name="sensor_name" value="kinect_chest" />
+    <node name="baxter_sequence_calibration" pkg="calibration_routine" type="baxter_sequence_calibration.py" output="screen"/>
+</launch>

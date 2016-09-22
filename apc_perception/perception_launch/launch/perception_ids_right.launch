@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+		<!-- Define the machines -->
+	<include file="$(find apc_launch)/launch/machines.launch"/>
+
+	<arg name="machine_name" default="morgoth"/>
+	<arg name="ids_right_name" default="ids_right" />
+	<arg name="ids_right_frame_name" default="ids_right_rgb_optical_center" />
+    
+	<!-- right camera -->
+	<include file="$(find ueye_cam)/launch/xs_cam.launch">
+		<arg name="machine_name" value="$(arg machine_name)"/>
+		<arg name="camera_id" value="2"/>
+		<arg name="camera_name" value="$(arg ids_right_name)"/>
+		<arg name="frame_name" value="$(arg ids_right_frame_name)"/>
+		<arg name="camera_intrinsics_file" value="$(find calibration_data)/intrinsics/$(arg ids_right_name)/$(arg ids_right_name).yaml" />
+	</include>
+</launch>

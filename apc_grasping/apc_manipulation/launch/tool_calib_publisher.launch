@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <!-- arg for pick/stow task -->
+  <arg name="pick" default="true"/>
+
+
+  <!-- Pick task -->
+  <!-- Left suction cup with 90 degree angle -->
+  <!-- Right suction cup with 90 degree angle -->
+  <group if="$(arg pick)">
+    <node name="left_gripper_urdf_publisher" pkg="baxter_examples" type="send_urdf_fragment.py" args="-f $(find calibration_data)/urdf/end_effectors/left_end_effector_90.urdf.xacro -l left_hand -j left_gripper_base" />
+
+    <node name="right_gripper_urdf_publisher" pkg="baxter_examples" type="send_urdf_fragment.py" args="-f $(find calibration_data)/urdf/end_effectors/right_end_effector_90.urdf.xacro -l right_hand -j right_gripper_base" />
+  </group>
+
+
+  <!-- Stow task -->
+  <!-- Left parallel gripper -->
+  <!-- Right suction cup with 45 degree angle -->
+  <group unless="$(arg pick)">
+    <node name="right_gripper_urdf_publisher" pkg="baxter_examples" type="send_urdf_fragment.py" args="-f $(find calibration_data)/urdf/end_effectors/right_end_effector_45.urdf.xacro -l right_hand -j right_gripper_base" />
+  </group>
+
+</launch>

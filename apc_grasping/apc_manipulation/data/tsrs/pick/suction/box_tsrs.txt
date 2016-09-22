@@ -1,0 +1,24 @@
+./createBoxTSRs.py 0.201 0.004 0.169 0.0175 --output ../data/tsrs/suction/i_am_a_bunny_book.tsrs
+./createBoxTSRs.py 0.165 0.19 0.07 0.0175 --output ../data/tsrs/suction/hanes_tube_socks.tsrs
+./createBoxTSRs.py 0.13 0.008 0.075 0.0175 --output ../data/tsrs/suction/cool_shot_glue_sticks.tsrs
+./createBoxTSRs.py 0.118 0.062 0.062 0.0175 --output ../data/tsrs/suction/soft_white_lightbulb.tsrs
+./createBoxTSRs.py 0.37 0.004 0.085 0.0175 --output ../data/tsrs/suction/creativity_chenille_stems.tsrs
+./createBoxTSRs.py 0.085 0.038 0.092 0.0175 --output ../data/tsrs/suction/command_hooks.tsrs
+./createBoxTSRs.py 0.193 0.009 0.095 0.0175 --output ../data/tsrs/suction/ticonderoga_12_pencils.tsrs
+./createBoxTSRs.py 0.09 0.033 0.063 0.0175 --output ../data/tsrs/suction/dove_beauty_bar.tsrs
+./createBoxTSRs.py 0.09 0.033 0.063 0.0175 --output ../data/tsrs/suction/dove_beauty_bar.tsrs
+./createBoxTSRs.py 0.122 0.018 0.076 0.0175 --output ../data/tsrs/suction/staples_index_cards.tsrs
+./createBoxTSRs.py 0.18 0.01 0.05 0.0175 --output ../data/tsrs/suction/barkely_hide_bones.tsrs
+./createBoxTSRs.py 0.07 0.001 0.05 0.0175 --output ../data/tsrs/suction/woods_extension_cord.tsrs
+./createBoxTSRs.py 0.045 0.1 0.045 0.0175 --output ../data/tsrs/suction/dasani_water_bottle.tsrs
+./createBoxTSRs.py 0.28 0.001 0.24 0.0175 --output ../data/tsrs/suction/scotch_bubble_mailer.tsrs
+./createBoxTSRs.py 0.09 0.25 0.09 0.0175 --output ../data/tsrs/suction/kleenex_paper_towels.tsrs
+
+./createBoxTSRs.py 0.06 0.001 0.06 0.0175 --output ../data/tsrs/suction/platinum_pets_dog_bowl.tsrs
+
+./createBoxTSRs.py 0.1 0.04 0.06 0.0175 --output ../data/tsrs/suction/clorox_utility_brush.tsrs
+
+./createBoxTSRs.py 0.05 0.05 0.05 0.0175 --output ../data/tsrs/suction/rgb_picking.tsrs
+./createBoxTSRs.py 0.05 0.05 0.05 0.0175 --output ../data/tsrs/suction/rgb_stowing.tsrs
+
+./createBoxTSRs.py 0.128 0.11 0.11 0.0175 --output ../data/tsrs/suction/kleenex_tissue_box.tsrs

@@ -1,0 +1,10 @@
+#goal definition
+string target_item
+string target_bin
+string[] bin_contents
+---
+#result definition
+bool result
+---
+#feedback
+bool status

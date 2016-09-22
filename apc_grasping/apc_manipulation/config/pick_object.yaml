@@ -1,0 +1,140 @@
+min_approach_dist: 0.01
+max_approach_dist: 0.05
+approach_step_size: 0.005
+sucking_time_out: 1800
+lift_dist: 0.05
+# samples per squared meter
+pick_sample_density: 10000
+planning_time_out: 10
+max_feasibility_checks_per_dir: 50
+num_discrete_tsrs: 20
+push_dist: 0.07
+push_dist_electric: 0.04
+retreat_dist: 0.05
+wall_separation_dist: 0.025
+wall_separation_timeout: 5
+retreat_step_size: 0.01
+pre_approach_tote_distance: 0.30
+pre_approach_bin_distance: 0.08
+tote_bottom_lowering_value: 0.3
+
+# TSR parameters
+tsr:
+  # Angle (in radians) for comparing with bin axes
+  # and filtering TSRs
+  filtering_angle: 1.0
+
+  # preferred Z axis of gripper_base w.r.t. bin frame
+  z_axis_bin_gripper_base: [1.0, 0.0, 0.0]
+
+  # preferred Z axis of gripper_base w.r.t. tote frame
+  z_axis_tote_gripper_base: [0.0, 0.0, -1.0]
+
+  # number of angles for optimizing TSR rotations around Z-axis
+  rotz_num_angles: 72
+
+  # standard deviation of Gaussian noise on the angle of rotation of TSRs (in radians)
+  rotz_noise_stdev: 0.25
+
+  # standard deviation of Gaussian position noise to add on Stow tsrs
+  # NB: only used with suction device
+  stow_pos_noise_stdev: [0.0, 0.0, 0.0]
+
+  # standard deviation of Gaussian RPY noise to add on Stow tsrs
+  # NB: only used with suction device
+  stow_rpy_noise_stdev: [0.3, 0.3, 0.0]
+
+  min_samples: 100
+
+binDimensions:
+  bin_A:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.24
+  bin_B:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.14
+    y_max: 0.14
+    z_min: 0.0
+    z_max: 0.24
+  bin_C:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.24
+  bin_D:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.20
+  bin_E:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.14
+    y_max: 0.14
+    z_min: 0.0
+    z_max: 0.20
+  bin_F:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.20
+  bin_G:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.20
+  bin_H:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.14
+    y_max: 0.14
+    z_min: 0.0
+    z_max: 0.20
+  bin_I:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.20
+  bin_J:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.24
+  bin_K:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.14
+    y_max: 0.14
+    z_min: 0.0
+    z_max: 0.24
+  bin_L:
+    x_min: -0.04
+    x_max: 0.43
+    y_min: -0.13
+    y_max: 0.13
+    z_min: 0.0
+    z_max: 0.24
+  tote:
+    x_min: -0.27
+    x_max: 0.27
+    y_min: -0.17
+    y_max: 0.17
+    z_min: -0.02
+    z_max: 0.35

@@ -1,0 +1,32 @@
+<launch>
+    <!-- set the machine to run the ids -->
+    <arg name="ids_left_machine" default="sauron"/>
+    <arg name="ids_right_machine" default="sauron"/>
+
+    <!-- ros_args.launch -->
+    <arg name="ids_name" doc="Sensor name (e.g. left)"/>
+
+    <!-- launch the ids -->
+    <include file="$(find perception_launch)/launch/perception_ids_robot.launch">
+        <arg name="ids_left_machine" value="$(arg ids_left_machine)"/>
+        <arg name="ids_right_machine" value="$(arg ids_right_machine)"/>
+    </include>
+
+
+    <!-- launch simtrack -->
+    <rosparam command="load" file="$(find simtrack_nodes)/config/apc_2016_camera_topics.yaml"/>
+    <rosparam command="load" file="$(find simtrack_nodes)/config/parameters.yaml"/>
+    <param name="simtrack/use_compressed_streams" value="false" />
+    <rosparam command="load" file="$(find simtrack_nodes)/config/demo_objects.yaml"/>
+    <param name="simtrack/model_path" value="$(find simtrack_nodes)/../data/object_models/"/>
+
+    <node name="simtrack" pkg="simtrack_nodes" type="simtrack_apc_node" output="screen"/>
+
+
+    <!-- launch the calibration node -->
+    <include file="$(find calibration_routine)/launch/calib_ids_$(arg ids_name).launch"/>
+
+    <!-- start the baxter calibration sequence -->
+    <!--<include file="$(find calibration_routine)/launch/baxter_sequence_ids_$(arg ids_name).launch"/>-->
+
+</launch>

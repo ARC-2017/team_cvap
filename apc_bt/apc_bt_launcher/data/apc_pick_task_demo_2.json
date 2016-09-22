@@ -1,0 +1,102 @@
+{
+    "bin_contents": {
+        "bin_A": [
+            "woods_extension_cord",
+            "scotch_duct_tape"
+        ],
+        "bin_B": [
+            "staples_index_cards",
+            "cherokee_easy_tee_shirt",
+            "kyjen_squeakin_eggs_plush_puppies"
+        ],
+        "bin_C": [
+            "hanes_tube_socks",
+            "crayola_24_ct",
+            "womens_knit_gloves",
+            "oral_b_toothbrush_red",
+            "folgers_classic_roast_coffee"
+        ],
+        "bin_D": [
+            "peva_shower_curtain_liner"
+        ],
+        "bin_E": [
+            "cloud_b_plush_bear",
+            "platinum_pets_dog_bowl",
+            "kleenex_tissue_box",
+            "expo_dry_erase_board_eraser"
+        ],
+        "bin_F": [
+            "scotch_duct_tape",
+            "crayola_24_ct",
+            "easter_turtle_sippy_cup",
+            "elmers_washable_no_run_school_glue",
+            "dasani_water_bottle"
+        ],
+        "bin_G": [
+            "jane_eyre_dvd",
+            "rolodex_jumbo_pencil_cup",
+            "up_glucose_bottle",
+            "scotch_bubble_mailer",
+            "creativity_chenille_stems"
+        ],
+        "bin_H": [
+            "dove_beauty_bar",
+            "elmers_washable_no_run_school_glue"
+        ],
+        "bin_I": [
+            "soft_white_lightbulb",
+            "rawlings_baseball",
+            "clorox_utility_brush"
+        ],
+        "bin_J": [
+            "creativity_chenille_stems",
+            "kleenex_tissue_box"
+        ],
+        "bin_K": [
+            "kleenex_paper_towels",
+            "fiskars_scissors_red",
+            "elmers_washable_no_run_school_glue",
+            "scotch_duct_tape"
+        ],
+        "bin_L": [
+            "dr_browns_bottle_brush",
+            "laugh_out_loud_joke_book",
+            "scotch_bubble_mailer",
+            "dasani_water_bottle",
+            "soft_white_lightbulb",
+            "cool_shot_glue_sticks",
+            "command_hooks"
+        ]
+    },
+    "tote_contents": [],
+    "work_order": [
+        {
+            "bin": "bin_F",
+            "item": "dasani_water_bottle"
+        },
+        {
+            "bin": "bin_G",
+            "item": "jane_eyre_dvd"
+        },
+        {
+            "bin": "bin_B",
+            "item": "staples_index_cards"
+        },
+        {
+            "bin": "bin_H",
+            "item": "dove_beauty_bar"
+        },
+        {
+            "bin": "bin_E",
+            "item": "expo_dry_erase_board_eraser"
+        },
+        {
+            "bin": "bin_I",
+            "item": "dr_browns_bottle_brush"
+        },
+        {
+            "bin": "bin_K",
+            "item": "kleenex_paper_towels"
+        }
+    ]
+}

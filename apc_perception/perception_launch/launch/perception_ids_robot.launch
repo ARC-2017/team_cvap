@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+	<!-- Define the machines -->
+	<include file="$(find apc_launch)/launch/machines.launch"/>
+
+	<arg name="ids_left_machine" default="morgoth"/>
+	<arg name="ids_right_machine" default="morgoth"/>
+    
+	<include file="$(find perception_launch)/launch/perception_ids_left.launch">
+		<arg name="machine_name" value="$(arg ids_left_machine)"/>
+	</include>
+
+	<include file="$(find perception_launch)/launch/perception_ids_right.launch">
+		<arg name="machine_name" value="$(arg ids_right_machine)"/>
+	</include>
+</launch>

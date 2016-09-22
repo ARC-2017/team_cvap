@@ -1,0 +1,8 @@
+<KinBody name="shelf">
+  <Body type="dynamic">
+    <Geom type="trimesh">
+      <Data>pod_lowres.stl</Data>
+      <Render>pod_lowres.stl</Render>
+    </Geom>      
+  </Body>
+</KinBody>

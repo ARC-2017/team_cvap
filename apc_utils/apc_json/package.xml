@@ -1,0 +1,19 @@
+<package>
+
+  <name>apc_json</name>
+  <version>0.0.1</version>
+  <description>
+    Scripts for generating/testing APC'16 JSON files
+  </description>
+  <author email="fevb@kth.se">Francisco Vina</author>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+  <url type="bugtracker">https://gits-15.sys.kth.se/KTH-APC/apc_utils/issues</url>
+  <url type="repository">https://gits-15.sys.kth.se/KTH-APC/apc_utils</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  
+</package>

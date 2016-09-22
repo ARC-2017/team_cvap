@@ -1,0 +1,9 @@
+# Goal of the MoveArm action
+string goalBin # either bin_A, ... , bin_L or tote
+string arm # either left_arm or right_arm
+---
+# Result
+bool success
+---
+# Feedback
+string lastStep # String stating what the last successful processing step was.

@@ -1,0 +1,4 @@
+<launch>
+    <param name="sensor_name" value="ids_right" />
+    <node name="baxter_sequence_calibration_ids" pkg="calibration_routine" type="baxter_sequence_calibration_ids.py" output="screen"/>
+</launch>

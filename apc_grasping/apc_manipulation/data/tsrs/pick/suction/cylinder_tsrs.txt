@@ -1,0 +1,9 @@
+./createCylinderTSRs.py 0.0 0.05 0.27 y 1 0.0175 --output ../data/tsrs/suction/kleenex_paper_towels.tsrs
+
+./createCylinderTSRs.py 0.0 0.04 0.13 y 1 0.0175 --output ../data/tsrs/suction/folgers_classic_roast_coffee.tsrs
+
+./createCylinderTSRs.py 0.0 0.0475 0.048 y 0 0.0175 --output ../data/tsrs/suction/scotch_duct_tape.tsrs
+
+./createCylinderTSRs.py 0.0 0.027 0.135 y 1 0.0175 --output ../data/tsrs/suction/up_glucose_bottle.tsrs
+
+./createCylinderTSRs.py 0.0 0.028 0.13 y 0 0.0175 --output ../data/tsrs/suction/dasani_water_bottle.tsrs

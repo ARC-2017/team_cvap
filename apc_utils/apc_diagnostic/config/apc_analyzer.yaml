@@ -1,0 +1,69 @@
+pub_rate: 1.0 # Optional
+base_path: '' # Optional, prepended to all diagnostic output
+analyzers:
+
+  robot:
+    type: GenericAnalyzer
+    path: 'Baxter'
+    timeout: 5.0
+    contains: [
+         'baxter', 
+         'robot']
+         
+  motors:
+    type: GenericAnalyzer
+    path: Motors
+    startswith: 'EtherCAT'
+    
+  sensors:
+    type: AnalyzerGroup
+    path: Sensors
+    analyzers:
+      kinect_head:
+        type: GenericAnalyzer
+        path: Kinect head
+        timeout: 5.0
+        find_and_remove_prefix: kinect_head
+        num_items: 3
+      kinect_cheast:
+        type: GenericAnalyzer
+        path: Kinect cheast
+        timeout: 5.0
+        find_and_remove_prefix: kinect_cheast
+        num_items: 3
+      ids_l:
+        type: GenericAnalyzer
+        path: IDS left
+        timeout: 5.0
+        find_and_remove_prefix: ids_left_
+        num_items: 3 
+      ids_r:
+        type: GenericAnalyzer
+        path: IDS right
+        timeout: 5.0
+        find_and_remove_prefix: ids_right_
+        num_items: 3             
+
+  joints:
+    type: GenericAnalyzer
+    path: Joints
+    startswith: 'Joint'
+
+  example:
+    type: GenericAnalyzer
+    path: 'Example for APC'
+    timeout: 5.0
+    contains: [
+         'example']
+  perception:
+    type: GenericAnalyzer
+    path: 'Perception'
+    timeout: 5.0
+    contains: [
+         'objects']
+    expected: [
+      'Server obj',
+      'RGB',
+      'PC',
+      'General']            
+

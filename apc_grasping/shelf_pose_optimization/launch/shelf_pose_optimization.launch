@@ -1,0 +1,12 @@
+<launch>
+
+  <include file="$(find baxter_moveit_config)/launch/planning_context.launch">
+    <arg name="load_robot_description" value="true"/>
+  </include>
+
+    <node name="shelf_pose_optimization" pkg="shelf_pose_optimization" type="shelfPoseOptimizationNode.py" respawn="false" output="screen" args="--shelfMeshPath $(find shelf_pose_optimization)/data/pod_lowres.stl">
+
+    <rosparam command="load" file="$(find baxter_moveit_config)/config/kinematics.yaml"/>
+</node>
+
+</launch>

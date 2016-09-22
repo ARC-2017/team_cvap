@@ -1,0 +1,8 @@
+#Request is the start and goal configuration
+string move_group
+sensor_msgs/JointState start
+sensor_msgs/JointState goal
+---
+#Response is a serialized trajectory
+bool success
+moveit_msgs/RobotTrajectory traj

@@ -1,0 +1,26 @@
+<package>
+
+  <name>apc_launch</name>
+  <version>0.0.1</version>
+  <description>
+    High level launch files for full system deployment
+  </description>
+  <author email="fevb@kth.se">Francisco Vina</author>
+  <maintainer email="fevb@kth.se">Francisco Vina</maintainer>
+
+  <license>BSD</license>
+
+  <url type="website">https://gits-15.sys.kth.se/KTH-APC/apc_launch</url>
+  <url type="bugtracker">https://gits-15.sys.kth.se/KTH-APC/apc_launch/issues</url>
+  <url type="repository">https://gits-15.sys.kth.se/KTH-APC/apc_launch</url>
+
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>apc_grasping</run_depend>
+  <run_depend>apc_perception</run_depend>
+  <run_depend>apc_bt</run_depend>
+
+  
+</package>

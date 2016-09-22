@@ -1,0 +1,128 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="apc_suction_gripper">
+  <!-- side:= left or right -->
+  <!-- connector: '0' for 45 degree connector, '1' for 90 degree connector -->
+  <!-- calib_<x, y, z> : translation offset from gripper base to gripper tip (from calibration routine) -->
+  <!-- calib_<roll, pitch, yaw> : orientation offset from gripper base to gripper tip (from calibration routine) -->
+  <xacro:include filename="$(find calibration_data)/urdf/apc_suction_extension.urdf.xacro" />
+  <xacro:include filename="$(find calibration_data)/urdf/apc_connector_suction_cup.urdf.xacro" />
+
+  <xacro:macro name="apc_suction_gripper" params="side connector reflect_connector_angle calib_x calib_y calib_z calib_roll calib_pitch calib_yaw">
+
+    <xacro:property name="base_length" value="${0.04}" scope="local"/>
+
+    <!-- extension tube -->
+    <xacro:property name="extension_length_45" value="${0.11}" scope="local"/>
+    <xacro:property name="extension_length_90" value="${0.165+0.018}" scope="local"/>
+    <xacro:property name="extension_radius" value="${0.01}" scope="local"/>
+
+    <!-- connector (45 or 90 degrees) + suction cup -->
+    <xacro:property name="connector_cup_length_45" value="${0.08}" scope="local"/>
+    <xacro:property name="connector_cup_radius_45" value="${0.014}" scope="local"/>
+    <xacro:property name="connector_cup_length_90" value="${0.07}" scope="local"/>
+    <xacro:property name="connector_cup_radius_90" value="${0.014}" scope="local"/>
+
+    <!-- Base of end effector -->
+    <link name="${side}_gripper_base">
+      <visual>
+        <origin rpy="0 ${pi} ${pi}" xyz="0 0 0"/>
+        <geometry>
+          <mesh filename="package://rethink_ee_description/meshes/pneumatic_gripper/pneumatic_gripper_base.DAE"/>
+        </geometry>
+      </visual>
+      <collision>
+        <origin rpy="0 ${pi} ${pi}" xyz="0.0 0.0 0.04"/>
+        <geometry>
+          <cylinder length="0.08" radius="0.02"/>
+        </geometry>
+        <material name="darkred">
+          <color rgba=".5 .1 .1 1"/>
+        </material>
+      </collision>
+      <inertial>
+        <origin rpy="0 ${pi} ${pi}" xyz="0.0 0.0 0.0"/>
+        <mass value="0.3"/>
+        <inertia ixx="2e-08" ixy="0" ixz="0" iyy="3e-08" iyz="0" izz="2e-08"/>
+      </inertial>
+    </link>
+
+    <!-- Pneumatic Gripper Base Joint -->
+    <joint name="${side}_gripper_base" type="fixed">
+      <origin rpy="0 0 0" xyz="0 0 0.0"/>
+      <parent link="${side}_hand"/>
+      <child link="${side}_gripper_base"/>
+    </joint>
+
+
+    <!-- Pneumatic Gripper joint for connector with 45 or 90 degree angle -->
+    <!-- and connector + suction cup link -->
+    <xacro:unless value="${connector}">
+
+        <!-- Pneumatic Gripper extension joint for translation + rotation Z-axis -->
+        <joint name="${side}_gripper_extension_joint" type="fixed">
+            <origin rpy="0 0 ${calib_yaw - pi/2 - 1.25}" xyz="0 0 0"/>
+            <parent link="${side}_gripper_base"/>
+            <child link="${side}_gripper_extension"/>
+        </joint>
+
+      <!-- gripper extension -->
+      <xacro:apc_suction_extension side="${side}"
+				   base_length="${base_length}"
+				   extension_length="${extension_length_45}"
+				   extension_radius="${extension_radius}" />
+
+      <!-- gripper connector (45 degrees) and suction cup -->
+      <xacro:apc_connector_suction_cup side="${side}"
+			       base_length="${base_length}"
+			       extension_length="${extension_length_45}"
+			       connector_angle="${pi/4}"
+			       reflect_connector_angle="${reflect_connector_angle}"
+			       sin_connector_angle="0.707"
+			       connector_cup_length="${connector_cup_length_45}"
+
+			       connector_cup_radius="${connector_cup_radius_45}" />
+    </xacro:unless>
+    <xacro:if value="${connector}">
+
+        <!-- Pneumatic Gripper extension joint for translation + rotation Z-axis -->
+        <joint name="${side}_gripper_extension_joint" type="fixed">
+            <origin rpy="0 0 ${calib_yaw}" xyz="0 0 0"/>
+            <parent link="${side}_gripper_base"/>
+            <child link="${side}_gripper_extension"/>
+        </joint>
+
+      <!-- gripper extension -->
+      <xacro:apc_suction_extension side="${side}"
+				   base_length="${base_length}"
+				   extension_length="${extension_length_90}"
+				   extension_radius="${extension_radius}" />
+
+      <!-- gripper connector (90 degrees) and suction cup -->
+      <xacro:apc_connector_suction_cup side="${side}"
+			       base_length="${base_length}"
+			       extension_length="${extension_length_90}"
+			       connector_angle="${pi/2}"
+			       reflect_connector_angle="${reflect_connector_angle}"
+			       sin_connector_angle="1.0"
+			       connector_cup_length="${connector_cup_length_90}"
+			       connector_cup_radius="${connector_cup_radius_90}" />
+    </xacro:if>
+
+    <!-- Pneumatic Gripper Tip joint -->
+    <joint name="${side}_endpoint" type="fixed">
+      <origin rpy="${calib_roll} ${calib_pitch} ${calib_yaw}" xyz="${calib_x} ${calib_y} ${calib_z}"/>
+      <parent link="${side}_gripper_base"/>
+      <child link="${side}_gripper"/>
+    </joint>
+
+    <!-- Pneumatic Gripper Tip link -->
+    <link name="${side}_gripper">
+      <inertial>
+        <origin rpy="0 0 0" xyz="0 0 0"/>
+        <mass value="0.0001"/>
+        <inertia ixx="0" ixy="0" ixz="0" iyy="0" iyz="0" izz="0.0"/>
+      </inertial>
+    </link>
+
+  </xacro:macro>
+</robot>

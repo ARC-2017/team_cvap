@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<package>
+  <name>apc_bt_status_action</name>
+  <version>1.0.0</version>
+  <description>
+    This package will call the task manager service with an appropriate status
+    that signals that the BT has reached some execution point. The task manager
+    can then update the ros parameter server accordingly, so that we can safely
+    reutilize BT actions (such as the move_action)
+  </description>
+
+  <maintainer email="diogoa@kth.se">
+    Diogo Almeida
+  </maintainer>
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>apc_bt_comms</build_depend>
+  <build_depend>behavior_trees</build_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>apc_bt_comms</run_depend>
+  <run_depend>behavior_trees</run_depend>
+</package>

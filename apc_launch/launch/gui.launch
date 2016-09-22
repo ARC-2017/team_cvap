@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+
+  <include file="$(find baxter_moveit_config)/launch/moveit_rviz.launch" >
+    <arg name="config" value="true" />
+    <arg name="rviz_config" default="$(find apc_manipulation)/config/moveit.rviz" />
+  </include>
+
+    <node name="rqt_apc" pkg="rqt_apc" type="rqt_apc" />
+
+</launch>

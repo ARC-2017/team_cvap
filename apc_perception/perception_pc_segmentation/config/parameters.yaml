@@ -1,0 +1,11 @@
+pc_segmentation/input_filter_type: median # or median
+pc_segmentation/input_filter_size: -1 # or -1 for no filtering
+pc_segmentation/max_depth: 4.0 # meters
+pc_segmentation/debug_mode: true
+
+
+feature_segmentation/debug_mode: true
+feature_segmentation/min_inliers: 15 # increase this for more robust detections / less false positives
+feature_segmentation/use_previous_detection: true # whether to use the previous pose of a detection object when looking for it in the next frame
+feature_segmentation/redetect_inliers: 35 # if detected once, on the next frame the system will use the previous detection as seed if the previous inliers were higher than this threshold
+

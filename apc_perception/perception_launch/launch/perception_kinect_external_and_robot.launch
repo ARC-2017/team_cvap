@@ -1,0 +1,24 @@
+<launch>
+	<arg name="kinect_external_name" default="kinect_external" />
+	<arg name="kinect_external_serial" default="004436460547" />
+	<arg name="kinect_chest_name" default="kinect_chest" />
+	<arg name="kinect_chest_serial" default="500374240242" />
+	<arg name="respawn_delay"     default="5"/>
+<!-- external camera -->
+	<include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch">
+		<arg name="base_name" value="$(arg kinect_external_name)"/>
+		<arg name="publish_tf" value="true"/>
+		<arg name="calib_path"        default="$(find calibration_data)/intrinsics/"/>
+		<arg name="sensor" value="$(arg kinect_external_serial)"/>
+		<arg name="respawn_delay" value="$(arg respawn_delay)"/>
+	</include>
+<!-- chest camera -->
+	<include file="$(find kinect2_bridge)/launch/kinect2_bridge.launch">
+		<arg name="base_name" value="$(arg kinect_chest_name)"/>
+		<arg name="publish_tf" value="true"/>
+		<arg name="calib_path"        default="$(find calibration_data)/intrinsics/"/>
+		<arg name="sensor" value="$(arg kinect_chest_serial)"/>
+		<arg name="respawn_delay" value="$(arg respawn_delay)"/>
+	</include>
+
+</launch>

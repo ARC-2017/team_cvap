@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<robot name="left_end_effector" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:include filename="$(find calibration_data)/urdf/apc_suction_gripper_left45.urdf.xacro" />
+  <xacro:apc_suction_gripper side="left"
+			     connector="0"
+			     reflect_connector_angle="1"
+			     calib_x="-0.0492"
+			     calib_y="0.0127"
+			     calib_z="0.2082"
+			     calib_roll="0.2746"
+			     calib_pitch="0.6978"
+			     calib_yaw="-2.8822"/>
+</robot>

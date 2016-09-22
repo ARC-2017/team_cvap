@@ -1,0 +1,19 @@
+<launch>
+
+  <arg name="kinect_chest_calibration_file" value="$(find calibration_data)/extrinsics/kinect_chest.txt"/>
+  <arg name="kinect_chest_source_frame" value="base"/>
+  <arg name="kinect_chest_target_frame" value="kinect_chest_link"/>
+
+  <param name="/apc/shelf_calibration/height" value="-0.01"/>
+  <param name="/apc/shelf_calibration/roll" value="0.0"/>
+  <param name="/apc/shelf_calibration/pitch" value="0.0349065850398866"/>
+
+  <param name="apc/shelf_calibration/max_discard_threshold_z" value="-0.2"/>
+  <param name="apc/shelf_calibration/min_discard_threshold_z" value="-0.3"/>
+  <param name="apc/shelf_calibration/max_discard_threshold_x" value="+1.2"/>
+  <param name="apc/shelf_calibration/min_discard_threshold_x" value="+0.8"/>
+
+
+  <node name="shelf_publisher" pkg="amazon_challenge_grasping" type="shelfPublisherStatic.py" respawn="false" output="screen" />
+  <rosparam command="load" file="$(find amazon_challenge_grasping)/config/base_scan.yaml" />
+</launch>

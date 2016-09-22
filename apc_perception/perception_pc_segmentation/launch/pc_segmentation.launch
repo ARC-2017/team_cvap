@@ -1,0 +1,10 @@
+<launch>
+  <rosparam command="load" file="$(find perception_pc_segmentation)/config/pc_seg_camera_topics.yaml"/>
+  <rosparam command="load" file="$(find perception_pc_segmentation)/config/parameters.yaml"/>
+
+  <param name="pc_segmentation/use_compressed_streams" value="false" />
+  <param name="pc_segmentation/model_path" value="$(find apc_2016_mesh_models)/object_models"/>
+
+  <node name="pc_segmentation" pkg="perception_pc_segmentation" type="pc_segmentation" output="screen"/>
+
+</launch>

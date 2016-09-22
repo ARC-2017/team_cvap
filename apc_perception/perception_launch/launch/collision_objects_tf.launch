@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<launch>
+  <arg name="test_tote" default="false"/>
+
+  <group if="$(arg test_tote)">
+	  <!-- tote -->
+	  <arg name="tote_calibration_file" value="$(find calibration_data)/extrinsics/tote.txt"/>
+	  <arg name="tote_source_frame" value="base"/>
+	  <arg name="tote_target_frame" value="tote"/>
+
+	  <!-- tote_table -->
+	  <arg name="tote_table_calibration_file" value="$(find calibration_data)/extrinsics/tote_table.txt"/>
+	  <arg name="tote_table_source_frame" value="base"/>
+	  <arg name="tote_table_target_frame" value="tote_table"/>
+
+	  <!-- camera_mount -->
+	  <arg name="camera_mount_calibration_file" value="$(find calibration_data)/extrinsics/camera_mount.txt"/>
+	  <arg name="camera_mount_source_frame" value="base"/>
+	  <arg name="camera_mount_target_frame" value="camera_mount"/>
+
+	  <!-- tote -->
+	  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+	    <arg name="source_frame" value="$(arg tote_source_frame)"/>
+	    <arg name="target_frame" value="$(arg tote_target_frame)"/>
+	    <arg name="calibration_file" value="$(arg tote_calibration_file)" />
+	  </include>
+
+	  <!-- tote_table -->
+	  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+	    <arg name="source_frame" value="$(arg tote_table_source_frame)"/>
+	    <arg name="target_frame" value="$(arg tote_table_target_frame)"/>
+	    <arg name="calibration_file" value="$(arg tote_table_calibration_file)" />
+	  </include>
+
+	  <!-- camera_mount -->
+	  <include file="$(find calibration_publisher)/launch/calibration_publisher.launch">
+	    <arg name="source_frame" value="$(arg camera_mount_source_frame)"/>
+	    <arg name="target_frame" value="$(arg camera_mount_target_frame)"/>
+	    <arg name="calibration_file" value="$(arg camera_mount_calibration_file)" />
+	  </include>
+  </group>
+</launch>

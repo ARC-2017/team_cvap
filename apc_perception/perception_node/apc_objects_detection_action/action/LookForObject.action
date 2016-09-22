@@ -1,0 +1,21 @@
+#goal definition
+int32 goalID
+string targetObj
+string[] objectslist
+string cameraID
+string methodID
+string taskID
+string binID
+bool globalSearch
+string[] objectslistglobal
+
+---
+#result definition
+int32 segmentationID
+string side
+bool trueTF
+---
+#feedback
+#int32 n_object_found
+string info
+

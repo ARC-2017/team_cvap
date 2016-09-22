@@ -1,0 +1,106 @@
+[*
+	{*
+		A is_place_failure
+		[*
+			A has_memory
+			A move_to_home_action
+		]
+		A do_nothing_action
+	}
+	{*
+		A is_place_failure
+		[*
+			A get_next_target_action
+			{*
+				[*
+					A is_level_1
+					{*
+						[*
+							A set_ids_2_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_tote_ids_action
+						]
+					}
+					[*
+						{*
+							A pick_no_move_home
+							[*
+								A move_to_home_action
+								A set_memory
+							]
+						}
+					]
+				]
+				[*
+					A is_level_2
+					A move_to_home_action
+					A look_tote_kinect_action
+					A set_memory
+				]
+				[*
+					A is_level_3
+					{*
+						[*
+							A set_ids_4_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_tote_ids_action
+						]
+					}
+					[*
+						{*
+							A pick_no_move_home
+							[*
+								A move_to_home_action
+								A set_memory
+							]
+						}
+					]
+				]
+				[*
+					A is_level_4
+					{*
+						[*
+							A set_ids_6_action
+							{*
+								A ids_no_move_home
+								A move_to_home_action
+							}
+							A move_ids_action
+							A look_tote_ids_action
+						]
+					}
+					[*
+						{*
+							A pick_no_move_home
+							[*
+								A move_to_home_action
+								A set_memory
+							]
+						}
+					]
+				]
+			}
+			[*
+				A move_to_tote_action
+				A pick_tote_action
+			]
+		]
+	}
+	{*
+		[*
+			A move_action
+			A place_bin_action
+			A success_action
+			A move_to_home_action
+		]
+		A place_failure_action
+	}
+]
