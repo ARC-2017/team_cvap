@@ -1,3 +1,0 @@
-# base laser scanner offset in XY in cm
-base_scan:
-  offset: [-0.044, 0.0]

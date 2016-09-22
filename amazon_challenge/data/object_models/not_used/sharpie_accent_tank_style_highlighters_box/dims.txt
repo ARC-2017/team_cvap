@@ -1,2 +1,0 @@
-width x height x depth (in cm)
-12 x 12.8 x 2
